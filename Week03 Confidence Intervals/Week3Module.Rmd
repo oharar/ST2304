@@ -6,6 +6,15 @@ output:
     df_print: paged
 ---
 
+```{css, echo=FALSE}
+details > summary {
+  padding: 20px 6px;
+  background-color: #ddd;
+  border: none;
+  cursor: pointer;
+}
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -14,7 +23,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 First, if you dare [you can watch this video](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=79a5b98a-ddf4-4752-b3b8-ae28009ec22c):
 
-ADD EMBED 1
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=79a5b98a-ddf4-4752-b3b8-ae28009ec22c&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
 
 We have a globe. We have sampled 13 points (by spinning the globe around): 6 of these were land and 7 were sea. We want to know what proportion of the globe is land. We call each data point a "trial".
 
@@ -90,7 +101,7 @@ Because different samples give different estimates, we want to quantify this, to
 ```{r SimData}
 # Source the script directly from the internet
 # source('https://www.math.ntnu.no/emner/ST2304/2020v/Week02/Week2Functions.R')
-source('../Functions/InferenceFunctions.R')
+source('InferenceFunctions.R')
 nTrials <- 13
 nLand <- 6
 
@@ -115,9 +126,9 @@ We have plotted the likelihood, but we don't really want to summarise the distib
 
 If you prefer the spoken word, [you can watch this video introducing the ideas behind confidence intervals](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c5a7005c-b676-45e2-a783-ae2800a4faa6):
 
-ADD EMBED 2
-
-
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=c5a7005c-b676-45e2-a783-ae2800a4faa6&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
 
 Confidence intervals give the range of values of the statistic that are likely. Usually we use 95%. 
 
@@ -530,7 +541,9 @@ the sample size. But this is more extreme for the approximate intervals.
 
 Here's a third video, [covering coverage](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=e565705c-f7ad-402b-bf13-ae2800a55812):
 
-ADD EMBED 3
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=e565705c-f7ad-402b-bf13-ae2800a55812&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
 
 
 We should check the coverage of the approximation. 

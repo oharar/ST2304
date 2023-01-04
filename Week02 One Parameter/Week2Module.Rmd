@@ -6,6 +6,15 @@ output:
     df_print: paged
 ---
 
+```{css, echo=FALSE}
+details > summary {
+  padding: 20px 6px;
+  background-color: #ddd;
+  border: none;
+  cursor: pointer;
+}
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```

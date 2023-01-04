@@ -12,6 +12,15 @@ pdf_document:
 keep_tex: yes
 ---
 
+```{css, echo=FALSE}
+details > summary {
+  padding: 20px 6px;
+  background-color: #ddd;
+  border: none;
+  cursor: pointer;
+}
+```
+
 ## Instructions:
 
 Read through each part of the document and complete the tasks. 
