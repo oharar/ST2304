@@ -1,0 +1,1241 @@
+---
+title: "How good is our straight line?"
+author: "Bob O'Hara"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Last Week
+
+<!---
+By the end of the lecture the students should:
+- know how a model may not be good
+- be able to say whether a model explains the data
+- be able to check whether the model fits, or if it suffers from non-linearity, heteroscedasticity, outliers
+- know how to improve the model to overcome these deficiencies
+
+By the end of the practical the students should be able to 
+- check the fit of a model
+- fit improved models
+
+Structure:
+Prelude: would a straight line fit well?
+
+Part 1: Model as fit + residuals
+
+Part 2: R^2
+
+Part 3: residual plots
+- curvature
+- outliers
+
+Part 4: leverage
+
+Part 5: QQ plots
+
+--->
+
+Last week we learned about regression: fitting straight lines
+
+(show plot with residuals)
+
+## How good is my model? A Summary
+
+- Model as fit + residuals
+
+- $R^2$: How much variation does the model explain?
+
+- Residual plots
+    - curvature
+    - outliers
+    - heteroscedasticity
+
+- Normal Probability Plots
+
+- Influential Points
+
+- What to do to improve models 
+
+## Exerise: looking at some models
+
+Here are some simulated data sets. For all of them I used the the same errors, but manipulated the data in different ways. For each one, you should decide
+
+- if you think a straight line would be a good fit to the data, and 
+- if it is not, can you do something simple to improve the fit? (for some you cannot, for some you can)
+
+```{r CreateSimData, echo=FALSE, results='hide'}
+if(!file.exists("../Data/SimRegression.csv")) {
+  set.seed(5)
+  alpha <- 1; beta <- 1
+  sigma <- c(0.3, 0.9, 5)
+  x <- seq(1, -1, length=20)
+  E.y <- alpha + beta*x
+  eps <- rnorm(length(x), 0, 1)
+  SimData <- data.frame(x = x, x7 = x,
+                        y1 = E.y + sigma[1]*eps, # good, high R^2
+                        y2 = E.y + sigma[2]*eps, # fairly good, decent R^2
+                        y3 = E.y + sigma[2]*(exp(eps)-1), # fairly good, skewed resids
+                        y4 = E.y + sigma[1]*abs(eps)*(-1)^(seq_along(x)),# good, but odd resids
+                        y5 = E.y + 2*sigma[1]*eps*(length(x):1), # heteroscedastic
+                        y6 = E.y + sigma[2]*eps, # outlier
+                        y7 = E.y + sigma[2]*eps, # influential point
+                        y8 = E.y- 1.5*x^2 + sigma[1]*eps # Curved
+  )
+  
+  SimData$y6[2] <- SimData$y6[2]*5
+  SimData$x7[2] <- SimData$x7[2] + 10
+  
+  write.csv(SimData, "../Data/SimRegression.csv", row.names = FALSE)
+  
+  ToPDF <- TRUE
+  if(ToPDF) {
+    pdf("SimDataFit.pdf", paper="a4", width=8, height=11)
+    par(mfrow=c(4,2), mar=c(1.1,1.1,4,1))
+    plot(SimData$x, SimData$y1, main="Data Set 1")
+    plot(SimData$x, SimData$y2, main="Data Set 2")
+    plot(SimData$x, SimData$y3, main="Data Set 3")
+    plot(SimData$x, SimData$y4, main="Data Set 4")
+    plot(SimData$x, SimData$y5, main="Data Set 5")
+    plot(SimData$x, SimData$y6, main="Data Set 6")
+    plot(SimData$x7, SimData$y7, main="Data Set 7")
+    plot(SimData$x, SimData$y8, main="Data Set 8")
+    dev.off()
+  }
+}
+
+```
+
+```{r PlotSimData, echo=FALSE, fig.height=8}
+SimData <- read.csv("../Data/SimRegression.csv")
+par(mfrow=c(4,2), mar=c(1.1,1.1,4,1))
+plot(SimData$x, SimData$y1, main="Data Set 1")
+plot(SimData$x, SimData$y2, main="Data Set 2")
+plot(SimData$x, SimData$y3, main="Data Set 3")
+plot(SimData$x, SimData$y4, main="Data Set 4")
+plot(SimData$x, SimData$y5, main="Data Set 5")
+plot(SimData$x, SimData$y6, main="Data Set 6")
+plot(SimData$x7, SimData$y7, main="Data Set 7")
+plot(SimData$x, SimData$y8, main="Data Set 8")
+```
+
+## Exercise: Data set 1
+
+```{r PlotSimData1, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y1, main="Data Set 1")
+```
+
+Comments?
+
+
+## Exercise: Data set 1
+
+```{r PlotSimData1a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y1, main="Data Set 1")
+```
+
+This looks OK, with  a decent slope.
+
+## Exercise: Data set 2
+
+```{r PlotSimData2, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y2, main="Data Set 2")
+```
+
+## Exercise: Data set 2
+
+```{r PlotSimData2a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y2, main="Data Set 2")
+```
+
+This is similar to data set 1, but x explain as much of the variation in y.
+
+## Exercise: Data set 3
+
+```{r PlotSimData3, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y3, main="Data Set 3")
+```
+
+Comments?
+
+
+## Exercise: Data set 3
+
+```{r PlotSimData3a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y3, main="Data Set 3")
+```
+
+This looks OK, but there are 3 values that look too big.
+
+
+
+## Exercise: Data set 4
+
+```{r PlotSimData4, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y4, main="Data Set 4")
+```
+
+Comments?
+
+
+## Exercise: Data set 4
+
+```{r PlotSimData4a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y4, main="Data Set 4")
+```
+
+This looks OK, like Data Set 1. There is a issue here, but it's really subtle.
+
+
+## Exercise: Data set 5
+
+```{r PlotSimData5, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y5, main="Data Set 5")
+```
+
+Comments?
+
+
+## Exercise: Data set 5
+
+```{r PlotSimData5a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y5, main="Data Set 5")
+```
+
+This looks OK, but as we move to the right the variation increases
+
+## Exercise: Data set 6
+
+```{r PlotSimData6, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y6, main="Data Set 6")
+```
+
+Comments?
+
+
+## Exercise: Data set 6
+
+```{r PlotSimData6a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y6, main="Data Set 6")
+```
+
+This looks OK, exept for that one point that is far too large.
+
+
+## Exercise: Data set 7
+
+```{r PlotSimData7, echo=FALSE, fig.height=6}
+plot(SimData$x7, SimData$y7, main="Data Set 7")
+```
+
+Comments?
+
+
+## Exercise: Data set 7
+
+```{r PlotSimData7a, echo=FALSE, fig.height=6}
+plot(SimData$x7, SimData$y7, main="Data Set 7")
+```
+
+Err, what is that point doing over on the right?
+
+
+
+## Exercise: Data set 8
+
+```{r PlotSimData8, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y8, main="Data Set 8")
+```
+
+Comments?
+
+
+## Exercise: Data set 8
+
+```{r PlotSimData8a, echo=FALSE, fig.height=6}
+plot(SimData$x, SimData$y8, main="Data Set 8")
+```
+
+This looks OK, but it seems to flatten off: the amount of curvature changes
+
+
+
+## Another View of Regression
+
+Model is <span style="color:red">systematic part</span> + <span style="color:blue">random part</span>
+
+$$
+\begin{aligned}
+y_i &= \color{red}{\mu_i} &+ \color{blue}{\varepsilon_i} \\
+&= \color{red}{\alpha + \beta x_i} &+ \color{blue}{\varepsilon_i}
+\end{aligned}
+$$
+
+- \textcolor{red}{Systematic part of model: a straight line}
+- \textcolor{blue}{Random part of model: residual error}
+
+All of the models we will see have this general form, but both parts can be more complicated
+
+## Women's times
+
+```{r MensTimes, fig.height=5}
+Times <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/Times.csv")
+WomenMod <- lm(WomenTimes~Year, data=Times)
+plot(Times$Year, Times$WomenTimes, lwd=2)
+abline(WomenMod, col=2)
+segments(Times$Year, fitted(WomenMod), Times$Year, Times$WomenTimes, col="blue", lwd=2)
+```
+
+## How much variation does the model explain?
+
+The total variation is
+
+$$
+\begin{aligned}
+\text{Var}(y_i) &= \color{red}{\text{Var} (\alpha + \beta x_i)} + \color{blue}{\text{Var} (\varepsilon_i)} \\
+&= \color{red}{ \beta^2 \text{Var}(x_i)} + \color{blue}{\sigma^2}
+\end{aligned}
+$$
+
+- $\sigma^2$ is the residual variation
+
+So we can ask how much of the total total variation is explained
+by the model
+
+- if it only explains 4% then the model is not good
+
+A poor model might be because it is wrong, or because the data come from a problem that is just too noisy
+
+
+## The Proportion of variance explained: $R^2$?
+
+We can calculate the proportion of the total variation explained by the model
+
+$$
+R^2 = \frac{\color{red}{\text{Variance Explained}} }{\text{Total Variance}} = 1 - \frac{\color{blue}{\text{Residual Variance}} }{\text{Total Variance}}
+$$
+
+After a bit of maths, we get 
+
+$$
+R^2 = 1 - \frac{\sum (y_i - \mu_i)^2}{\sum (y_i - \bar{y})^2}
+$$
+
+- $\sum (y_i - \mu_i)^2$ is the residual variance
+    - squared difference from expected value
+
+- $\sum (y_i - \bar{y})^2$ is the total variance 
+    - squared difference from grand mean
+
+## How do we calculate $R^2$ in R?
+
+R calculates $R^2$ in a summary, so we can get it from this
+
+```{r CalcRsq}
+R2 <- summary(WomenMod)$r.squared
+R2
+
+round(100*R2, 1)
+```
+
+- we usually write $R^2$ as a percentage
+
+## What is a good $R^2$?
+
+It depends!
+
+```{R DifferentR2, fig.height=6, echo=FALSE}
+
+x <- scale(1:100)
+eps <- scale(rnorm(length(x), 0, 1))
+prop <- c(0.1, 0.5, 0.7, 0.9)
+y10 <- sqrt(prop[1])*x + sqrt(1-prop[1])*eps
+y50 <- sqrt(prop[2])*x + sqrt(1-prop[2])*eps
+y70 <- sqrt(prop[3])*x + sqrt(1-prop[3])*eps
+y90 <- sqrt(prop[4])*x + sqrt(1-prop[4])*eps
+
+par(mfrow=c(2,2), mar=c(2,2,3,1), oma=c(2,2,0,0), cex.main=2)
+plot(x, y10, main=expression(R^2==10~'%'), xlab="", ylab="")
+plot(x, y50, main=expression(R^2==50~'%'), xlab="", ylab="")
+plot(x, y70, main=expression(R^2==70~'%'), xlab="", ylab="")
+plot(x, y90, main=expression(R^2==90~'%'), xlab="", ylab="")
+mtext("x", 1, outer=TRUE)
+mtext("y", 2, outer=TRUE)
+```
+
+## Exercise
+
+Exercise: calculate the $R^2$ for the 8 plots
+
+You will need to read in the data, and fit the models.
+
+`x` is the same for all `y`'s *except* `y7`
+
+```{r ReadData}
+Data <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week6/SimRegression.csv")
+mod1 <- lm(y1 ~ x, data=Data)
+mod7 <- lm(y7 ~ x7, data=Data)
+
+summary(lm(y1 ~ x, data=Data))$r.squared
+```
+
+## Exercise Solutions
+
+```{r Calc4Rsq, echo=TRUE}
+Models <- list(mod1 = lm(y1 ~ x, data=Data),
+               mod2 = lm(y2 ~ x, data=Data),
+               mod3 = lm(y3 ~ x, data=Data),
+               mod4 = lm(y4 ~ x, data=Data),
+               mod5 = lm(y5 ~ x, data=Data),
+               mod6 = lm(y6 ~ x, data=Data),
+               mod7 = lm(y7 ~ x7, data=Data),
+               mod8 = lm(y8 ~ x, data=Data))
+
+(Rsq <- round(100*unlist(lapply(Models, function(mod) summary(mod)$r.squared)), 1))
+```
+
+## Exercise Solutions
+
+```{r Plot4Rsq, echo=FALSE}
+par(mfrow=c(2,4), mar=c(1.1,1.1,4,1))
+plot(SimData$x, SimData$y1, main=Rsq["mod1"])
+abline(Models$mod1, col=2)
+plot(SimData$x, SimData$y2, main=Rsq["mod2"])
+abline(Models$mod2, col=2)
+plot(SimData$x, SimData$y3, main=Rsq["mod3"])
+abline(Models$mod3, col=2)
+plot(SimData$x, SimData$y4, main=Rsq["mod4"])
+abline(Models$mod4, col=2)
+plot(SimData$x, SimData$y5, main=Rsq["mod5"])
+abline(Models$mod5, col=2)
+plot(SimData$x, SimData$y6, main=Rsq["mod6"])
+abline(Models$mod6, col=2)
+plot(SimData$x7, SimData$y7, main=Rsq["mod7"])
+abline(Models$mod7, col=2)
+plot(SimData$x, SimData$y8, main=Rsq["mod8"])
+abline(Models$mod8, col=2)
+```
+
+
+## Regression Assumptions
+
+Model is <span style="color:red">systematic part</span> + <span style="color:blue">random part</span>
+
+$$
+\begin{aligned}
+y_i &= \color{red}{\mu_i} &+ \color{blue}{\varepsilon_i} \\
+&= \color{red}{\alpha + \beta x_i} &+ \color{blue}{\varepsilon_i}
+\end{aligned}
+$$
+
+- \textcolor{red}{straight line}
+- \textcolor{blue}{errors are independent}
+- \textcolor{blue}{errors have the same variance}
+- \textcolor{blue}{errors are normally distributed}
+- \textcolor{blue}{errors have zero mean}
+
+How can these be wrong?
+(zero mean is forced by the maximum likelihood)
+
+
+
+
+## How can we check these?
+
+This will get more complicated later
+
+We need some tools!
+
+## Residuals
+
+The model is
+
+$$
+y_i = \color{red}{\alpha + \beta x_i} + \color{blue}{\varepsilon_i}
+$$
+
+We can mimic this with the fitted model
+
+$$
+y_i = \color{red}{\hat{\alpha} + \hat{\beta} x_i} + \color{blue}{e_i}
+$$
+
+$\color{blue}{e_i}$ are the ***residuals***
+
+$\hat{\alpha}$ and $\hat{\beta}$ are the parameter estimates: $\hat{\alpha} + \hat{\beta} x_i$ is the prediction for $y_i$
+
+## Residuals
+
+Residuals are estimates of the error
+
+- they should have no structure
+- they should be normally distributed
+
+We often use standardised residuals
+
+We also sometimes standardise them:
+
+$$
+t_i = \frac{y_i - E(y_i)}{\sqrt{var(r_i)}}
+$$
+
+
+## Residuals and Fitted Values
+
+We can extract them in R like this:
+
+```{r ExtractResids}
+Women.res <- residuals(WomenMod)
+round(Women.res, 2)[1:5]
+
+Women.fit <- fitted(WomenMod)
+round(Women.fit, 2)[1:5]
+```
+
+We can stare at them, but it is more useful if we plot them
+
+## Residual plots
+
+```{r PlotResids, fig.height=5}
+par(mfrow=c(1,2))
+plot(Women.fit, Women.res, main = "Plot against fitted values")
+plot(Times$Year, Women.res, main = "Plot against predictor")
+```
+
+(yes, these do look similar)
+
+## What Residual plots show
+
+Residuals should not have any structure
+
+With them we can see
+
+- curvature
+- outliers
+- heteroscedasticity (variance changing)
+
+## Residual Exercise
+
+Plot the residuals against the fitted values for all 8 plots. 
+
+- For which data do they suggest a problem?
+- What is the problem?
+- Can you think of ways to improve these models?
+    - no, you haven't been given the tools yet! So you can be creative
+
+```{r PlotAllResids, echo=FALSE, eval=FALSE}
+par(mfrow=c(4,2), mar=c(2,2,1,1))
+lapply(Models, function(mod) plot(fitted(mod), resid(mod)))
+```
+
+## Exercise
+
+For the data sets, which assumptions are wrong?
+
+```{r PlotSimData5678, echo=FALSE,fig.height=5}
+par(mfrow=c(2,2), mar=c(1.1,1.1,4,1))
+plot(SimData$x, SimData$y5, main="Data Set 5")
+plot(SimData$x, SimData$y6, main="Data Set 6")
+plot(SimData$x7, SimData$y7, main="Data Set 7")
+plot(SimData$x, SimData$y8, main="Data Set 8")
+```
+
+
+## Exercise: Data set 1
+
+```{r PlotSimData1check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y1, main="Data Set 1")
+plot(SimData$x, resid(Models$mod1), main="Residuals, Data Set 1")
+```
+
+## Exercise: Data set 1
+
+```{r PlotSimData1Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y1, main="Data Set 1")
+plot(SimData$x, resid(Models$mod1), main="Residuals, Data Set 1")
+```
+
+The residuals look OK
+
+
+## Exercise: Data set 2
+
+```{r PlotSimData2Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y2, main="Data Set 2")
+plot(SimData$x, resid(Models$mod2), main="Residuals, Data Set 2")
+```
+
+## Exercise: Data set 2
+
+```{r PlotSimData2check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y2, main="Data Set 2")
+plot(SimData$x, resid(Models$mod2), main="Residuals, Data Set 2")
+```
+
+The residuals look OK
+
+
+## Exercise: Data set 3
+
+```{r PlotSimData3Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y3, main="Data Set 3")
+plot(SimData$x, resid(Models$mod3), main="Residuals, Data Set 3")
+```
+
+## Exercise: Data set 3
+
+```{r PlotSimData3check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y3, main="Data Set 3")
+plot(SimData$x, resid(Models$mod3), main="Residuals, Data Set 3")
+```
+
+The constant variance and normality assumptions are wrong: normality might be difficult to see if you don't know what to expect.
+
+## Exercise: Data set 4
+
+```{r PlotSimData4check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y4, main="Data Set 4")
+plot(SimData$x, resid(Models$mod4), main="Residuals, Data Set 4")
+```
+
+## Exercise: Data set 4
+
+```{r PlotSimData4Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y4, main="Data Set 4", type="b")
+plot(SimData$x, resid(Models$mod4), main="Residuals, Data Set 4", type="b")
+abline(h=0, lty=3)
+```
+
+This looks OK, but the independence of errors is wrong. The signs of the residuals reverse
+
+- I'll be surprised if anyone noticed that
+
+## Exercise: Data set 5
+
+```{r PlotSimData5check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y5, main="Data Set 5")
+plot(SimData$x, resid(Models$mod5), main="Residuals, Data Set 5")
+```
+
+## Exercise: Data set 5
+
+```{r PlotSimData5Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y5, main="Data Set 5")
+plot(SimData$x, resid(Models$mod5), main="Residuals, Data Set 5")
+```
+
+The constant variance assumption looks wrong
+
+## Exercise: Data set 6
+
+```{r PlotSimData6check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y6, main="Data Set 6")
+plot(SimData$x, resid(Models$mod6), main="Residuals, Data Set 6")
+```
+
+## Exercise: Data set 6
+
+```{r PlotSimData6Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y6, main="Data Set 6")
+plot(SimData$x, resid(Models$mod6), main="Residuals, Data Set 6")
+```
+
+Either the normality assumption is wrong, or the constant variance. Take your pick
+
+## Exercise: Data set 7
+
+```{r PlotSimData7check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x7, SimData$y7, main="Data Set 7")
+plot(SimData$x7, resid(Models$mod7), main="Residuals, Data Set 7")
+```
+
+## Exercise: Data set 7
+
+```{r PlotSimData7Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y7, main="Data Set 7")
+plot(SimData$x, resid(Models$mod7), main="Residuals, Data Set 7")
+```
+
+Either the normality assumption is wrong, or linearity is wrong. Take your pick
+
+
+
+## Exercise: Data set 8
+
+```{r PlotSimData8check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y8, main="Data Set 8")
+plot(SimData$x, resid(Models$mod8), main="Residuals, Data Set 8")
+```
+
+## Exercise: Data set 8
+
+```{r PlotSimData8Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y8, main="Data Set 8")
+plot(SimData$x, resid(Models$mod8), main="Residuals, Data Set 8")
+```
+
+The straight line assumption is wrong. Horribly wrong
+
+
+## Normal Probability Plots
+
+Residual plots can show some deviant patterns
+
+But they are poor as a test of normality
+
+```{r NotNormal, echo=FALSE, fig.height=5}
+N <- 50
+NNorm <- scale(rnorm(N))
+NUnif <- scale(runif(N))
+
+par(mfrow=c(1,2), mar=c(2,2,1,1))
+plot(1:N, NNorm, ann=FALSE)
+plot(1:N, NUnif, ann=FALSE)
+
+```
+
+
+## Normal Probability Plots
+
+If we sort the data (smallest to largest), we can plot them against their expected values, i.e. plot $r_i$ against the normal quantile
+
+```{r QQResidPlot, fig.height=4}
+par(mar=c(4.1,4.1,1,1), lwd=2)
+qqnorm(resid(WomenMod), main="", lwd=3, col="lightblue")
+qqline(resid(WomenMod))
+
+```
+
+## Constructing Probability Plots
+
+```{r ContructQQPlot, fig.height=4}
+NormQuants <- qnorm(1:length(Women.res)/
+                      (1+length(Women.res)))
+par(mfrow=c(1,3), mar=c(4.1,2.1,3,1), oma=c(0,2,0,0), lwd=2)
+plot(Women.res, lwd=3, col="lightblue", main="Residuals", ylab="")
+plot(sort(Women.res), lwd=3, col="lightblue", main="Sorted Residuals", ylab="", xlab="Rank")
+plot(NormQuants, sort(Women.res), lwd=3, col="lightblue", main="Residuals vs Normal quantiles", ylab="", xlab="Normal Quantiles")
+mtext("Residuals", 2, outer=TRUE)
+```
+
+## What you can see
+
+```{r UseQQPlot, fig.height=6, echo=FALSE}
+Res.norm <- rnorm(100)
+Res.outl <- c(7, Res.norm[-1])
+Res.skew <- Res.norm^1.2
+Res.t <- Res.norm*rgamma(length(Res.norm), 2,2)
+
+par(mfrow=c(2,2), mar=c(2.1,2.1,3,1), oma=c(0,2,0,0), lwd=2)
+qqnorm(Res.norm, main="Normal: Looks straight", ylab="", col=4)
+qqline(Res.norm)
+
+qqnorm(Res.outl, main="Outliers: 1 or 2 points a long way from the line", ylab="", col=4)
+qqline(Res.outl)
+
+qqnorm(Res.skew, main="Skewness: It's curved", ylab="", col=4)
+qqline(Res.skew)
+
+qqnorm(Res.t, main="Thick tails: It's more z-shaped", ylab="", col=4)
+qqline(Res.t)
+```
+
+## You Turn...
+
+- Draw normal probability plots for the 8 data sets. Do any suggest problems?
+- Try to draw normal probability plots that are normal, and then have outliers, skewness and thick tails
+    - you will need to simulate data (e.g. with `rnorm()`), and then add points, or transform the data
+    
+## Thursday
+
+Yesterday covered R^2, residuals vs fitted plots, and began normal probability
+
+Today:
+
+- we will look at normal probability a  bit more
+- leverage
+- making bad data
+
+## Recap: normal probability (normall QQ)
+
+Normal QQ = normal quantile-quantile
+
+Plots the quantiles of your residuals against a theoretical normal
+
+Checks: **that residuals meet the normality assumption**
+
+## The plots
+
+```{r QQPlots, echo=FALSE, eval=TRUE}
+par(mfrow=c(2,4), mar=c(2,2,1,1))
+lapply(Models, function(mod) {
+  qqnorm(resid(mod))
+  qqline(resid(mod))
+})
+```
+
+
+## Exercise: Data set 1
+
+```{r QQPlotSimData1check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y1, main="Data Set 1")
+  qqnorm(resid(Models$mod1));   qqline(resid(Models$mod1))
+
+```
+
+## Exercise: Data set 1
+
+```{r QQPlotSimData1Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y1, main="Data Set 1")
+  qqnorm(resid(Models$mod1));   qqline(resid(Models$mod1))
+```
+
+The residuals look OK
+
+
+## Exercise: Data set 2
+
+```{r QQPlotSimData2Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y2, main="Data Set 2")
+  qqnorm(resid(Models$mod2));   qqline(resid(Models$mod2))
+```
+
+## Exercise: Data set 2
+
+```{r QQPlotSimData2check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y2, main="Data Set 2")
+  qqnorm(resid(Models$mod2));   qqline(resid(Models$mod2))
+```
+
+The residuals look OK (and you might be able to guess how I created data serts 1 & 2)
+
+
+## Exercise: Data set 3
+
+```{r QQPlotSimData3Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y3, main="Data Set 3")
+  qqnorm(resid(Models$mod3));   qqline(resid(Models$mod3))
+```
+
+## Exercise: Data set 3
+
+```{r QQPlotSimData3check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y3, main="Data Set 3")
+  qqnorm(resid(Models$mod3));   qqline(resid(Models$mod3))
+```
+
+This looks skewed: the plot curves up
+
+## Exercise: Data set 4
+
+```{r QQPlotSimData4check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y4, main="Data Set 4")
+  qqnorm(resid(Models$mod4));   qqline(resid(Models$mod4))
+```
+
+## Exercise: Data set 4
+
+```{r QQPlotSimData4Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y4, main="Data Set 4")
+  qqnorm(resid(Models$mod4));   qqline(resid(Models$mod4))
+```
+
+This looks OK
+
+## Exercise: Data set 5
+
+```{r QQPlotSimData5check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y5, main="Data Set 5")
+  qqnorm(resid(Models$mod5));   qqline(resid(Models$mod5))
+```
+
+## Exercise: Data set 5
+
+```{r QQPlotSimData5Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y5, main="Data Set 5")
+  qqnorm(resid(Models$mod5));   qqline(resid(Models$mod5))
+```
+
+The heteroscedasticity makes outliers at both ends, so the tails look thick
+
+## Exercise: Data set 6
+
+```{r QQPlotSimData6check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y6, main="Data Set 6")
+  qqnorm(resid(Models$mod6));   qqline(resid(Models$mod6))
+```
+
+## Exercise: Data set 6
+
+```{r QQPlotSimData6Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y6, main="Data Set 6")
+  qqnorm(resid(Models$mod6));   qqline(resid(Models$mod6))
+```
+
+Look! Huge outlier!
+
+## Exercise: Data set 7
+
+```{r QQPlotSimData7check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x7, SimData$y7, main="Data Set 7")
+  qqnorm(resid(Models$mod7));   qqline(resid(Models$mod7))
+```
+
+## Exercise: Data set 7
+
+```{r QQPlotSimData7Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y7, main="Data Set 7")
+  qqnorm(resid(Models$mod7));   qqline(resid(Models$mod7))
+```
+
+Again, the influential observation makes the tails look too thick. Basically, it screws things up
+
+
+
+## Exercise: Data set 8
+
+```{r QQPlotSimData8check, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y8, main="Data Set 8")
+  qqnorm(resid(Models$mod8));   qqline(resid(Models$mod8))
+```
+
+## Exercise: Data set 8
+
+```{r QQPlotSimData8Acheck, echo=FALSE,fig.height=5}
+par(mfrow=c(1,2))
+plot(SimData$x, SimData$y8, main="Data Set 8")
+  qqnorm(resid(Models$mod8));   qqline(resid(Models$mod8))
+```
+
+This doesn't look too bad on the normal probability plot. By luck, more than anything else
+
+## Exercise: make your own bad data
+
+There are lots of ways to do this! Let's start with some "good" data
+
+```{r MakeGoodData, fig.height=4}
+x.badness <- 21:70
+y <- rnorm(length(x.badness), x.badness, 10)
+plot(x.badness,y)
+```
+
+## Exercise: make your own bad data, outliers
+
+This is easy: add a "bad" point
+
+```{r AddOutlier, fig.height=4}
+y.outlier <- y
+y.outlier[20] <- 200
+mod.outlier <- lm(y.outlier~x.badness)
+qqnorm(resid(mod.outlier)); qqline(resid(mod.outlier))
+```
+
+
+## Exercise: make your own bad data, skewness
+
+
+```{r Skewness, fig.height=4}
+err.skew <- rnorm(length(x.badness), 4, 1)^2
+y.skew <- x.badness + err.skew
+mod.skew <- lm(y.skew~x.badness)
+par(mfrow=c(1,2))
+plot(x.badness, y.skew)
+qqnorm(resid(mod.skew)); qqline(resid(mod.skew))
+
+```
+
+## Exercise: make your own bad data, thick tails
+
+```{r ThickTails, fig.height=4}
+err.tailed <- rnorm(length(x.badness), 4, c(1,5)) # repeat std dev 1, 5
+y.tailed <- x.badness + err.tailed
+mod.tailed <- lm(y.tailed~x.badness)
+par(mfrow=c(1,2))
+plot(x.badness, y.tailed)
+qqnorm(resid(mod.tailed)); qqline(resid(mod.tailed))
+
+```
+
+
+## Leverage
+
+This is less well know, but can be a problem.
+
+Let's look at the residuals for data sets 6  & 7:
+
+```{r Resids76, echo=FALSE, fig.height=4}
+WhModel67 <- rep(6:7, each=nrow(SimData))
+Res67 <- c(resid(Models[[6]]), resid(Models[[7]]))
+Col <- rep(c(1,2, rep(1, nrow(SimData)-2)),2)
+par(mar=c(4.1,6,1,1))
+plot(Res67, jitter(WhModel67), col=Col, cex=Col, pch=16, xlab="Residual", ylab="", yaxt="n")
+axis(2, at=c(6,7), labels=paste0("Data set ", 6:7), las=1, cex=2)
+
+```
+
+In data set 7 there is an obvious weird point, but the residuals don't see it
+
+
+## Influence and Leverage: Cook's D
+
+The general problem is with points that have a big influence on the regression. We call this **leverage**: like a good lever, these points can shift the regression line a long way.
+
+
+We can generalise this idea by asking how much the fitted values for the other points change if we remove a data point
+
+$$
+D_i = \frac{\sum_{j=1}^{n} (\hat{y}_j - \hat{y}_{j(-i)})^2}{s^2}
+$$
+
+- $\hat{y}_j$ - prediction for full model
+- $\hat{y}_{j(-i)}$ - prediction for model with data point $i$ removed
+- $s^2$ - residual variance
+
+- for each data point take the difference in the predicted value for that point between the full model, and the model with that point removed
+- sum the squares, and standardise by the residual variance
+
+## What is influential?
+
+Large values of $D_i$ mean a large influence
+
+- $D_i$ > 1, or 4/$n$
+
+```{r AnscombeData3CooksD, fig.height=5, echo=FALSE}
+par(mfrow=c(2,1), mar=c(2,4,2,2), oma=c(2,0,0,0), pch=16)
+# plot(SimData$x7, SimData$y7, xlab="x", ylab="y")
+# plot(SimData$x7, cooks.distance(Models[[7]]), xlab="x", ylab="Cook's D")
+plot(Times$Year, Times$WomenTimes, xlab="x", ylab="y")
+plot(Times$Year, cooks.distance(WomenMod), xlab="x", ylab="Cook's D")
+abline(h=4/nrow(Times), col="hotpink")
+
+```
+
+## Influence
+
+Your task
+
+Fit the model with and without the weird point
+
+You can remove the point like this:
+
+```{r RemovePoint}
+DataNotWeird <- Data[Data$x7<10,]
+
+```
+
+Look at the fitted models. How similar are they?
+
+- check the parameter estimates
+- plot the fitted lines on the data (with `abline()`)
+
+Calculate Cook's D for the different data sets, and plot them against `x`. Do you see any influential points?
+
+```{r CooksD}
+cooks.distance(WomenMod)[1:5]
+
+```
+
+
+```{r PlotAllCooksD, echo=FALSE, eval=FALSE}
+par(mfrow=c(4,2), mar=c(2,2,1,1))
+lapply(Models, function(mod) {
+  plot(fitted(mod), cooks.distance(mod))
+  abline(h=1, col="hotpink"); abline(h=4/length(mod$residuals), col=2); 
+})
+
+```
+
+
+## How good is my model? A Summary
+
+- Model as fit + residuals
+
+- $R^2$: How much variation does the model explain?
+
+- Residual plots
+    - curvature
+    - outliers
+    - heteroscedasticity
+
+- Normal Probability Plots
+
+- Influential Points
+
+## How can we improve the model?
+
+First, check the data and model for silly mistakes
+
+- typos are common
+
+Then, ask if if any misfit is a problem
+
+- does it change the conclusions?
+- will it change predictions?
+
+
+
+## Individual Data Points
+
+Is your data point wrong?
+
+- typos?
+- real but unique
+
+If it is wrong, correct, if it is right, might want to remove it & see if that makes a big difference
+
+- if it does, be careful!
+
+
+## Possible Solutions
+
+Transform the covariate
+
+$$
+y_i = \alpha + \beta x_i^p + \varepsilon_i
+$$
+
+e.g. $\sqrt(x_i)$, $x_i^2$, $\log(x_i)$, 
+
+Add more terms
+
+- quadratic
+
+$$
+y_i = \alpha + \beta x_i + \gamma x_i^2  + \varepsilon_i
+$$
+
+More about this later
+
+
+## Transformations
+
+Transform the response
+
+e.g. $\sqrt(x_i)$, $x_i^2$, $\log(x_i)$
+
+$$
+y_i^p = \alpha + \beta x_i + \varepsilon_i
+$$
+
+## Box-Cox transformations
+
+General Class of transformations
+
+$$
+y_i \rightarrow y_i^p 
+$$
+
+if $p = 0$, use $log(y_i)$
+
+## Using Box-Cox transformations
+
+```{r UseBoxCox, fig.height=5, echo=FALSE}
+x <- seq(10,100, length=30)
+y <- rnorm(length(x), x, 5)
+ySq <- y^2
+ySqrt <- sqrt(y)
+ylog <- log(y)
+
+par(mfrow=c(2,4), mar=c(4.1,2.1,3,1), oma=c(0,2,0,0), lwd=2)
+plot(x, y, main="Untransformed")
+ abline(lm(y~x, data = Times), col=2)
+plot(x, ySq, main="Squared Transformation")
+ abline(lm(ySq~x, data = Times), col=2)
+plot(x, ySqrt, main="Square Root Transformation")
+ abline(lm(ySqrt~x, data = Times), col=2)
+plot(x, ylog, main="log Transformation")
+ abline(lm(ylog~x, data = Times), col=2)
+
+plot(x, resid(lm(y~x, data = Times)))
+plot(x, resid(lm(ySq~x, data = Times)))
+plot(x, resid(lm(ySqrt~x, data = Times)))
+plot(x, resid(lm(ylog~x, data = Times)))
+```
+
+## Heteroscedasticity
+
+Variance changes with the mean
+
+- Box-Cox can also solve this (or make it worse)
+
+```{r Heteroscedasticity, fig.height=4, echo=FALSE}
+
+het.x <- rep(1:100,2)
+a=2
+b = 1
+sigma2 = het.x^1.3
+eps = rnorm(length(het.x),mean=0,sd=sqrt(sigma2))
+het.y=a+b*het.x + eps
+mod.het <- lm(het.y ~ het.x)
+mod.het2 <- lm(sqrt(het.y) ~ het.x)
+
+par(mfrow=c(1,3), mar=c(4.1,2.1,3,1), oma=c(0,2,0,0), lwd=2)
+plot(het.y, het.x, main="Data")
+abline(mod.het, col=2)
+
+plot(fitted(mod.het), resid(mod.het), main="Residuals")
+plot(fitted(mod.het2), resid(mod.het2), main="Residuals, sqrt transformation")
+
+```
+
+## Box-Cox in R
+
+R has a function to find the best Box-Cox transformation
+
+```{r BC, fig.height=4}
+library(MASS)
+x <- 1:50
+y <- rnorm(50,0.1*x, 1)^2
+boxcox(lm(y ~ x)) # 0.5 is true transformation
+
+```
+
+## Your Turn
+
+Follow the exercise!
+
+## Your Turn: The answers 
+
+
+## Summary
+
+We now know how to asses the model fit
+
+- $R^2$ show how much variation the model explains
+- Residual plots and Normal Probability Plots can show curvature, outliers, and varying variance
+- Influential Points can be detected using Cook's D. These may not be large outliers!
+- We should check outliers & other odd points - are they typos?
+- We can try to transform the response to get a better model

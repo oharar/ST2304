@@ -1,0 +1,93 @@
+---
+title: "Analysis Of Data"
+author: "Bob O'Hara & Emily Simmonds"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+```
+
+# Introduction
+
+This week will be a bit different. So far we have been looking at the parts that go into statistical modelling. This week we are going to take a step back and look at the whole process of modelling a data set, i.e. looking at what we do (or at least should do) when faced with a real problem. Minus the three hours shouting at the computer because you can't get the data into the right format.
+
+So you will not learn any new statistical methods this week, instead you will learn some "real" statistics.
+
+We will present 2 data sets, and for each you have two ways of approaching them: first you can try the analysis from the description we give here (of the data and the biological questions). Or you can try the exam-style questions.
+
+I would suggest you try analysing at at least one of these from the description here: if you get stuck you can ask for help, or look at the exam-style question. If you think you are planning a career that will involve data (not just in research: my brother once needed my help in his job designing passports).
+
+As a general comment - in practice there is quite a bit of poking around when analysing real data, and trying things which don't work (or seem stupid later). There is also not just one right way to do things, and you may come to a slightly different conclusion to other people. So please poke around in these analyses, and welcome to the real world.
+
+And now the problems
+
+# Problem 1: Cow Diets
+
+These data are from an experiment on cows, to look at how diet affects the amount cows will eat. Cows were split into 6 groups, each given a different diet treatment. Here you will look at how these different treatments influenced the dry matter intake (DMI) of the cows.
+
+You can find the data [here](https://www.math.ntnu.no/emner/ST2304/2020v/Week09/cowdata.csv): it is a .csv with a header.
+
+Important! When you import the data it is important to make sure it is in the right format. Here you need Treatment to be a factor and Baseline to be numeric. See the code below.
+
+```{r ImportCowData}
+cowdata <- read.csv("https://www.math.ntnu.no/emner/ST2304/2020v/Week09/cowdata.csv", header=TRUE)
+
+# str() checks the data structure
+str(cowdata)
+
+# we can see that the variables are not the right format
+# so we fix it
+cowdata$Treatment <- as.factor(cowdata$Treatment)
+cowdata$Baseline <- as.numeric(cowdata$Baseline)
+
+# now check again
+str(cowdata)
+```
+
+The columns in the dataframe are:
+
+- DMI = the dry matter intake during the experiment (grams)
+- Baseline = the baseline dry matter intake before the experiment (grams)
+- Treatment = the diet treatment group (1 to 6)
+
+You want to find out how diet treatment influenced dry matter intake while controlling for the baseline intake of each cow. Is there a diet that is better than the others?
+
+If you want to try the exam-style questions, [follow this link](Week10aCowQuestions.html).
+
+# Problem 2: Irises
+
+These data are from three species of the plant, iris. They include measures of petal width and length. The question here is how does the length of petals influences their width, and does it vary between species.
+
+You can find the data [here](https://www.math.ntnu.no/emner/ST2304/2020v/Week09/irisdata.csv"): it is a .csv with a header.
+
+Important! When you import the data it is important to make sure it is in the right format. Here you need Species to be a factor and PetalLength to be numeric. See code below.
+
+```{r ImportIrisData}
+irisdata <- read.csv("https://www.math.ntnu.no/emner/ST2304/2020v/Week09/irisdata.csv",
+                     header=TRUE)
+
+# str() checks the data structure
+str(irisdata)
+
+# we can see that the variables are ok but best to be sure
+irisdata$Species <- as.factor(irisdata$Species)
+irisdata$PetalLength <- as.numeric(irisdata$PetalLength)
+
+# now check again
+str(irisdata)
+```
+
+The columns in the dataframe are:
+
+- PetalWidth = width of the petal in cm.
+- PetalLength = length of the petal in cm.
+- Species = which species it is.
+
+You want to find out how petal length and species effect petal width.
+
+If you want to try the exam-style questions, [follow this link](Week10aIrisQuestions.html).

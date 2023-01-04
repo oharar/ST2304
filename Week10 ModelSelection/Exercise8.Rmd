@@ -1,0 +1,302 @@
+---
+title: 'Exercise 8: Dinosaur Park'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+Make sure to read these - there have been some updates
+
+This document contains information, questions, R code, and plots.
+
+**Hints and reminders are bold**
+
+<span style="color:blue"> Questions appear in blue. </span>
+
+## Extra exercise tips:
+
+1. While questions are in blue, there might be some extra tasks in the text 
+of the exercise. These extra tasks are not mandatory but might help you
+achieve the blue task or explain why the next blue task is being done.
+
+2. Group work - while you should submit just one exercise per group, it is a
+good idea that either all members run all of the code on their own computers
+and then collectively write the answers. Or, all members help to write the
+code on one computer. Remember that a lot of the answers require words or
+an answer not just code!
+
+3. Definitions of question words. We received feedback that it is not always
+clear what you need to do for each question, there are definitions of the
+question words in the Glossary on Blackboard (but we know it is hard to find!).
+[Link to glossary](https://ntnu.blackboard.com/webapps/Bb-wiki-BB5def77a38a2f7/wikiView?course_id=_16763_1&wiki_id=_91149_1&page_guid=c38de43765074c5d94623b8f2ad11970)
+
+</br>
+
+**Needs to be completed and handed in by 25th March 23:59 2022**
+
+## Rationale
+
+**This week we want you to make some decisions on when to do each analysis. 
+Therefore,
+we have included code help and hints in separate HTMLs with code 
+not here in the exercise.**
+
+As we are getting further through the course, these exercises will start to 
+ask you to make more decisions for yourself. The aim of the course is that 
+you will be able to analyse your own data, so it is good to have some practice
+doing this without us telling you every step. 
+
+## Resources:
+
+* [Confirmatory code](https://www.math.ntnu.no/emner/ST2304/2022v/Week10/ConfirmatoryScript.html)
+* [Exploratory code](https://www.math.ntnu.no/emner/ST2304/2022v/Week10/ExploratoryScript.html)
+* [This week's module](https://www.math.ntnu.no/emner/ST2304/2022v/Week10)
+
+### R this week:
+
+All R parts explained in extra code htmls.
+
+* `lm()` as always
+* `bestglm()`
+* `AIC()`
+* `BIC()`
+* `anova()`
+
+Might need to install the `bestglm` package.
+
+
+# The challenge: How can we create the best dinosaur exhibit at a new zoo?
+
+You are the board of directors of a new zoo opening in Norway. You want your
+zoo to be both exciting and educational, to teach visitors about all different
+kinds of plants and animals from throughout time. You have been very excited by
+new advances in cloning technology that you saw in Jurassic Park (you are not very 
+up to date). You have set
+up a team of biologists to try and clone some dinosaurs to complete your "Ancient
+History" exhibit. They have been trialling different cloning techniques to try
+and work out the best protocol. 
+
+You have also set up another team to investigate public opinion of dinosaurs.
+It is very expensive to clone and to keep dinosaurs so you want to make sure that
+you are investing in the right ones.
+
+Both teams have sent their results back you. Now you must analyse the data and
+decide on how to set up your dinosaur exhibit. 
+
+<span style="color:blue"> Your job is to find out how to use resources
+most efficiently to create an exciting dinosaur exhibit. </span>
+
+![Dino](Dino.jpg)
+
+# Part A: Concepts
+
+This week, we will begin with some very general conceptual points. As you are
+part of a board of directors for the zoo, you will need to answer to your  
+investors. Therefore, you need to begin your recommendation for which
+dinosaurs to include with a brief introduction into the statistics you will
+use to make this decision and why. 
+
+**Remember to think about your audience**. The shareholders are not scientists,
+or statisticians. So, make sure your explanation is suitable for non-scientists too. 
+
+<span style="color:blue"> A1. **Why** do we have model selection in statistics? </span>
+
+
+<span style="color:blue"> A2. **What** are two of the different aims of model selection? </span>
+
+
+<span style="color:blue"> A3. **How** do you perform model selection for each of these? i.e.
+name the technique don't give all the details </span>
+
+# Part B: Which variables influence cloning success?
+
+These data have been collected by your team of scientists in the cloning facility.
+They have been trying to clone several different species of dinosaur using 
+fossils of different
+ages and different lab procedures. 
+They have recorded the 'success' of the cloning
+ as an index created from the
+number of viable embryos created, longevity of embryos, 
+and the cost of the cloning method. 
+The index has positive and
+negative values, positive indicating greater success from the investment. 
+This is called **SuccessIndex** in the
+data and is the response variable.
+
+The explanatory variables they collected are: **Age** this is age of 
+the fossil being cloned in million years, **Size** this is the average 
+adult body weight
+of the dinosaur species being cloned in metric tons, **Herbivore** 
+this is an indicator of whether the species
+is a herbivore (TRUE) or a carnivore (FALSE).
+
+**Think about what kind of data (continuous or categorical) each of these are. 
+It will help you with interpreting.**
+
+It is thought that some of these variables might explain the variation 
+in cloning success index. But it is 
+not yet known which.
+
+The dataset for this questions can be found at 
+https://www.math.ntnu.no/emner/ST2304/2021v/Week10/CloneData_2021v.csv
+
+As always, the first step is to import the data and assign it to an object. 
+You can use the whole
+web link above to import the data. 
+It is a csv file with column names (header) included.
+
+```{r ReadClone, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE, eval=FALSE}
+CloneData <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week10/CloneData_2021v.csv", header=T)
+
+pairs(CloneData)
+```
+
+<span style="color:blue"> B1. Look at the question at the start of this 
+section (in the title of Part B). 
+**Is** this
+question confirmatory or exploratory? **Why**? </span>
+
+
+Based on your answer to question B1, 
+open the appropriate help HTML for this section. 
+These are listed in the Resources section.
+
+You do not have to use the HTML document, the code is included in the module
+for week 10. See if you can try and list the steps you need for B2 before 
+looking at the HTML. 
+
+<span style="color:blue"> B2. **Conduct** model selection for answering
+"which variables influence cloning success?" and **Write** a report of
+the steps you took to do this, why, and state what the result was.</span> 
+
+**To answer this question include a 
+bullet point list of the steps you take to do this. You can include a line or two
+of R code with each bullet point but you should not need a lot (so, you also
+need to use words to explain why you are doing each step not only the R code).** </span>
+
+Image that you are writing a report to be read by the investors in the zoo 
+when you answer B2. They will want to know the results of each step but also
+have some idea why you are running certain lines of code. 
+
+```{r MS, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE, eval=FALSE}
+# Steps of the model selection
+
+# create a null model with no variables
+# then one for each explanatory variable alone
+null <- lm(SuccessIndex ~ 1, data = CloneData)
+model1 <- lm(SuccessIndex ~ Age, data = CloneData)
+model2 <- lm(SuccessIndex ~ Size, data = CloneData)
+model3 <- lm(SuccessIndex ~ Herbivore, data = CloneData)
+
+AIC(null, model1, model2, model3) # find AIC
+BIC(null, model1, model2, model3) # find BIC
+
+library(bestglm)
+# create Xy to use in bestglm
+NewData <- CloneData[ ,c(2:4, 1)] # find the best of all combinations
+
+# now we can use bestglm()
+bestglm(NewData, IC="AIC")
+bestglm(NewData, IC="BIC")
+
+# Should get a model with Age and Size
+```
+
+<span style="color:blue"> B3. **Interpret** the results from the model selection.
+**Include reference to model selection and the final model you end up with. I.e.
+you should also mention what the effect any variables have** </span>
+
+
+# Part C: Does the size of a dinosaur affect their popularity?
+
+These data were collected from a large survey of the general public. 
+The participants were
+asked to rate, on a continuous scale (0-100), 
+how much they liked different dinosaur species.
+The species all differed in size. 
+The board members (your team) think that visitors to your
+zoo will be more excited to see bigger dinosaurs because bigger dinosaurs 
+are more popular.
+
+The dataset has columns: **PopularityScore** the popularity score of the d
+inosaur species, 
+**Weight** weight of the species in metric tons (a measure of size).
+
+The data for this question can be found at 
+https://www.math.ntnu.no/emner/ST2304/2021v/Week10/DinoData_2021v.csv
+
+As always, the first step is to import the data and assign it to an object. 
+You can use the whole
+web link above to import the data. It is a csv file with column names (header) included.
+
+```{r ReadDino2, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE, eval=FALSE}
+DinoData <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week10/DinoData_2021v.csv", header=T)
+pairs(DinoData)
+```
+
+<span style="color:blue"> C1. Look at the question at the start of this section (in the title
+for Part C). **Is** this
+question confirmatory or exploratory? **Why**? </span>
+
+<span style="color:blue"> C2. **Conduct** model selection for answering
+"does the size (weight) of a dinosaur affect its popularity?" 
+and **Write** a report of
+the steps you took to do this, why, and what the result was.</span>
+
+**To answer this question include a 
+bullet point list of the steps you take to do this. You can include a line or two
+of R code with each bullet point but you should not need a lot. (Again, R
+code alone will not answer this question, also say why you do each step).**
+
+Image that you are writing a report to be read by the investors in the zoo 
+when you answer C2. They will want to know the results of each step but also
+have some idea why you are running certain lines of code. 
+
+```{r MS2, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE, eval = FALSE}
+# Begin by creating H0 model 
+ModelH0 <- lm(PopularityScore ~ 1, data = DinoData)
+# Then create H1 model 
+ModelH1 <- lm(PopularityScore ~ Weight, data = DinoData)
+
+# Compare with 
+anova(ModelH0, ModelH1) # make sure they are in correct order
+# The DF in the anova output should be 1 NOT -1
+```
+
+<span style="color:blue"> C3. **Interpret** the results from the model selection.
+**Include reference to model selection and the final model you end up with. I.e.
+you should also mention what the effect of any variables are** </span>
+
+
+# Part D: Recommendation
+
+<span style="color:blue"> D1. Based on all of your results, what would
+you recommend as a way to create an efficient and exciting exhibit? </span>
+
+# Part E: Self reflection
+
+<span style="color:blue"> E1. If you were to do this analysis in real life,
+is there anything you would change about the experimental design or the
+analysis? Was anything missing? Any extra steps you would take or extra information
+you might want? </span>
+
+These next questions are to help you think critically about your
+own work, as well as to help us to give you feedback that is actually useful. 
+It is a chance to sit back and think about how well you think you did on the
+exercise. 
+
+<span style="color:blue"> E2. How do you think your group did on this
+exercise? Are there areas you are pretty sure you got correct? Any you
+are not very sure? Anything new you learned while doing the exercise? </span>
+
+<span style="color:blue"> E3. How does this compare to last week? </span>
+
+<span style="color:blue"> E4. Any particular areas you find challenging? </span>
+
+<span style="color:blue"> E5. What would you like feedback on this week? </span>
+
+

@@ -1,0 +1,830 @@
+---
+title: "Maximum Likelihood"
+author: "Emily Simmonds"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+ 
+This module accompanies the video lectures from week 2, which are on Panopto and embedded here. 
+ 
+This document contains information, questions, R code, and plots.
+ 
+**Hints and reminders are in bold**
+ 
+ <span style="color:blue"> Questions appear in blue. </span>
+ 
+```{r Intro, warning = FALSE, error = FALSE, evaluate = FALSE, echo = TRUE} 
+# R code looks like this.
+# Comments are in grey and explain the code
+
+2+2 # add two and two
+
+# outputs from R appear like the above ^^^^
+```
+
+
+**This first exercise module does not need to be submitted.
+Answers will be posted on the website at the end of the week.** 
+ 
+Parts A-E cover statistical modelling
+Part F covers R
+
+ 
+# R skills
+ 
+ * Sourcing a script
+ * Running functions
+ * Simulating data
+ * Plotting
+ * Using `rbinom()` to simulate data
+ * Using `dbinom()` to calculate likelihoods
+ 
+# Definitions
+ 
+ * A **population** is the total number of things that fit in a particular category 
+ e.g. if you want to study the average pace of skiers in Norway, the population is all skiers in Norway ever. 
+ You can rarely measure a whole population, particularly in biology. 
+ * **Sample** a subset of the population that we measure.
+ * **Parameter** a property or numerical characteristic of a population.
+ * **Likelihood** the probability of obtaining the observed data, given the parameter value.
+ * **Estimand** the parameter we want to estimate, the true population level parameter.
+ * **Estimator** the parameter we estimate from our data. We estimate the estimand with this.
+
+# Part A - Land and Sea
+ 
+<span style="color:blue"> Begin by watching the **Introduction video** </span>
+Either [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7c9e1f6a-e7d4-4dd7-a39e-ae2000cda621) or watch below. 
+
+(NOTE: in the markdown document the video embed has been commented out. It should be manually copied and pasted into the html)
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7c9e1f6a-e7d4-4dd7-a39e-ae2000cda621&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&captions=true&interactivity=all" height="315" width="560" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+ --->
+
+In the video Bob collected data using a globe. He span the globe 
+and recorded if the he 
+touched `Land` or `Sea` when it stopped spinning. 
+Each time he picked a point on the globe, this gave a new
+data point. If he did this 12 times, he would have 12 data points. 
+All of the data points are called
+a **sample** and the number of them is the **sample size**. 
+So in this example you have a sample with
+a sample size of 12. If you repeat all of the 12 spins (data collection), you would have two samples, each with sample size 12.   
+ 
+ ![Figure 1: Picture of globe: source = wikipedia](Globe.JPEG)
+ 
+
+In reality it would take a long time to repeat the data collection many times
+to get many samples, so we have created an app to do this for this.
+ 
+ [Click for app](https://shiny.math.ntnu.no/qmbio/Shiny_apps/LandSea/)
+ 
+```{r LandSeaApp, echo=FALSE}
+knitr::include_app("https://shiny.math.ntnu.no/qmbio/Shiny_apps/LandSea/")
+``` 
+
+
+ <span style="color:blue"> Open the app and have a go at collecting some 
+ data: </span>
+ 
+ 
+ <span style="color:blue"> Try changing the number of points in your sample 
+ (sample size). </span>
+ 
+ <span style="color:blue"> Also change the number of times you repeat the data 
+ collection (number of samples). </span>
+ 
+ This app was created in R, it simulates the idea of collecting data in the 
+ way described above. 
+ Simulations can be very useful when it is hard to collect data ourselves.
+ 
+ In the 
+ app the code is hidden, but you can also source the code into your own R 
+ session and run the function there.
+ It is not quite as pretty but you have more control. 
+ You now only get the data not the plots.  
+ 
+ <span style="color:blue"> Run the lines below to source the function and 
+ try using it.
+ You will need to enter arguments `NTrials` (your sample size) and `nSims` 
+ (number of times you repeat the sampling) and set `probability` to 0.4. </span>
+ 
+ We will explain why the arguments have these names in Part B.
+ 
+```{r SourceFunctions, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# You can find the script with the functions for this week at this url:
+# https://www.math.ntnu.no/emner/ST2304/2020v/Week02/Week2Functions.R
+
+# Source the script directly from the internet
+source('https://www.math.ntnu.no/emner/ST2304/2020v/Week02/Week2Functions.R')
+
+# The functions should now be loaded,
+# check your environment to be sure - you should have two functions there
+
+# Use the function simGlobe
+# try a few different combinations
+result <- simGlobe(NTrials = 5, nSims = 1, probability = 0.4)
+
+# Look at your results:
+result
+```
+
+ 
+ 
+ <span style="color:blue"> When you repeat the data collection more than once, 
+ do you get the same data? </span>
+ 
+ <span style="color:blue"> If not, why not? </span>
+ 
+ <span style="color:blue"> Does the probability of picking a point with a 
+ value `Land` change when you
+ change the sample size or number of samples? </span>
+ 
+ <details><summary>ANSWERS</span></summary>
+ 
+ When you repeat data collection, you should see different results. Each time
+ you take a sample, it is different. 
+ 
+ This is because it is a random process and we are only taking a subset of the
+ whole population. Each subset is slightly different to the others. 
+ 
+ No, the probability of each point being Land does not change even if the 
+ actual number we get is different. 
+ 
+ </details>
+ 
+# Part B - Inference
+ 
+In Part A, you experimented with simulating data in R or in an app. 
+ Hopefully you could see that each time you
+ took a **sample** of data from the **population** (every point in world), 
+ you got a different result. The difference
+ in results should be greatest when the sample size is lowest. 
+ 
+ ![Figure 2: Population and sample](PoptoSample.png)
+ *Figure 2: Population and sample*
+ 
+ This happens because you are only collecting data on a subset of the 
+ population, which is chosen at random. 
+ Because different individuals (our individuals are points on the globe) are 
+ chosen each time you take a sample,
+ you get different results when you measure them, 
+ **even though the population level proportion of land does not change.**
+ In other words, the probability of sampling a point that is land is always 
+ the same. The same 'true'
+ probability can produce many possible observed outcomes, 
+ there is **variation**. 
+ 
+ <span style="color:blue"> Simulate one sample with a sample size of 10, 
+ either in R or on the app. </span>
+ 
+ <span style="color:blue"> From this data, what do you guess is the proportion 
+ of land on earth? </span>
+ 
+ <span style="color:blue"> How confident are you that this guess is correct 
+ for the whole of globe (**The population**)? </span>
+ 
+ Hopefully you are not very confident that the proportion you calculated from 
+ the single sample is correct
+ for the whole population. As you saw in Part A, there can be a lot of 
+ variation in observed data and our
+ sample is just one realisation, see Figure 3 for an example. 
+ 
+ ![Figure 3: Different samples of land and sea](Realisations.png)
+ *Figure 3: Different samples of land and sea*
+ 
+ But really we are most interested in the population, not the sample.  
+ Therefore, in statistics, we want to use information from
+ a sample to tell us something about the population as a whole. 
+ We want to take into account the variability 
+ in possible outcomes and estimate properties (called **parameters**) 
+ of the population. 
+ This is called **statistical inference**. 
+ 
+ <span style="color:blue"> Now watch **video 2** </span>
+ 
+ Either [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3b325c3e-561c-47d5-a18f-ae2000bc8099)
+ or watch below.
+ (NOTE: in the markdown document the video embed has been commented out. It should be manually copied and pasted into the html)
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=3b325c3e-561c-47d5-a18f-ae2000bc8099&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&captions=true&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+## Statistical inference for the proportion of land and sea
+ 
+ The biological question we are asking in this example is: 
+ "What is the proportion of land cover on earth?"
+ 
+ To go from the data you collected on your sample, 
+ to saying something about the population takes several steps.
+ 
+### Step 1 = to choose a model. 
+ (This is a statistical modelling course after all.)
+ When we say model,
+ we are really talking about a mathematical representation of how we think the 
+ data were generated.
+ Which model to choose, and how you decide this, 
+ is something we will come back to several times in this course.
+ You need to match the characteristics of a distribution or equation to the 
+ characteristics of
+ our data at the population level. 
+ 
+ For the current example, you first need to think about your population level 
+ data.The type of data you collected are stored in the computer as
+  `0` and `1`. `0` = `Sea` and `1` = `Land`.
+ This is binary data, with land as a success and sea as a failure.
+  Each time that someone puts their
+ finger on the map and chooses a location, this is a **trial** 
+ with two possible outcomes,
+ 'success' or 'failure' (this is why we have an Ntrials argument in the 
+ `simGlobe()` function).
+  
+ You can imagine each time you choose a location you ask the question: 
+ "Is there land?" which would give a "yes" or "no" answer. 
+ Each time you conduct a trial, there
+ is a certain **probability of success**. 
+ This probability is the same for each trial and each
+ trial is independent. 
+ 
+ Now you know these characteristics of your data, you can consider which 
+ distribution might
+ be a good model for this data. In this case, the **binomial distribition** 
+ works well
+ because it is a distribution of the number of successes from independent 
+ trials with a binary outcome.
+ 
+### Step 2 = estimate parameters. 
+ Every distribution or other model we use in this course, has
+ some properties, which control its form. These are the **parameters** 
+ mentioned above and they
+ can tell us things about the population.  
+ 
+ You might remember from your previous course that the binomial distribution 
+ has two parameters
+ $p$ **which is the probability of a succcess 
+ (choosing a point that is land)** and
+ **$n$ which is number of successes.** 
+ (This is why we have a probability argument in the `simGlobe()` function).
+ 
+ To answer our biological question, you want to estimate the population level 
+ parameter $p$, which is the probability of choosing a point that is land.
+ You can do this using the sample you generated above, 
+ in which case we know $n$ but we want to estimate $p$.
+ 
+ **We can say $n$ follows a binomial distribution with unknown probability of 
+ success $p$.**
+ 
+ $p$ is the **estimand**. 
+ It is what we want to estimate and we estimate it with
+ an **estimator** $\hat{p}$. 
+ In other words, $p$ is the true population level parameter, 
+ $\hat{p}$ is what we estimate
+ with statistics.
+ 
+ More on how to estimate the parameters in Part D.
+ 
+### Step 3 = estimate the uncertainty. 
+
+ As we saw from the first simulations, there can be a lot of variation 
+ in real data. The same 'true' parameter can produce many different data sets. 
+ It is also true that the
+ same data set could be produced from several different 'true' parameters 
+ (this is different to the sentence before
+ but might take some thinking about). For example with a 'true' proportion of
+ land of 0.5 or 0.6 you could still get a result of 6 lands and 6 seas from 
+ a sample of size 12. 
+ 
+ **This idea of variation is really important** we can try and visualise it 
+ too.
+ You already saw how the same 'true' parameter can produce many data sets. 
+ Now we want to look at how
+ different parameters can produce similar datasets. 
+ 
+ <span style="color:blue"> Using the code below, simulate 100 
+ observed data sets for $p$ = 0.4 AND $p$ = 0.6. Two histograms
+ will be plotted. How many time was the same observed data created by both 
+ probabilities? For example, if you see Land 5 times, how often do you get it with $p=0.4$, and with $p=0.6$. What does this suggest about tyrying to estimate $p$?</span>
+ 
+```{r PlotSims, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Create a split screen to plot in
+par(mfrow=c(1,2)) # one row and two columns
+
+# Create the histograms
+# we put the simGlobe function inside hist()
+# simGlobe creates our x arugment for hist()
+#["Land",] tells R to take only the row with number of Land
+hist(simGlobe(0.4, 12, 100)["Land",], xlab = "Number of land",
+     main = "0.4")
+hist(simGlobe(0.6, 12, 100)["Land",], xlab = "Number of land",
+     main = "0.6")
+# main changes the title
+# xlab changes the x label
+
+```
+ 
+ When we 
+ estimate parameters, we also want to recognise the variation. 
+ We call it **uncertainty**, more on this next week. 
+ 
+ 
+### Step 4 = interpret results. 
+
+ Once you have an estimate for the population and quantified uncertainty, 
+ you can
+ go back to your biological question and interpret the results.
+ 
+ <span style="color:blue"> How confident are you now in your guess from 
+ the beginning of this section? </span>
+ 
+# Part C - Likelihoods
+ 
+ Once we have a model for our data, how do we decide what good estimates of 
+ the parameters of the model are?
+ This can be difficult, as many different values could be possible. 
+ But we need an objective and repeatable
+ way to estimate the 'best' parameter based on our data. 
+ In this course we do this using **likelihoods**.
+ 
+ The **likelihood** is defined as the probability of obtaining the observed 
+ data, given the parameter value.
+ It represents how the data were generated. 
+ We assume that the data are random and the parameters are fixed.
+ In our example this would be the probability of getting our number of lands 
+ given a particular probability of success.
+ 
+## Getting a likelihood for our example (land and sea)
+ 
+ <span style="color:blue"> Watch the **final video**.</span>
+ 
+ Either [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=41ced04a-52e9-4d07-a9cf-ae2000d0a23d)
+ or watch below.
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=41ced04a-52e9-4d07-a9cf-ae2000d0a23d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&captions=true&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+ As we said above, the likelihood is the probability of getting our observed 
+ data, given a parameter value $p$.
+ 
+ In this section we will walk you through how to write a likelihood for our 
+ land and sea data.
+ 
+### 1: For the first step we will do this for just 1 trial. 
+
+ Imagine we ran one trial and the data we got was `Land`, which is a success.
+ **Remember: we can use the symbol $n$ to indicate the number of successes 
+ (theoretically) and $r$ is the actual number we observed**. 
+ The probability of
+ getting our data is equal to $p$, because we only have one trial. 
+ This can be written as: 
+ 
+ $$
+ \begin{aligned}
+ Pr(n=r) &= p  \\
+ \end{aligned}
+ $$
+ 
+ where $Pr(n=r)$ is the probability of getting our data, in this case, 
+ one success (so $r=1$). 
+ 
+We can break this down: $Pr()$ means the probability of something, here the probability that $n$ equals $r$. $n$ is a *random variable*: it is a random number that can take one of several values. $r$ is the value it takes here. So, $Pr(n=r)$ is the probability that $n$ is value $r$. $Pr(n=r)$ is a number (e.g. 0.4), but here we do not know what that number is, so we call it $p$. And we want to find an estimate for $p$ (which we will - eventually - call $\hat{p}$).
+
+
+### 2: Next we will look at 2 trials. 
+
+ This time our data are `Land`, which is a success, then `Sea`, 
+ which is a failure.
+ **$r$ is still used to indicate the observed number of successes, 
+ which = 1**. Using probability theory we can work out the 
+ probability of getting 1 success from our two trials. This can be written as: 
+ 
+ $$
+ \begin{aligned}
+ Pr(n=1) &= p(1-p) + (1-p)p = 2p(1-p)\\
+ \end{aligned}
+ $$
+ 
+ where $Pr(n=1)$ is the probability of getting our data, in this case, 
+ one success (i.e. it is $Pr(n=r)$, with $r=1$).
+ 
+ In words, the equation shows that we could get one success in two ways 
+ (`Land-Sea` or `Sea-Land`). Each time the probability
+ of `Land` = $p$ and the probability of `Sea` = $(1-p)$. 
+ 
+ You can get to this equation using the probability tree you used in ST0103. 
+ See text book 'The Analysis of Biological Data' probability
+ section or google probability tree, if you cannot remember. 
+ 
+### 3: More than 2 trials. 
+
+ In points 1 and 2 it was easy to calculate the probability of obtaining the 
+ data manually using a probability tree. But, when we get into more trials, 
+ this would take a long time, and there are better options.
+ In this case, we can use the equation for the binomial distribution to get 
+ to a more general likelihood, i.e. to work
+ for any number of trials. The reasons we use the binomial distribution are 
+ explained in Part B. 
+ 
+ **Now we use $N$ to indicate the number of trials**  
+ 
+ We can write the equation like this, using the equation for a binomial 
+ distribution:
+ 
+ $$
+ \begin{aligned}
+ Pr(n = r | N, p) &= \frac{N !}{r! (N-r)!} p^r (1-p)^{N-r}
+ \end{aligned}
+ $$
+ 
+ where $Pr(n = r | N, p)$ is the probability of getting our observed data 
+ GIVEN the number of trials $N$ and the 
+ probability of success $p$ (our parameter). 
+ 
+ In words, the equation shows has two parts: 
+ 
+ * The first part $\frac{N !}{r! (N-r)!}$ counts the number of combinations
+ of $r$ successes and $N-r$ which is the number failures. 
+ This uses combinatorics theory also from ST0103. 
+ 
+ * The second part $p^r (1-p)^{N-r}$ is the probability of success $p$ to the 
+ power of the number of successes $r$ 
+ multiplied by the probability of failure $(1-p)$ to the power of the number 
+ of failures $N-r$.
+ 
+ Together they make the equation for a binomial distribution. 
+ We know $r$ and $N$ from our data but we need to 
+ put in a value of $p$ to use the equation. **This is important in Part D.**
+  
+### 4: Plugging in numbers. 
+
+ <span style="color:blue"> Have a go at using the equation in point 3 to 
+ calculate a likelihood for the following: </span>
+ 
+ <span style="color:blue"> 5 trials and 
+ data = (`Land`, `Land`, `Land`, `Sea`, `Sea`). </span>
+ 
+ <span style="color:blue"> $p$ = 0.5 </span>
+ 
+ You can use R or a calculator. If you use R, the function `factorial()` 
+ will take the factorial of a number and `^` takes the power.
+ E.g.
+ 
+```{r Factorials,  warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Code to demonstrate factorial and power
+
+factorial(5) # 5!
+
+5^3 # 5 to the power of 3
+
+```
+
+ **Remember to use brackets ().**
+
+ <details><summary>ANSWER</summary>
+ 
+```{r FactorialAnswer,warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Code to demonstrate factorial and power
+
+(factorial(5)/(factorial(3)*factorial((5-3))))*((0.5^3)*0.5^2)
+```
+
+ 
+ </details>
+ 
+ </br>
+ 
+ <span style="color:blue"> If you have time, try and repeat the calculation 
+ for some different values of $p$. How does the likelihood change? </span>
+ 
+ Next we will look at how we find the highest probability of getting our data. 
+ 
+# Part D - Using the likelihood
+ 
+ When we estimate parameters for our models, we want to find the parameter value that 
+ **gives the highest likelihood for our data**. This is called maximum likelihood estimation.  
+ 
+ To find the highest likelihood (**to maximise the likelihood**) 
+ you need to calculate it for several different 
+ parameter values. Ideally, we should do this for all possible values the 
+ parameter could take. There are several
+ ways that we can do this:
+ 
+### Manually.
+ 
+ You already had a go at this in Part C by plugging numbers into the 
+ likelihood equation and getting an answer.
+ But to do this for 100s of candidate parameter values would take much too 
+ long. 
+ 
+### Using R and `dbinom()`
+ 
+ There is a function in R called `dbinom()`. 
+ This function calculates the density of a binomial distribution
+ from some input parameters (`x` = the observed number of successes, 
+ `size` = the number of trials, `prob` = the probability of success). 
+ This density in this case the proportion of times you would expect to get the 
+ observed number of successes for 
+ the given number of trials and the probability. 
+ Hopefully this sounds a bit familiar, the density here is the
+ same as the likelihood. 
+ 
+ As before, the parameter we want to estimate is $p$ (argument `prob` in the 
+ function), which is the probability
+ of getting `Land`. To find the 'best' estimate of $p$ based on our observed 
+ data, we need to calculate the
+ likelihood for many different values of $p$ and compare which gives the 
+ highest likelihood. 
+ 
+ <span style="color:blue"> Use the code below to calculate the likelihood by 
+ hand for 10 candidate
+ values for $p$. </span>
+ 
+ <span style="color:blue"> The data for this are: 10 trials and data = 
+ (`Land` = 4, `Sea` = 6). </span>
+ 
+```{r dbinom, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Code to use dbinom()
+
+# First create an object containing your candidate values of p
+probabilities <- seq(from = 0.1, to = 0.9, length.out = 10)
+
+# Use dbinom to calculate the likelihoods
+likelihoods <- dbinom(x = 4, size = 10, prob = probabilities)
+```
+ 
+ 
+ <span style="color:blue"> Now use the `dbinom()` function to calculate the 
+ likelihood for 100 candidate
+ values for $p$. </span>
+ 
+ <details><summary>ANSWERS</summary>
+ 
+```{r dbinomAnswer, warning = FALSE, error = FALSE, eval = TRUE, echo = TRUE}
+# Code to use dbinom()
+
+# First create an object containing your candidate values of p
+probabilities <- seq(from = 0.1, to = 0.9, length.out = 10)
+
+probabilities
+
+# Use dbinom to calculate the likelihoods
+likelihoods <- dbinom(x = 4, size = 10, prob = probabilities)
+
+likelihoods
+```
+ 
+ </details>
+ 
+ </br>
+ 
+ <span style="color:blue"> Plot the results using the code below. 
+ Discuss the plots in your group. What do they show? Can you guess
+ which parameter value gives the maximum likelihood? 
+ Is it easy to read? </span>
+ 
+```{r PlotLhood, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Plotting the likelihoods
+
+# To plot we use the plot() function
+# Our x is our probabilities and our y is the likelihoods
+# We want a line graph with x and y labels that we choose
+plot(x = probabilities, y = likelihoods,
+     type = 'l', xlab = "Candidate value for p",
+     ylab = "likelihood")
+```
+ 
+ 
+ <span style="color:blue"> Now do the same for log likelihood. </span>
+ 
+ To do this, you need to add one more argument to your the `dbinom()` function. 
+ `log = TRUE` this will calculate the log likelihood instead. 
+ 
+ **Remember to change the y axis label.**
+ 
+ <details><summary>ANSWERS</summary>
+ 
+```{r PlotLHoodAns, warning = FALSE, error = FALSE, eval = TRUE, echo = TRUE}
+
+par(mfrow=c(1,2)) # puts two plots side by side (1 row and 2 columns)
+
+plot(x = probabilities, y = likelihoods,
+     type = 'l', xlab = "Candidate value for p",
+     ylab = "likelihood")
+
+# make log likelihoods
+loglikelihoods <- dbinom(x = 4, size = 10, prob = probabilities, log=TRUE)
+
+plot(x = probabilities, y = loglikelihoods,
+     type = 'l', xlab = "Candidate value for p",
+     ylab = "loglikelihood")
+```
+ 
+ </details>
+ 
+ </br>
+ 
+ <span style="color:blue"> Do you think this plot is any better? </span>
+ 
+ We tend to use log likelihood because likelihood values get very small 
+ and it makes
+ differences harder to see. 
+ Conveniently, the maximum is the same for raw likelihood and
+ log likelihood. 
+ 
+ <span style="color:blue"> Using whichever graph you prefer, can you find the
+ maximum likelihood estimate for the parameter p? </span>
+ 
+ This is not so easy from the graphs or the data alone. 
+ We cover more on how to find
+ the maximum in Part E. 
+ 
+ <span style="color:blue"> Try and write in your own words what the likelihood 
+ is and why we use it. </span>
+ 
+# Part E - Finding the maximum
+ 
+ In Part D you calculated likelihood values for several possible values of our 
+ parameter $p$. 
+ It was possible to find the maximum value from those you calculated, 
+ but this does 
+ not necessarily give us the actual **maximum** likelihood value. 
+ That is because we
+ cannot guarantee that we tested **all** possible values of $p$. 
+ 
+ There are several ways we can find the maximum:
+ 
+### Analytical estimation (do maths) 
+ 
+ **This is what we will use today.**
+ 
+ Analytical estimation works for the simple example we have here. It
+ finds mathematically the point on the likelihood curve 
+ (what we plotted in Part D),
+ where the gradient of the line is 0. To do this we find an equation for the 
+ slope and set the equation to 0. We can then solve this to find the value of 
+ $p$ when the slope is 0.
+ 
+ The equation for the slope is:
+ 
+ $$
+ \frac{d l(p | n)}{dp} = \frac{r}{p} - \frac{N-r}{1-p}
+ $$
+ 
+ Where, $\frac{d l(p | n)}{dp}$ is the change in likelihood over the change 
+ in $p$, $\frac{r}{p}$
+ is the number of successes over $p$, and $\frac{N-r}{1-p}$ 
+ is the number of failures over the 
+ probability of getting a failure. 
+ 
+ If we set this to 0 we get:
+ 
+ $$
+ 0 = \frac{r}{p} - \frac{N-r}{1-p}
+ $$
+ 
+ It can be rearranged to be :
+ 
+ $$
+\frac{p}{1-p} = \frac{r}{N-r}
+ $$
+ 
+ This means that the odds of success $\frac{p}{1-p}$ 
+ (probability of success over probability of failure)
+ are equal to the ratio of success to failure $\frac{r}{N-r}$. 
+ 
+ This is also equal to: 
+ 
+ $\hat{p} = \frac{r}{N}$ 
+ 
+ **remembering that $\hat{p}$ is our estimator, which
+ is our 'best' estimate of $p$**
+ 
+ **$\hat{p}$ is the maximum likelihood estimate of $p$**
+ 
+ <span style="color:blue"> Using the final equation. 
+ Try and calculate the maximum 
+ likelihood estimate of $p$ for our example </span>
+ 
+ <details><summary>ANSWER</summary> 
+ 
+ Our example was 3 successes from 5 trials. 
+ So using the formula we do 3/5 = MLE = 0.6 
+ 
+ </details>
+ 
+ </br>
+ 
+### Now we have a maximum likelihood estimate, how does it change if we take more samples?
+ 
+ <span style="color:blue"> Consider what happens if we take another sample. 
+ Our data
+ are now (`Land` = 2, `Sea` = 8). 
+ Will $\hat{p}$ be the same for this new sample? </span>
+ 
+ We can look at this more easily in a graph. 
+ To do this we should estimate $\hat{p}$
+ for many different samples, all from the same population. 
+ We can then plot the results. We have made
+ a function to help you do this called `mleGlobe()`. 
+ It calculates $\hat{p}$ for a given set of
+ observed data. It takes two arguments: `NLand` = number of lands and 
+ `NTrials` = number of trials. 
+ **We assume the 'true' value of $p$ is 0.4**
+ 
+ This function was loaded at the same time as `simGlobe()` in Part A. 
+ **Go back to Part A if 
+ the function is no longer loaded.** The two functions `simGlobe()` and 
+ `mleGlobe()` can
+ be combined as follows:
+ 
+```{r SimGlobe, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Example of a single use of mleGlobe()
+# 6 land values from 12 trials
+# This produces two probability values, one for Sea and one for Land
+# we only care about the Land one
+mleGlobe(NLand = 6, NTrials = 12)
+
+# Using simGlobe as the input
+# ["Land",] takes only the lands from the simGlobe output
+result <- mleGlobe(NLand = simGlobe(probability = 0.4,
+                                    NTrials = 12,
+                                    nSims = 10)["Land",],
+                   NTrials = 12)
+
+result
+```
+
+ 
+ <span style="color:blue"> Use the code above to calculate the maximum
+ likelihood estimator for many different samples 
+ (change the nSims argument). </span>
+ 
+ We can plot the results using the `hist()` function. This makes
+ a histogram of the data.
+ 
+```{r HistRes, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+# Plot the results in a histogram
+hist(result,
+     main = "Histogram of results",
+     xlab = "MLE of p")
+
+# main changes the title
+```
+ 
+ <span style="color:blue"> What do you think of the graph? and how does
+ it change as the number of samples changes? </span>
+ 
+ **We will think about this more when we cover uncertainty.**
+ 
+### Numerical and simulation estimation
+ 
+ It is not always possible to find the maximum likelihood estimate 
+ analytically.
+ Therefore, in many situations we use either numerical or simulation 
+ estimation.
+ 
+ In numerical estimation, we use an algorithm to find the maximum.
+ 
+ For simulation, we simulate the likelihood by simulating repeated sampling 
+ many times
+ and calculating how often a particular set of data are generated. 
+ Then we find the set of 
+ parameters that produce the observed data most often. 
+ 
+# Part F - R - Inside the functions
+ 
+ This week we used several functions. The main ones were:
+ `rbinom()`, `dbinom()`.
+ 
+ Both of these functions use the binomial distribution. `rbinom()` 
+ generates a random value 
+ from the binomial distribution and `dbinom()` produces a density 
+ (the proportion of times
+ you get the observed number of successes from the probability $p$ you enter). 
+ You can find
+ out more about them in the help pages by typing `?dbinom` into R.
+ 
+ This type of function exists for many different kinds of distributions. 
+ We will
+ use them a lot in this course. 
+ 
+ We also used these functions within the ones we wrote for this course. 
+ The full code with comments for this week's functions `simGlobe()` and 
+ `mleGlobe()` can be found in the 
+ [script](https://www.math.ntnu.no/emner/ST2304/2020v/Week02/Week2Functions.R).
+ 
+ **Reminder for arguments** you can input arguments to a function
+ either by naming them e.g. `plot(x=2, y=3)` or by typing them in order
+ e.g. `plot(2, 3)`. If doing the second option, you MUST put them in the 
+ right order, so it is important to remember or check what the function expects. 
+ 
+ # Finally 
+ 
+ 
+[Here is a video summarising this week's module](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c), running through some of the main themes (and talking too much about the R code).
+

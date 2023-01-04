@@ -1,0 +1,464 @@
+---
+title: "Exercise 5: Alien Escape"
+author: Emily Simmonds
+output: html_document
+---
+
+# Instructions:
+ 
+This document contains information, questions, R code, and plots.
+ 
+**Hints and reminders are bold**
+
+<span style="color:blue"> Questions appear in blue. </span>
+ 
+**Needs to be completed and handed in by Friday 4th March 23:59 2022**
+ 
+This week you will be looking at multiple regression, working out when to use it, practicing how to use it, and interpreting results.
+ 
+## R hints and general help
+ 
+### Resources:
+ 
+ * Google (or any other search engine) e.g. "multiple regression in R"
+ * [Week 7 lectures](https://www.math.ntnu.no/emner/ST2304/2021v/Week07/)
+ 
+### R this week:
+ 
+ New functions:
+ 
+- `pairs()` a function to plot all scatterplots of each variable in your data against the others in paired plots.
+ It takes the argument `x`, which is your data object. e.g. `pairs(YOURDATA)`
+- `plotting_function()` a function we have created for you to plot your predictions on a map. 
+  It takes the arugments:
+ `InputData` and `Predictions`. 
+ 
+Things to remember:
+ 
+- `lm()` takes the arguments x, y, and data e.g. `lm(y ~ x, data = YOURDATA)` x and y here correspond to an 
+ explanatory variable (x) and a response (y)
+- `plot()` and `abline()` 
+- `predict()`
+- `confint()` and `coef()`
+- `par(mfrow=(NumberRows, NumberColumns))` to make more than one plotting window.
+- `summary(YourModel)$r.squared`
+- code to make diagnostic plots for model checking e.g.  residuals vs fitted, normal Q-Q, and cook's distance.
+ 
+## A bit more on the `predict()` function
+ 
+You have been using the `predict()` function for a few weeks now, so it seemed like a good time to have a quick recap of how the function works.
+ 
+The main arguments we use for predict are: `object` = YourModelObject, 
+ `newdata` = a dataframe of data you want
+ to predict for, and `interval` = either prediction or confidence.
+ 
+ A few comments on the arguments:
+ 
+- `object`. The model objects you have used to predict with so far have been 
+ created using the `lm()` function. You know there are two ways
+ to write an model using `lm()`, `lm(y ~ x, data = YOURDATA)` and 
+ `lm(YOURDATA$y ~ YOURDATA$x)`. Some of you might have noticed that
+ if you use predict without a `newdata` argument, it does not matter how 
+ you wrote your `lm()`. **But** if you do
+ need to use a `newdata` argument, then predict only works correctly if you 
+ wrote your `lm()` like this: `lm(y ~ x, data = YOURDATA)`.
+ This is because the column names in `newdata` need to perfectly 
+ match those in the model formula (`y~x`) for predict to work.
+ When you write your formula with a `$` then this is how R sees the 
+ variable name e.g. it is YOURDATA$x not x. By splitting out
+ the column names from the data, it makes it clear to R what the variables 
+ are called and then it can match those to what
+ you give it in `newdata`.
+- `newdata`. This week you will start using `newdata` with more than onecolumn. When you do multiple regression, you have
+ multiple explanatory (x) variables. Therefore, when you predict, you need to 
+ include values for all of your x's, not just one.
+ Many of you have already been creating `newdata` using
+  `<- data.frame(x=ValueYouWantToPredictFor)`, now you will need to include
+ two columns in these dataframes. The `data.frame()` function tells R to 
+ create a dataframe, the bits inside the brackets tell it
+ what you want inside. The column name goes on the left, = in the middle, 
+ and the values for the column on the right. An
+ example of a two column `newdata` 
+ `newdata <- data.frame(x = 1:5, x2 = 6:10)`. 
+- **Remember the column names in newdata should 
+ match your x variable names.**
+ 
+# The challenge: Will we be taken over by aliens?
+ 
+ It is a time in the near future, space travel has become more common.
+ Ships leave from earth every few months on exploration missions of the
+ galaxy. Ship "Explorer 5" has been searching to see if any life on other planets could be useful on earth.
+ During the mission the crew
+ found a planet with life and collected some organisms. The alien organism 101 is a multicoloured, modular, plant-like organism (the plant-animal divide is less clear for aliens). The organism seems to grow well in air similar to earth's
+ atmosphere and could be useful as it grows flower-like structures made of gold.
+ 
+ ![Alien picture](Alien101.png)
+ 
+ On their way back to earth the scientific crew of "Explorer 5"
+ have been conducting experiments on alien 101
+ to try and determine the conditions under which it grows best. 
+ The scientists grew alien 101 in containers under different temperatures (ºC)
+ and rainfall (mm) conditions. They
+ recorded the weight of biomass (g) of alien 101 per square metre after one week.
+ 
+Unfortunately, on the journey back, the ship hit a satellite and has crash landed on Australia. The crew were able to survive, but the experimental lab has been badly damaged. Alien 101 has been
+ released into the wild on earth. 
+ 
+ You are a local team of scientists assisting the space travel company
+ with predicting how the organism might spread. The company want
+ to know where to focus their containment resources to stop the organism
+ from taking over. Even if it could be useful, they don't know how it
+ could damage earth's wildlife.
+ 
+ <span style="color:blue"> **It is your job to predict where
+ the alien organism will spread to and recommend how to deploy resources** </span>
+ 
+ The data can be found at https://www.math.ntnu.no/emner/ST2304/2021v/Week07/Alien101LabData.csv
+ 
+ The first step is to import the data and assign it to an object. You can use the whole
+ web link above to import the data. It is a csv file with column names (header) included.
+
+```{r ReadAlienData} 
+Alien <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/Alien101LabData.csv", 
+                  header=TRUE)
+```
+
+ <span style="color:blue"> A1. Plot the data using the `pairs()` function. 
+ What can you tell from the plots?</span>
+ 
+ <span style="color:blue"> A2. Have a look at the raw data from Explorer 5, do you think 
+ rainfall and temperature were tested separately in their experiments? Why/why not? </span>
+ 
+ <details><summary>Hint</summary>
+ Here you need to look at the raw data i.e. 
+ the data frame you have. `head()` is one function
+ you can use to do this. or click on the data object in the Environment panel
+ on the top left. 
+ 
+ You need to think about how the way data are collected relates to the way it 
+ is presented.
+ For instance, if you tested temperature and rainfall separately, 
+ how would you write this
+ into a table? 
+ How many columns would you have? What would each row represent?
+ 
+ If you aren't sure, pretend you are designing the experiment from the beginning
+ and make a draft of the table you would use. 
+ 
+ </details>
+ 
+<span style="color:blue"> A3. **Run** a simple linear regression for each of 
+ i) temperature and biomass,
+ ii) rainfall and biomass. Give the coefficient estimates (of each parameter), 
+ the confidence intervals, and
+ say how much variance each model explains. </span>
+ 
+ **Remember to put the explanatory variable and the response in the right 
+ places, you might
+ need to think about which is which.**
+ 
+ <details><summary>I've forgotten how to do this!</summary>
+ 
+ use `lm()` for the model, `coef()` to see the estimates, `confint()` to 
+ get confidence intervals, 
+ and `summary()$r.squared` to see how much variance is explained.
+ 
+ If none of this is familiar - look over the exercises from previous weeks!
+</details>
+
+ <span style="color:blue"> A4. **Interpret** the results of the separate 
+ linear regressions.
+ What do the results suggest about the ideal conditions for alien 101? </span>
+ 
+ You now have some results about how temperature and rainfall (individually) influence the
+ growth of alien 101. But you want to generate predictions of how it could spread around
+ Australia. You can do this by creating predictions of the amount of biomass for the
+ actual average annual temperature and rainfall of Australia. The company have provided
+ you with very simplified data of the average annual temperature and total annual rainfall
+ for different coordinates in Australia. Found at:
+ https://www.math.ntnu.no/emner/ST2304/2021v/Week07/AustraliaEnvironmentalData.csv
+ 
+ This is plotted below.
+ 
+ Using this you can try to guess where the alien might spread to based on what you
+ have found out about the influence of temperature and rainfall on alien 101's growth.
+ **Assume that
+ amount of biomass is an indicator of how suitable the conditions are for alien 101.** 
+ 
+```{r Stuff, warning = FALSE, message = FALSE, error = FALSE, include = TRUE, echo = FALSE}
+
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+
+Australia <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/AustraliaEnvironmentalData.csv", 
+                      header=TRUE)
+
+Rain <- ggplot(Australia)+
+  geom_raster(aes(x=Longitude, y=Latitude, fill=Rain))+
+  theme_void()+
+  scale_fill_viridis_c(begin=1, end=0, name ="Rainfall (mm)")+
+  theme(legend.position = "top")
+
+Temp <- ggplot(Australia)+
+  geom_raster(aes(x=Longitude, y=Latitude, fill=Temp))+
+  theme_void()+
+  scale_fill_viridis_c(option="B", name="Temperature (ºC)")+
+  theme(legend.position = "top")
+
+Rain + Temp + plot_layout(nrow=1)
+```
+
+ While guessing is ok. It would be better to predict actual numbers based on
+ our linear models. To do this, you will need to:
+ 
+  * Import the Australia environmental data.
+  * Use the `predict()` function to generate the predictions.
+  
+ <span style="color:blue"> A5. **Predict** biomass of alien 101 across Australia. </span>
+ 
+ To make the predictions you will use the data on environmental conditions in Australia. 
+ These will become your new explanatory variable (x) values that you want to predict 
+ a response (y) from. 
+ 
+ <details><summary>I need a hint</summary>
+ 
+ You need to create an object to be your `newdata` argument for the predict function.
+ `data.frame()` is a good function to use for this. 
+ You will need two because you have two different models, one with temperature
+ and one with rainfall. 
+ 
+ Remember that the column names in `newdata` must be the same as those used
+ to make your model. 
+ 
+ **If it doesn't work - check your `lm()` is written as described in the start of this document.**
+ 
+ <details><summary>Nope, still not sure</summary>
+ 
+ **Make sure to read all comments.** You may need to change the name
+ of the datafile to match what you called the Australia data.
+
+```{r PredictHintHint, warning = FALSE, error = FALSE, include = TRUE, echo = TRUE, eval = FALSE}
+# First thing for the prediction is to create the newdata object
+# you will need as an argument for the predict() function.
+
+# Here you need two, one for temperature and one for rainfall.
+# Newdata needs to be a datafame so the function data.frame() is very
+# useful here. My data is called Australia and my models are ModelTemp
+# and ModelRain.
+# Column names in newdata MUST be identical to those in the
+# data used to make the model (the lab data). 
+
+# newdata for temperature (it makes a dataframe with a column called 
+# Temperature from the Temp column in the Australia data)
+newdataTemp <- data.frame(Temperature = Australia$Temp)
+
+# newdata for rainfall
+newdataRain <- data.frame(Rainfall = Australia$Rain)
+
+# now predict - this should be familiar now
+PredictionsTemp <- predict(ModelTemp, newdata = newdataTemp, 
+                           interval="prediction")
+
+# now predict - this should be familiar now
+PredictionsRain <- predict(ModelRain, newdata = newdataRain, 
+                           interval="prediction")
+```
+ </details>
+ 
+ </details>
+
+<br />
+
+ Now you have predictions for the biomass in g/m<sup>2</sup> for the whole of Australia.
+ If you look at the results, the numbers are very large. This is because biomass is in grams.
+ From looking just at the numbers it is difficult to interpret these predictions. 
+ 
+ Another member of your team (Emily) has created a function in R 
+ to plot the predicted results back onto the map of Australia. It is quite a complex
+ function and uses the package `ggplot2`. You can google this if you want to learn more
+ but it can make some very pretty plots!
+ 
+ To use the function, first install the following packages using `install.packages()`:
+ 
+ * "ggplot2"
+ * "viridis"
+ 
+ Then load them using the `library()` function. e.g. `library(ggplot2)`
+ 
+ The plotting function is available here:
+  https://www.math.ntnu.no/emner/ST2304/2021v/Week07/plotting_function.R. 
+  You can bring the function into your R by using the `source()` function.
+ 
+### What does source really do?
+ 
+ The `source()` function is something we can use to run all of the code in an R script. We use this
+ in this course to provide you with functions that we write ourselves. It is a bit like
+ bringing in data, but instead of data, it is R code. Have a go at sourcing the script for this 
+ week using `source()` and using the url above as the argument. 
+ You should see that in the right hand Environment panel you now have a function
+ called `plotting_function()`, it is ready to use. 
+ 
+ `plotting_function()` was written by Emily, it takes two input arguments:
+ `Input_data` which is the data for
+ Australia and `Predictions` which is your prediction object.
+ 
+ <span style="color:blue"> A6. Plot your predictions using `plotting_function()`. </span>
+ 
+ <details><summary>R hint</summary>
+```{r Source, eval = FALSE}
+# source the script
+source("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/plotting_function.R")
+
+plotting_function(InputData = Australia, Predictions = PredictionsRain[,1])
+
+plotting_function(InputData = Australia, Predictions = PredictionsTemp[,1])
+```
+
+ </details>
+ 
+ <span style="color:blue"> A7. Based on these results where would you
+ recommend the company focusses its containment resources? 
+ Include some mention of uncertainty in your answer. </span>
+ 
+# Part B: Multiple regression
+ 
+ Your team have made some predictions based on using temperature and rainfall
+ separately. But you know what you can put both variables into a combined
+ multiple regression model. So you now decide to do this.
+ 
+ <span style="color:blue"> B1. **Write** a line of R code (and run it) to run 
+ a multiple linear regression including temperature **and** rainfall. </span>
+ 
+ If you are not sure how to do this, have a look at question C3 from Exercise 4. 
+ In Exercise 4 you added a quadratic term to your model, this was actually 
+ creating a type of 
+ multiple regression. You add any other explanatory variables in the same way, 
+ but without
+ `I` or `^2`. 
+
+<span style="color:blue"> B2. **Write** the multiple linear regression as
+ a mathematical equation? E.g. Y=.... **Hint: think about how this is different to a simple regression** </span>
+
+ <span style="color:blue"> B3. **Compare** the estimates from the multiple regression
+ to those from the individual regressions. **Include coefficients,
+ confidence intervals, and R squared** </span>
+ 
+ Remember you can also plot the results. To do this you should plot each
+ variable against biomass separately i.e. biomass against temperature and
+ biomass against rainfall but you will need to adjust the line you are 
+ plotting with the mean value of the other variable. 
+ 
+ To do this, you can still use `abline()`
+```{r PlotMV, warning = FALSE, error = FALSE, echo = TRUE, eval = FALSE}
+# EXAMPLE:
+
+# make two plot window
+par(mfrow=c(1,2))
+
+# make the plot of temperature and biomass
+plot(Alien$Temperature, Alien$Biomass,
+     pch = 19, col = "red",
+     ylab = "Biomass", xlab = "Temp")
+
+# save the coefficient values as an object
+# contains 3 values, intercept, slope for temperature,
+# slope for rainfall
+coefs <- coef(ModelBoth)
+
+# use the coefficients to plot the line for temperature
+abline(a=coefs[1]+(mean(Alien$Rainfall)*coefs[3]), b=coefs[2], col="black")
+
+# make the plot of Rainfall and biomass
+plot(Alien$Rainfall, Alien$Biomass,
+     pch = 19, col = "blue",
+     ylab = "Biomass", xlab = "Rain")
+
+# save the coefficient values as an object
+# contains 3 values, intercept, slope for temperature,
+# slope for rainfall
+coefs <- coef(ModelBoth)
+
+# use the coefficients to plot the line for temperature
+abline(a=coefs[1]+(mean(Alien$Temperature)*coefs[2]), b=coefs[3], col="black")
+```
+
+
+ <span style="color:blue"> B4. **How** does R find the estimates of the
+ parameters for these linear regressions? **Hint: think back to earlier weeks - its the same** </span>
+
+  
+ <span style="color:blue"> B5. **Perform** model checking of the multiple linear
+ regression. **Include 3 plots of model checking and decide if you think the fit is ok** </span>
+ 
+ **Hint: code available in Exercise 4**
+
+ Now you have checked your model and hopefully are either happy with it or have
+ fixed any assumptions that were violated. So now you can generate new predictions
+ of biomass in Australia based on the multiple regression model. **This is
+ still not the full picture, remember to look at the uncertainty too. You 
+ can do this by entering the upper or lower prediction as the `Predictions` 
+ argument in `plotting_function()`.** To do this you need to use indexing like
+ last week. The lower confidence interval is column 2 in the output
+ from the `predict()` function 
+ e.g. 
+ 
+```{r Predict, warning = FALSE, error = FALSE, include = TRUE, echo = TRUE, eval=FALSE}
+Predictions <- predict(YOURMODEL, newdata=newdata, interval="prediction")
+Predictions[,2] # this bit gives the second column
+```
+
+ <span style="color:blue"> B6. **Predict** where the organism will spread to,
+ based on the multiple regression. Plot it using `plotting_function()`. </span>
+ 
+ **Hint: You can do this by editting the prediction code above so it predicts
+ from the multiple regression. Now you also only need one 
+ `newdata` object with two columns.**
+ 
+ <details><summary>I need help!</summary>
+ 
+ Try editting the code from A5 and A6
+ 
+ Australia = dataset of environmental conditions in Australia. 
+ 
+ This shows code to plot the mean predictions. To check how uncertainty changes
+ the patter you can change which column of the object `PredictionsBoth` that
+ you plot.
+ 
+```{r PredictHint1, warning = FALSE, error = FALSE, include = TRUE, echo = TRUE, eval = FALSE}
+PredictionsBoth <- predict(ModelBoth, newdata = data.frame(Temperature = Australia$Temp,
+                                                           Rainfall = Australia$Rain), 
+                           interval="prediction")
+```
+```{r PredictHint2, warning = FALSE, error = FALSE, include = TRUE, echo = TRUE, eval =FALSE}
+plotting_function(InputData = Australia, 
+                              Predictions = PredictionsBoth[,1])
+```
+ </details>
+
+ <span style="color:blue"> B7. **What** would you recommend in terms of deployment of
+ resources based on your predicted spread? Has this changed from before?</span>
+
+## Part C: Reflection
+ 
+ <span style="color:blue"> C1. Can you draw any biological conclusions about this
+ alien species? Can you say anything about the relative influence of 
+ temperature and rainfall? Are the variables in this analysis enough, what else could
+ have an influence? </span>
+ 
+ <span style="color:blue"> C2. **Why** do we use multiple regressions rather
+ than running individual simple linear regressions? </span>
+
+## Part D: Feedback
+ 
+ <span style="color:blue"> D1. How do you think this exercise went? What do
+ you think your group did well, what are you less sure about? 
+ (2 examples of each) </span>
+ 
+ <span style="color:blue"> D2. What do you think you improved from last 
+ week? </span>
+ 
+ <span style="color:blue"> D3. Are there any concepts you are very unsure of? </span>
+ 
+ <span style="color:blue"> D4. What would you like feedback on this 
+ week? </span>

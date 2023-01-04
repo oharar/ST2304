@@ -1,0 +1,253 @@
+
+---
+title: "How good is our straight line? Part 2"
+author: "Bob O'Hara"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_depth: 3
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!---
+By the end of the lecture the students should:
+- know how a model may not be good
+- be able to say whether a model explains the data
+- be able to check whether the model fits, or if it suffers from non-linearity, heteroscedasticity, outliers
+- know how to improve the model to overcome these deficiencies
+
+By the end of the practical the students should be able to 
+- check the fit of a model
+- fit improved models
+
+Structure:
+Prelude: would a straight line fit well?
+
+Part 1: Model as fit + residuals
+
+Part 2: R^2
+
+Part 3: residual plots
+- curvature
+- outliers
+
+Part 4: leverage
+
+Part 5: QQ plots
+
+--->
+
+```{r WomensTimes, fig.height=5, echo=FALSE}
+Times <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/Times.csv")
+WomenMod <- lm(WomenTimes~Year, data=Times)
+
+```
+
+# How can we improve the model?
+<!---
+
+[Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3eabac64-48e6-4966-8c51-acd00115b138) or watch below
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=3eabac64-48e6-4966-8c51-acd00115b138&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+If we have identified some problems, what do we do? The first thing to do it to check the data and model for silly mistakes, like typos. Once that has been done, we should start to think about what the mis-fit means, and whether it will cause any real problems. For example, does it change our conclusions? Or if we are making predictions, we want to know if the mis-fit will change the predictions.
+
+If we find individual data points are a potential problem (e.g. they are outliers or influential), we first need to check that they are not typos, or other errors (e.g. computers reading them in incorrectly). If they are genuine, then we can remove them & see if that makes a big difference. If it does, we have to think hard. It is possible that they really should be 'in' the data, so that we would be inflating the fit of the model by removing them. And if there are more than one or two points that we could remove, it might be that the problem is not that they are outliers. For example, it could be that the distribution genuinely has more large values than expected from a normal distribution (the technical term for this is that the data are leptokurtic. This term will not be on the exam).
+
+Other problems are due to the model, as a whole, not fitting. In particular, we can sometimes see curvature or skewness in the residuals. In these cases there are a few solutions, based on transformations. One possibility, if we only have curature or if the curvature is only apparent in the plot against one covariate (but not others) is to transform the covariate, e.g. $\sqrt{x_i}$, $x_i^2$, $\log(x_i)$, so the model becomes
+
+$$
+y_i = \alpha + \beta x_i^p + \varepsilon_i
+$$
+where, for example, $p=2$ for the squared transformation. The transformation can sometimes make biological sense. An alternative approach is to add more terms, for example a quadratic term:
+
+$$
+y_i = \alpha + \beta x_i + \gamma x_i^2  + \varepsilon_i
+$$
+There will be more about this later, when we get on to multiple regression.
+
+An alternative approach is to transform the response, e.g. $\sqrt{x_i}$, $x_i^2$, $\log(x_i)$, to give a model like this:
+
+$$
+y_i^p = \alpha + \beta x_i + \varepsilon_i
+$$
+Doing this can change both the linearity and the skewness, so it can be a bit more trickly. But there are times when it is the clear thing to do. There is a general class of transformations that can be used, the Box-Cox family:
+
+$$
+y_i \rightarrow y_i^p 
+$$
+e.g. if we want a square root transformation, we can use $p = 1/2$. If we decide $p = 0$ is appropriate, we use $log(y_i)$. The transformation has two effects: on the curvature of the response, and on how the variance changes with the mean. We can look at the effect on curvature first:
+
+```{r UseBoxCox, fig.height=5, echo=TRUE}
+x <- seq(10,100, length=30)
+y <- rnorm(length(x), x, 5)
+ySq <- y^2
+ySqrt <- sqrt(y)
+ylog <- log(y)
+
+par(mfrow=c(2,4), mar=c(4.1,2.1,3,1), oma=c(0,2,0,0))
+plot(x, y, main="Untransformed")
+ abline(lm(y~x, data = Times), col=2)
+plot(x, ySq, main="Squared Transformation")
+ abline(lm(ySq~x, data = Times), col=2)
+plot(x, ySqrt, main="Square Root Transformation")
+ abline(lm(ySqrt~x, data = Times), col=2)
+plot(x, ylog, main="log Transformation")
+ abline(lm(ylog~x, data = Times), col=2)
+
+plot(x, resid(lm(y~x, data = Times)))
+plot(x, resid(lm(ySq~x, data = Times)))
+plot(x, resid(lm(ySqrt~x, data = Times)))
+plot(x, resid(lm(ylog~x, data = Times)))
+```
+
+And then how the variance changes with the mean. If the variance is constant, we say the data are **homoscedastic**. If the variance changes with the mean, it is **heteroscedastic**. These are two terms that will also not be on the exam (especially not an oral exam).
+
+The Box-Cox transformation can change this relationship
+
+```{r Heteroscedasticity, fig.height=4, echo=TRUE}
+
+het.x <- rep(1:101,2)
+a=2
+b = 1
+sigma2 = het.x^1.3
+eps = rnorm(length(het.x),mean=0,sd=sqrt(sigma2))
+het.y=a+b*het.x + eps
+mod.het <- lm(het.y ~ het.x)
+mod.het2 <- lm(sqrt(het.y) ~ het.x)
+
+par(mfrow=c(1,3), mar=c(4.1,2.1,3,1), oma=c(0,2,0,0))
+plot(het.y, het.x, main="Data")
+abline(mod.het, col=2)
+
+plot(fitted(mod.het), resid(mod.het), main="Residuals")
+plot(fitted(mod.het2), resid(mod.het2), main="Residuals, sqrt transformation")
+
+```
+
+## Box-Cox in R
+
+We could do the transformation by trying several different transformations.  This is a good way of getting a feel for what it's doing, and the transformation doesn't usually have to be precise. But R has a function to find the best Box-Cox transformation, which is found in the MASS package:
+
+```{r BC, fig.height=4, echo=TRUE}
+library(MASS)
+x <- 1:50
+y <- rnorm(50,0.1*x, 1)^2
+boxcox(lm(y ~ x)) # 0.5 is true transformation
+
+```
+
+## Your Turn
+
+Unfortunately `boxcox()` needs positive responses, so we can't use the data we have already been using. Instead we can create data from a Gamma distribution with `rgamma()`. It has two parameters (after the number of points to simulate):
+
+- Shape: controls skew: the higher, the more symmetrical
+- Scale: this controls the mean (mean = shape*scale)
+
+We can create a (bad) model by keeping the shape constant but letting the scale vary with x:
+
+```{r BC.Sim, fig.height=4, echo=TRUE}
+x <- seq(1,10, length=50)
+y1 <- rgamma(length(x), shape=5, scale=x)
+y2 <- rgamma(length(x), shape=100, scale=x)
+y3 <- rgamma(length(x), shape=5, scale=x^2)
+
+par(mfrow=c(1,3))
+plot(x,y1, main="Average Shape")
+plot(x,y2, main="Larger Shape")
+plot(x,y3, main="Scale Quadratic")
+
+```
+
+- <span style="color:blue">Look at the curves, and describe what it looks like</span>
+- <span style="color:blue">Regress each y (i.e. y1, y2, y3) against X</span>
+- <span style="color:blue">Check the residuals. </span>
+- <span style="color:blue">See if a transformation helps, e.g. </span>
+
+```{r BC.try, fig.height=4, echo=TRUE, eval=FALSE}
+gam.mod <- lm(y1 ~ x)
+library(MASS)
+boxcox(gam.mod)
+```
+- <span style="color:blue">if a transformation is suggested, try it, and check the residuals again</span>
+
+<details><summary>Hint</summary>
+
+You can use `boxcox()` to get what is an optimal model, but it still might not be a good model. So it is worth plotting the residuals, even after you have what you think is a good model.
+
+This problem is as much about interpreting the outout as about getting it.
+
+</details>
+
+<details><summary>Answers</summary>
+
+First fit the models, and plot the residuals. This time I've plotted against $x$.
+
+```{r FitGammas, fig.height=4}
+AveShape <- lm(y1 ~ x)
+LargeShape <- lm(y2 ~ x)
+ScaleQuad <- lm(y3 ~ x)
+
+par(mfrow=c(1,3))
+plot(x, resid(AveShape), main="Average Shape")
+plot(x, resid(LargeShape), main="Larger Shape")
+plot(x, resid(ScaleQuad), main="Scale Quadratic")
+
+```
+
+We can see that in all cases there is a lot of heteroscedasticity (which is the way the gamma distribution works). For the Scale Quadratic model particularly, there are far fewer high residuals, which might suggest there is also positive skewness.
+
+Now to look for a better model. First, for the Scale Quadratic model we can try the square root and log transformations, and look at the residuals:
+
+```{r SQtrans}
+ScaleQuad.sqrt <- lm(sqrt(y3) ~ x)
+ScaleQuad.log <- lm(log(y3) ~ x)
+
+par(mfrow=c(1,3), mar=c(2,2,3,1))
+plot(x, resid(ScaleQuad), main="Scale Quadratic")
+plot(x, resid(ScaleQuad.sqrt), main="Square Root Transformation")
+plot(x, resid(ScaleQuad.log), main="log Transformation")
+
+```
+
+The square root transformation is not enough to make the residual homoscedastic: the log transformation is much better, but might have made the relationship curved. This suggests a log transformation, and possibly adding a quadratic term to the effect of $x$ will help.
+
+We can use the `boxcox()` function to look at all three data sets. I have restricted the range of the power (the default is -2 to 2, but usually 0 to 1 is OK).
+
+```{r SQBocCox}
+par(mfrow=c(3,1), mar=c(3,2,2,1))
+boxcox(AveShape, lambda=seq(-0.1,1.2,0.1))
+mtext("Average Shape", 3)
+boxcox(LargeShape, lambda=seq(-0.1,1.2,0.1))
+mtext("Large Shape", 3)
+boxcox(ScaleQuad, main="Scale Quadratic", lambda=seq(-0.1,1.2,0.1))
+mtext("Scale Quadratic", 3)
+```
+
+Depending on the simulation, the result might be bit different. But a transformation lower than 1 is called for, and possibly as low as 0 (a log transformation). The Large Shape data seems to want a larger value of lambda.
+
+You should check the residuals for the other models, as we did for the scale quadratic model above. There may not be a perfect transformation.
+
+</details>
+
+# Summary
+
+We now know how to asses the model fit
+
+- $R^2$ show how much variation the model explains
+- Residual plots and Normal Probability Plots can show curvature, outliers, and varying variance
+- Influential Points can be detected using Cook's D. These may not be large outliers!
+- We should check outliers & other odd points - are they typos?
+- We can try to transform the response to get a better model
+
+
+[![Don't overinterpret](https://imgs.xkcd.com/comics/curve_fitting.png){height=55%}](https://xkcd.com/2048/)
+
+

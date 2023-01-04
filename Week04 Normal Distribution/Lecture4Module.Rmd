@@ -1,0 +1,480 @@
+---
+title: 'Week 4: The Normal Distribution'
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Recap
+
+So far we have 
+
+- learned about maximising the likelihood
+- estimated confidence intervals and standard errors
+
+These are the basic tools we will use to fit and understand our models
+
+## More than one datum
+
+So far we have only used one data point. But what if we have more? The standard approach starts by making one additional assumption: that each data point is collected independently of the rest. This would mean that each time data is collected, it doesn't depend on what the last data point was.
+
+If we assume that the data are independent, then from the definition of independence:
+
+$Pr(X_1 \& X_2) = Pr(X_1) Pr(X_2)$
+
+So, because the likelihood is the probability of each data point given the parameters, we can calculate the likelihood for the parameters ($\theta$) given all of the data ($X_i$'s) by multiplying the probabilities:
+
+$$
+Pr(X_1, X_2,...,X_n|\theta) = Pr(X_1|\theta)Pr(X_2|\theta)...Pr(X_n|\theta) = \prod_ {i=1}^{n} Pr(X_i\theta)
+$$
+
+But we usually work on the log-likelihood scale, where we have: 
+
+$$
+l(\theta|X_1, X_2,...,X_n) = \sum_{i=1}^{n} \log(Pr(X_i|\theta))
+$$
+
+So, we just add the log-likelihoods together, which is easier than multiplying, and makes a lot of the maths easier.
+ 
+## Punxsutawney Phil & Groundhog Day
+
+```{r PuxPhil, echo=FALSE, eval=FALSE}
+# The data is in a zip file. Guess what unzip() does
+GD <- read.csv(unzip("../Data/groundhog-day.zip"), stringsAsFactors = FALSE)
+GD <- GD[!grepl("-", GD$Year) & !is.na(GD$February.Average.Temperature),]
+# Calculate average temperature
+GD$Temperature <- (28*GD$February.Average.Temperature..Pennsylvania. + 
+                     31*GD$March.Average.Temperature..Pennsylvania.)/59
+# For Later: Does Phil predict winter?
+GD$Shadow <- GD$Punxsutawney.Phil%in%c("Full Shadow", 
+                                       "Partial Shadow")
+GD$PredictWinter <- c("Spring", "Winter")[1+GD$Shadow]
+
+write.csv(GD, file="../Data/GroundhogDayta.csv")
+```
+
+Every 2nd of February, the town of Punxsutawney in the US has a ritual where they go to Gobbler's Knob, drag a groundhog out of the ground, call it Phil, and ask it if it sees ~~Bill Murray's~~ its shadow. If Punxsutawney Phil sees his shadow, he'll decide to retreat, because there will be another 6 weeks of winter.
+
+The question is whether Punxsutawney Phil is actually any good at predicting the weather. We will answer that by looking at whether he sees his shadow, and the temperature for the following 6 weeks.
+
+```{r ReadPuxPhil, echo=TRUE}
+# read in the functions for this module
+source("../Functions/NormalDistFunctions.R")
+# Read the data
+GDay <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2019v/Week4/GroundhogDayta.csv")
+
+plot(GDay$Year, GDay$Temperature, cex=1, pch=3, 
+     col=c("red", "blue")[1+GDay$Shadow],
+     xlab="Year", ylab = expression(paste("Temperature (",degree,"F)")))
+legend(1930, 41.5, c("Didn't see shadow", "Saw shadow"), fill=c("red", "blue"))
+abline(h=32, col="hotpink")
+
+```
+
+Before getting to the question of whether Phil is any good as a weatherman, we'll look at the distribution of the temperature. Of the `r nrow(GDay)` observations, `r sum(GDay$Temperature>32)` are above freezing. But we want to summarise the data in more detail, partly so we can ask more complicated questions and also so we can develop the theory. We will do this with the normal distribution.
+
+## The Normal Distribution
+
+The normal distribution looks like this:
+
+```{r normal, echo=FALSE}
+x <- seq(-4,4,length=100)
+y <- dnorm(x)
+plot(x,y, type="l")
+```
+
+Or, for those who like equations, like this:
+
+$$
+f(x| \mu, \sigma^2) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(x - \mu)^2}{2\sigma^2} }
+$$
+$x$ is the thing that follows a normal distribution (e.g. temperature). $f(x|\mu, \sigma^2)$ is the density: a higher density means that value of $x$ is more likely^[this is not strictly correct, as $Pr(X=x)=0$ for a continuous density. More strictly a higher density means that an interval around that value is more likely to contain $x$]. We call $f(x|\mu, \sigma^2)$ the **probability density function**, and use it to calculate the probability that $x$ is between two values (e.g. $Pr(-1.96 < x < 1.96| \mu=0, \sigma^2 = 1) = 0.95$ ) The parameters are $\mu$ and $\sigma^2$: the mean and variance (sometikmes we use the standard deviation, $\sigma$, rather than $\sigma^2$, or even $1/\sigma^2$, the precision). 
+
+We can split the function up into bits. The first part is 
+
+$$
+\frac{1}{\sqrt{2 \pi \sigma^2}}
+$$
+
+which does not depend on $x$, so is a constant. It is there because the area under the whole curve has to equal 1. More important is the second part
+
+$$
+e^{-\frac{(x - \mu)^2}{2\sigma^2} }
+$$
+
+If we take the log transformation (so we have the log probability, or later the log likelihood) we see that it is this
+
+$$
+-\frac{(x - \mu)^2}{2\sigma^2}
+$$
+
+So is a quadratic curve, and looks like this:
+
+```{r normallog, echo=FALSE}
+x <- seq(-4,4,length=100)
+y <- dnorm(x)
+plot(x,log(y), type="l")
+```
+
+
+## The Normal Distribution: Exercises
+
+Let's look at the normal distribution, and some R functions we can use to play with it. In particular:
+- `rnorm()` - this simulates from a normal distribution
+- `dnorm()` - this calculates the density of a normal distribution for values `x`. 
+- `pnorm()` - this calculates the cumulative density of a normal distribution for values `x`. This is the probability that a random draw from the distribution would be less than `x`.
+- `qnorm()` - this calculates the values of `x` that would be the `q`th quantile
+
+<span style="color:blue">Simulate 1000 data points from a normal distribution with the same mean and standard deviation as the temperature data, using `rnorm()`.</span>
+
+```{r rnorm, echo=TRUE, eval=F, fig.height=3}
+MeanTemp <- mean(GDay$Temperature)
+sdTemp <- sd(GDay$Temperature)
+sim.data <- rnorm(5, mean = MeanTemp, sd = sdTemp)
+hist(sim.data)
+```
+
+<span style="color:blue">Calculate the density data from the distribution for values using `dnorm()`, but for more than 4 points.
+    - why is the density different from the probability (hint: the normal is continuous)</span>
+    
+    ```{r hidden, eval=T, echo=F, fig.height=3}
+# First, create a sequence of numbers to calculate the density on
+MeanTemp <- mean(GDay$Temperature)
+sdTemp <- sd(GDay$Temperature)
+sim.data <- rnorm(5, mean = MeanTemp, sd = sdTemp)
+At.data <- seq(min(GDay$Temperature), 
+               max(GDay$Temperature), length=4)
+dens.data <- dnorm(At.data, mean = MeanTemp, sd = sdTemp)
+cumul.data <- pnorm(At.data, mean = MeanTemp, sd = sdTemp)
+Quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+quants.data <- qnorm(Quantiles, 
+                     mean = MeanTemp, sd = sdTemp)
+```
+    
+```{r dnorm, eval=F, echo=TRUE, fig.height=3}
+# First, create a sequence of numbers to calculate the density on
+At.data <- seq(min(GDay$Temperature), 
+               max(GDay$Temperature), length=4)
+dens.data <- dnorm(At.data, mean = MeanTemp, sd = sdTemp)
+plot(At.data, dens.data, type="l")
+```
+
+<span style="color:blue">Calculate the cumulative density data from the distribution for values using `pnorm()`.</span>
+
+```{r pnorm, eval=F, echo=TRUE, fig.height=3}
+cumul.data <- pnorm(At.data, mean = MeanTemp, sd = sdTemp)
+plot(At.data, cumul.data, type="l")
+```
+
+<span style="color:blue"> Calculate the 2.5th, 25, 50th, 75th, and 97.5th quantiles from the distribution using `qnorm()`</span>
+```{r qnorm, eval=F, echo=TRUE, fig.height=3}
+Quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+quants.data <- qnorm(Quantiles, 
+                     mean = MeanTemp, sd = sdTemp)
+plot(Quantiles, quants.data, type="l")
+
+```
+
+<span style="color:blue">What is the difference between `pnorm()` and `qnorm()`?</span>
+
+## The Normal Distribution: the log likelihood
+
+If we are modelling our data, we have observations $y_i$, then we assume they were drawn from a normal distribution with mean $\mu$ and variance $\sigma^2$. The likeihood for this data is the probability density function (now as a function of the parameters): the log-likelihood for a single datapoint is 
+
+$$
+l(\mu, \sigma^2|y_1) = -\frac{1}{2} log({2 \pi \sigma^2)  -\frac{(y_1 - \mu)^2}{2\sigma^2} }
+$$
+
+In practice, we can calculate this with `dnorm(..., log=TRUE)`. If we have $n$ data points, the likelihood for them all is 
+
+$$
+\begin{aligned}
+l(\mu, \sigma^2|y_1, y_2, ..., y_n) &= \sum_{i=1}^{n} \left( -\frac{1}{2} \log(2 \pi \sigma^2)  -\frac{(y_1 - \mu)^2}{2\sigma^2} \right) \\
+  &=  -\frac{1}{2} n \log(2 \pi \sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_1 - \mu)^2
+  \end{aligned}
+$$
+And we can  calculate this using  `sum(dnorm(..., log=TRUE))`.
+
+```{r NormSimEst, echo=TRUE, fig.height=3}
+Means <- seq(25, 35, length=500)
+loglhoods <- sapply(Means, CalcNormlogLh, sigma=sdTemp, 
+                 data=GDay$Temperature)
+plot(Means, exp(loglhoods-max(loglhoods)), type="l", 
+     xlab="Temperature", ylab = "log likelihood")
+
+```
+
+This is the likelihood for $\mu$ given a guess for $\sigma^2$. But we want to estimate these parameters, so we need to maximise this likelihood with repsect to them.
+
+## Finding the Estimate: the mean
+
+In practice, $\hat{\mu}$ is more important, because we will be modelling $\mu$ as a function of different effects. First we can calculate the likelihood for different values of $\mu$, using the sample estimate of the standard deviation of the data as the standard deviation of the distribution. 
+
+This code uses `CalcNormlogLh()` to calculate the likelihood. We create a vector of possible values of $\mu$, calculate the likelihood for each of these, and then plot the likeihood against their values.
+
+```{r NormSimPlot, echo=TRUE, fig.height=3}
+Means <- seq(25, 35, length=500)
+# Calcualte the normal likelihood for differnet means
+#  sapply() loops ove rhte vlaues of Means, and applies the CalcNormlogLh() to each one
+loglhoods <- sapply(Means, CalcNormlogLh, sigma=sdTemp, 
+                 data=GDay$Temperature)
+plot(Means, exp(loglhoods-max(loglhoods)), type="l", 
+     xlab="Temperature", ylab = "log likelihood")
+
+```
+
+You may notice that `loglhoods` is the log-likeihood, but we plot the likelihood, so we have to back-transform it, using `exp(loglhoods-max(loglhoods))`. This is the same as `likelihood/(maximum likelihood)`, so we are just scaling the y-axis. if we don't do this, we can get numerical problems: the largest value of the log-likelihood is `r round(max(loglhoods), 2)`, which give a likelihood of `r exp(max(loglhoods))`. 
+
+Given this, we can estimate the maximum likelihood estimate with 
+
+```{r mle, echo=TRUE}
+max(loglhoods)
+Means[loglhoods==max(loglhoods)]
+
+```
+
+In the second line `loglhoods==max(loglhoods)` tests whether each value of `loglhoods` equals the maximum value.
+
+### Deriving the m.l.e for $\mu$
+
+But we can do better than this: we can find the maximum with a bit of maths. We want to maximise the likelihood in the same way we did for $p$ for the binomial distribution by doing this:
+
+- calculate the slope
+- set the slope to 0
+    - we should really check that it is the maximum, not minimum
+- find the parameter where the slope is 0: that is the m.l.e.
+
+Our log-likelihood is
+
+$$
+l(\mu, \sigma^2|y_1, y_2, ..., y_n) =  -\frac{1}{2} nlog({2 \pi \sigma^2)  - \sum_{i=1}^{n} \frac{(y_1 - \mu)^2}{2\sigma^2} }
+$$
+
+We can ignore the $-\frac{1}{2} nlog(2 \pi \sigma^2)$, because it does not involve $\mu$. And we can re-arrange the sum:
+
+$$
+\begin{aligned}
+l(\mu, \sigma^2|y_1, y_2, ..., y_n) &= - \sum_{i=1}^{n} \frac{(y_1 - \mu)^2}{2\sigma^2}  \\
+   &=   - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i^2 - 2y_i \mu + \mu^2) \\
+   &=   - \frac{1}{2\sigma^2} \left( \sum_{i=1}^{n} y_i^2 - 2 \mu \sum_{i=1}^{n}y_i + n \mu^2 \right) \\
+\end{aligned}
+$$
+If we differentiate with respect to $\mu$ and set that slope to zero we get 
+
+$$
+0 = \frac{1}{2\sigma^2} \left( 2 \sum_{i=1}^{n} y_i - 2 n \mu \right)
+$$
+Which we can re-arrange so the MLE is
+
+$$
+\hat{\mu} = \frac{\sum_{i=1}^{n} x_i}{n}
+$$
+
+The sample mean! And it doesn't depend on $\sigma^2$.
+
+## The MLE for $\sigma^2$
+
+This is usually less important. We are generally not interested in the standard deviation, but it is a parameter of the distribution, so it has to be estimated. What we do is differentiate with respect to $\sigma^2$, set to zero, re-arrange, and get
+
+$$
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n (x_i - \hat{\mu})^2
+$$
+
+For details, you can do it yourself or follow the proof at the [StatLect site](https://www.statlect.com/fundamentals-of-statistics/normal-distribution-maximum-likelihood).
+
+The estimate $\hat{\mu}$ is just the sample mean, and $\hat{\sigma}^2$ is the sample variance. These two statistics can be used to summarise the whole distibution. Note that the denominator for the estimate of $\hat{\sigma}^2$ is $n$, not $n-1$. But nobody actually uses this: it assumes the MLE for $\hat{\mu}$ is the true value, but in reality we do not know the true value of $\mu$, so it turns out that using $(n-1)$ is better because it takes into account the uncertainty
+
+
+## Confidence Intervals
+
+We can simulate data and calculate the likelihood for different values of the mean (we will fix the standard deviation for now)
+
+
+We can look at the distribution of $\hat{\mu}$, and (for example) estimate confidence intervals:
+
+```{r SimMu, echo=TRUE, eval=FALSE}
+# Simulate data sets with mean 1, standard deviation 2 and 10 data points
+# For each one calcualte the MLE for the mean
+Sims <- SimNormMeans(mu=1, sigma=2, N=10, nReps = 1e4)
+hist(Sims)
+quantile(Sims, c(0.025, 0.975))
+
+```
+
+<span style="color:blue">Use this to simulate the Punxsutawney temperature data to estimate the mean temperature and its 95% confidence interval. To do this you should:
+
+- <span style="color:blue">estimate the MLEs for $\mu$ and $\sigma^2$</span>
+- <span style="color:blue">Use these and `SimNormMean()` to simulate replicate data (with the same number of data points as in the original data), and estimate the means of each simulated data point</span>
+- <span style="color:blue">from the distribution of estimated means, calculate the 95% confidence interval (using the quantiles of the distribution)
+
+
+
+## The distribution of $\hat{\mu}$
+
+We could use the simuations whenever we want to calculate the confidence intervals, but instead we can rely on some beer-inspired mathematics. It turns out that the distribution of $\hat{\mu}$ is a t-distribution.
+
+So, we can calculate the density, quantiles etc. in the same way we did for the normal distribution:
+
+```{r t, echo=TRUE}
+dt(x=0.5, df=5)
+pt(q=1.5, df=5)
+qt(p=0.7, df=5)
+rt(n=2, df=5)
+
+```
+
+The t-distribution has a parameter, called `df`, which is there 'degrees of freedom', and is rough the amount of information in the distribution.
+
+"But what about the mean and variance?" you're thinking. Well, what we have above is the standard t-distribution. Recall that for the normal distribution we can calculate this:
+
+$$
+z = \frac{x - \mu}{\sigma}
+$$
+
+and $z$ follows a normal distirbution with mean 0 and variance 1. If we do the same transformation and $x$ follows a t distribution, $z$ follows a standard t distribution.
+
+So, to calculate the confidence interval for our mean, we can use the same approach as we use for the normal distribution. For the normal distribution, the interval is the mean plus/minus 1.96 times the standard error. We use 1.96 because that is the 97.5% quantile of the standard normal distribution (and -1.96 is the 2.5% quantile). So, we can just replace $\pm 1.96$ with the relevant quantiles. We call the q^th quantile $t_{\nu}(q)$, where $\nu$ is the degrees of freedom. For the mean of the normal distribution this is $n-1$, where $n$ is the sample size:
+
+$(\hat{\mu} + t_{n-1}(0.025)\frac{\hat{\sigma}}{\sqrt{n}}, \hat{\mu} + t_{n-1}(0.975)\frac{\hat{\sigma}}{\sqrt{n}})$
+
+
+
+```{r tCI, echo=TRUE, eval=F}
+# Use this function to calculate the confidence inteval for the mean.
+#  This is a trivial example, doing it for the numbers 1 to 5
+CalcNormalMeanCI(1:5)
+
+```
+
+If we have enough data, this distribution look like a normal distribution
+
+<span style="color:blue">Calculate the 95% confidence interval for the mean of the Patuxwarney temperature data.</span>
+
+## How the amount of data affects confidence intervals
+
+Those of you who are comfortable with mathematics might be able to work out from the equations how the confidence intervals are affected by the sample size (hint: look at the the standard error). For the rest of you...
+
+<span style="color:blue">Simulate data with the same mean & standard deviation as the Groundhog Day data, but with different sample sizes: 10, 100 and 100 data points. For each of these calculate the confidence intervals. How do they change as the sample size increases?
+
+<span style="color:blue">(Optional) If you want to some more advanced coding, calculate the standard errors for different sample sizes, and plot the standard error against sample size.</span>
+
+
+## Predicting the End of Winter
+
+So far we have been learning about statistical inference and statisical programming. Now we can start to use this in modelling. We will start with a simple model (a t-test), but put it in the context of maximum likelihood.
+
+The legend is that if Punxsutawney Phil sees his shadow, there will be 6 more weeks of winter. So if he is good at predicting winter, we should see lower average temperatures in the 2 months after the prediction.
+
+## The Modelling
+
+<span style="color:blue">What would we expect if Punxsutawney Phil can predict winter, and if he cannot? Draw some pictures - you don't need to be too precise.</span>
+
+```{r Expectations, echo=FALSE}
+YLab <- c("No\nShadow", "Shadow")
+
+par(mfrow=c(1,2), mar=c(2.5,1,3,1), oma=c(2,3,0,0))
+plot(GDay$Temperature, jitter(1*GDay$Shadow), yaxt="n", ann=FALSE, type="n")
+text(mean(GDay$Temperature), 0.5, "?", col=2, cex=20)
+axis(2, YLab, at=c(0,1), las=1)
+mtext("Phil can't predict weather", 3)
+
+plot(GDay$Temperature - 10*GDay$Shadow+5, jitter(1*GDay$Shadow), yaxt="n", ann=FALSE, type="n") 
+text(mean(GDay$Temperature), 0.5, "?", col=2, cex=20)
+mtext("Phil can predict weather", 3)
+
+mtext("Mean Temperature,  \u00b0 F", 1, outer=TRUE)
+
+```
+
+We have to build a model where there are different mean temparatures when he does see his shadow, and when he does not.
+
+We can do this in a few ways, but here we will  assume $y_i \sim N(\mu_i, \sigma^2)$ (i.e. the data follow a normal distribution with the same variance). We also will define a covariate $X_i$: $X_i=1$ if Phil saw his shadow (and hence predicted winter),$X_i=0$ if he did not. 
+
+The core of the modelling is $\mu_i$. We are asking whether it depends on $X_i$. We can write the model like this:
+
+$$
+\mu_i =
+  \begin{cases}
+    \beta_0       & \quad \text{if } X_i =0 \\
+    \beta_1       & \quad \text{if } X_i =1  
+  \end{cases}
+$$
+```{r FirstWay, echo=FALSE, fig.height=5.5}
+Means <- tapply(GDay$Temperature + 10*GDay$Shadow+5, list(GDay$Shadow), mean)
+par(mfrow=c(1,1), mar=c(4.1,4,1,1), oma=c(0,0,0,0))
+plot(GDay$Temperature + 10*GDay$Shadow+5, jitter(1*GDay$Shadow), yaxt="n", ann=FALSE, 
+     col="grey50") 
+points(Means, c(0,1), col=2, pch=3, cex=4)
+text(Means[1], 0.2, expression(beta[0]), cex=3, adj=-0.2)
+text(Means[2], 0.8, expression(beta[1]), cex=3, adj=-0.2)
+
+axis(2, YLab, at=c(0,1), las=1)
+
+```
+
+If the legend is correct, then $\mu_i$ is smaller when $X_i=1$. Thus, we are interested in the difference between $\beta_0$ and $\beta_1$. So it makes more sense to focus on that:
+
+$$
+\mu_i =
+  \begin{cases}
+    \alpha       & \quad \text{if } X_i =0 \\
+    \alpha + \beta       & \quad \text{if } X_i =1  
+  \end{cases}
+$$
+The difference is $\beta$, and this is what we are interested in, in particular whether it is 0.
+
+```{r SecondWay, echo=FALSE, fig.height=5.5}
+Means <- tapply(GDay$Temperature + 10*GDay$Shadow+5, list(GDay$Shadow), mean)
+par(mfrow=c(1,1), mar=c(4.1,4,1,1), oma=c(0,0,0,0))
+plot(GDay$Temperature + 10*GDay$Shadow+5, jitter(1*GDay$Shadow), yaxt="n", ann=FALSE, 
+     col="grey50") 
+points(Means, c(0,1), col=2, pch=3, cex=4)
+text(Means[1], 0.2, expression(alpha), cex=3, adj=-0.2)
+text(Means[2], 0.8, expression(alpha + beta), cex=3, adj=-0.2)
+
+axis(2, YLab, at=c(0,1), las=1)
+
+```
+
+
+We can also write the model as $\mu_i = \alpha + \beta X_i$. The difference is $\beta$ (because $X_i$ can only be 0 or 1). Although this seems a bit indirect, it is the easiest to extend to more complex models, as we will see later in teh course.
+
+## Calculating the Likelihood
+
+The log-likelihood is not too difficult to write down
+
+$$
+\log L(\mu_i, \sigma| x_1, ..., x_n) = C - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (x_i - \mu_i)^2
+$$
+where $mu_i$ is described above.  We now have 3 parameters (two for the means, and the standard deviation). We can look at the likelihood for the difference, using the MLEs for the other parameters.
+
+```{r Ttest, echo=TRUE, eval = F}
+# Use this function to simulate the MLE for the difference between 2 groups.
+#  XX is an indicator (0 or 1) for which group the data is in
+#  YY is the data (e.g. temperature)
+# nSims should be set to be much larger than 5
+SimttestLhood(XX=GDay$Shadow, YY=GDay$Temperature, nSims=5)
+
+```
+
+<span style="color:blue">Run more than 5 simulations and look at the likeihood for the difference. What is the mean and the 95% confidence interval?</span>
+
+## t-tests In Practice
+
+In practice, we don't need to simulate the likeihood as a student has already done the maths for us. It turns out that the difference also follows a t-distribution. And R has functions to do the calculations for us:
+
+```{r ttestfn, eval=FALSE, echo=TRUE}
+t.test(GDay$Temperature[GDay$Shadow], GDay$Temperature[!GDay$Shadow], var.equal = TRUE)
+```
+There is much more about this in Chapter 3 of _A New Stats with R_.
+
+- <span style="color:blue">what is the estimate of the difference in temperature between when Phil sees his shadow and when he does not?</span>
+- <span style="color:blue">what is the confidence interval?</span>
+- <span style="color:blue">how sure can you be about the direction of any difference? And how large could a difference be?</span>
+- <span style="color:blue">do you think Punxsutawney Phil can predict whether there will be another 6 weeks of winter?</span>
+
+

@@ -1,0 +1,129 @@
+---
+title: "Confirmatory model selection"
+author: "Emily Simmonds"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+* This html will remind you of the code needed to do confirmatory model selection
+* It will have hints and suggests for the steps you need to do confirmatory model selection
+* Data will be named YourData and models YourModel - **you should change these
+to the name you decide to give your data and models**
+
+**The variable names are also different here as examples are on 
+different data to what you have.
+Results will also be different**
+
+# Help and hints (and pictures because it was a bit boring)
+
+```{r Start, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE}
+library(SMPracticals)
+darwin
+
+YourModel1 <- lm(height ~ 1, data = darwin)
+YourModel2 <- lm(height ~ type, data = darwin)
+```
+
+Below are a list of click down sections, each covers a different part of the
+analysis. Use whichever you need. Also try to have a go on your own when you
+can, you can always check after if you got it right. 
+
+In confirmatory model selection you want to test a specific hypothesis.
+
+<details><summary><span style="color:purple">Useful R code</span></summary>
+
+```{r ANOVA, warning = FALSE, error = FALSE, evaluate = FALSE, echo = TRUE}
+anova(YourModel1, YourModel2) 
+```
+
+**Hint: check the degrees of freedom to see if you put them in the right order. 
+The degrees of freedom
+should make sense i.e. be positive**
+
+</details>
+
+![](Dino3.jpg)
+
+<details><summary><span style="color:purple">Hints on which steps to include</span></summary>
+
+
+Therefore, you need to think about a null and alternative hypothesis and a 
+way to compare them statistically. (This part involves a few steps).
+
+Then, as with every analysis, you will want to look at the results and make 
+a conclusion. Hint - it includes rejecting or not the null hypothesis. 
+
+<details><summary>I really don't know which steps!! (or I just want to be sure)</summary>
+
+The first step in confirmatory model selection is to work out what your
+H0 (null hypothesis) and H1 (alternative hypothesis) are. 
+
+Once you have worked this out you should run a linear model for each of these.
+**You should know the code to do this by now.** Make sure to save them as objects
+e.g. `YourModelH0 <- lm()`, because you will use them in other functions later.
+
+Then find a way to compare the results statistically. You can do this using
+the `anova()` function to compare them.
+
+Now you need to interpret the output of the `anova()`. 
+Below is an example from a **different** dataset, in the next section.
+
+Finally, you would need to interpret the output of the 'chosen' model. 
+
+
+</details>
+
+</details>
+
+![](Dino2.jpg)
+
+<details><summary><span style="color:purple">How to read outputs of confirmatory model selection</span></summary>
+
+**The degrees of freedom HERE begins as: n (number of data points). 
+But is usually n-1**
+
+The columns are: 
+
+* Res.DF - residual degrees of freedom, those left after number of parameters 
+estimated has been removed 
+(here, we have estimated an intercept in both (n-1), 
+and a slope too in one of our models (n-2))
+* RSS - residual sum of squares. Sum of squared distances between estimate 
+and data points. Estimate
+can be a mean or a regression line depending on the model.
+* DF - difference in degrees of freedom between the two models.
+* Sum of Sq - the RSS of the H0 model - RSS of the H1 model.
+* F - F statistic. Calculated as (Sum of Sq/df)/(RSS of H1/DF H1). 
+Here that is (51.352/1)/(242.08/28) = 5.9395
+* Pr(>F) - the probability of getting the F value you have or higher IF
+ H0 were true. Here it is 0.02141, which is a 2.141 % chance that we would see
+ the F statistic we estimated or higher IF H0 were true. 
+
+```{r AN2, warning = FALSE, error = FALSE, include = TRUE, echo = TRUE}
+anova(YourModel1, YourModel2) 
+```
+
+To make this an interpretation, the main thing we need is the Pr(>F) value,
+called the p-value. You might have come across this in another course. The
+typical threshold for this is 0.05, anything less than this is considered to
+be unlikely if H0 were true. (5% chance of seeing the result or higher). But
+this is a bit arbitrary. You could choose 0.01 instead if you want to be 
+really sure, or 0.1 if you don't need much confidence. The p-value does not
+tell you anything about the strength of any relationships though, for that
+you need the coefficients of the chosen `lm()` and their confidence intervals.
+
+To draw a conclusion, you want to focus on whether you reject or not H0. 
+
+**Never accept H0 or H1, just reject H0 or don't.** The p-value does not tell
+you how likely either H0 or H1 are to be true. 
+
+</details>
+
+![](Dino.jpg)
+
+

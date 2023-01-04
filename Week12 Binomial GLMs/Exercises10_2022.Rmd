@@ -1,0 +1,105 @@
+---
+title: 'Exercises Week 12: Binomial Models'
+output: html_document
+---
+
+
+## Instructions:
+
+*Hints and reminders are italic*
+
+<span style="color:blue"> Questions appear in blue. </span>
+ 
+<span style="color:red"> Answers are in red or in R code </span>
+
+### Remember to read ALL questions carefully and answer ALL parts
+
+**Exercise to be handed in by 22nd April, 2022**
+
+
+-----
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+-----
+
+![Sparrow](../Week11 Generalised linear models/Sparrow.jpg)
+
+* Photo credit Wikipedia
+
+
+# More House Sparrows in North America
+
+The North American Breeding Bird Survey is conducted across North America to estimate the abundances of birds. Bird watchers go to sites across North America and count the number of birds they observe for a set time. This data can be used to ask a wide range of questions. Here we can look at the effects of climate on abundance of the house sparrow.
+
+```{r ReadBBSSparrowData, eval=FALSE, echo=FALSE}
+
+Data <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week12/HouseSparrow.csv")
+names(Data) <- gsub("stoptotal", "Count", names(Data))
+Data$Present <- Data$Count>1
+Data$prec.mean.sc <- scale(Data$prec.mean)
+Data$temp.mean.sc <- scale(Data$temp.mean)
+attr(Data$prec.mean.sc, "scaled:center") <- NULL
+attr(Data$prec.mean.sc, "scaled:scale") <- NULL
+attr(Data$temp.mean.sc, "scaled:center") <- NULL
+attr(Data$temp.mean.sc, "scaled:scale") <- NULL
+
+write.csv(Data[,c("Latitude", "Longitude", "prec.mean", "temp.mean", 
+                  "prec.mean.sc", "temp.mean.sc", "Present")],
+          file="../Data/HouseSparrowPresence.csv", row.names = FALSE)
+```
+
+The data set consists of 1714 observations at different sites across North America. For each site the presence of the house sparrow was recorded. Mean temperature (temp.mean) and total precipitation (perc.mean) were extracted from a standard database (CRU). The mean temperaure and precipitation are both scaled, so that a temperature value of 0.3 would mean that the temperature is 0.3 standard deviations above the mean in North-America.
+
+```{r BBSSparrowData}
+Data <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week12/HouseSparrowPresence.csv")
+
+plot(Data$Longitude, Data$Latitude, col=1+Data$Present, pch=18)
+legend(-125, 31, c("Absent", "Present"), col=1:2, pch=18)
+
+```
+
+First, fit a generalised linear model for `Present` assuming a binomial response, with mean temperature and total precipitation as explanatory variables. Decide which link function and model to use.
+
+```{r FitBBSDaa1, echo=FALSE}
+form1 <- formula(Present ~ prec.mean.sc + temp.mean.sc)
+model1.logit <- glm(form1, data=Data, family = binomial("logit"))
+model1.cloglog <- glm(form1, data=Data, family = binomial("cloglog"))
+
+form2 <- formula(Present ~ prec.mean.sc + temp.mean.sc + I(prec.mean.sc^2) + I(temp.mean.sc^2))
+model2.logit <- glm(form2, data=Data, family = binomial("logit"))
+model2.cloglog <- glm(form2, data=Data, family = binomial("cloglog"))
+
+```
+
+<span style="color:blue">1. Which link function do you want to use? Justify your choice.</span>
+
+<span style="color:blue">2. Write down the assumptions of this model and an equation for the expected number of sparrows at a site.</span>
+
+<span style="color:blue">3. What is the estimated coefficient for the effect of mean temperature (`prec.mean.sc`)? And what is the 95% confidence interval for this coefficient? Does this suggest an effect of temperature?</span>
+
+```{r Coefs1, eval=FALSE, echo=FALSE}
+coef(model1.logit)["prec.mean.sc"]
+confint(model1.logit)["prec.mean.sc",]
+```
+<span style="color:blue">4. What is the predicted probability of sparrows being found in the following sites:</span>
+
+  <span style="color:blue">1. at a site near Seattle where the mean temperature is 0.3 standard deviations below the mean, and total precipitation is 0.3 standard deviations above the mean?</span>
+    <span style="color:blue">2. at a site just west of Seattle, in a temperate rainforest, where the mean temperature is 0.4 standard deviations below the average, but the total precipitation is 5.8 standard deviations above the average.</span>
+
+```{r Pred1, eval=FALSE, echo=FALSE}
+predData <- data.frame(prec.mean.sc=c(-0.3, -0.4), temp.mean.sc=c(0.3, 5.8))
+predict(model1.cloglog, newdata=predData)
+
+```
+From ecological theory, we might expect that there is an optimum temperature and precipitation for the sparrows, and abundance declines when the conditions are further away from the optimum. We can model this using a quadratic curve.
+
+Fit a model with quadratic effects for temperature and precipitation.
+
+<span style="color:blue">5. Does the ecological theory seem reasonable for this data? What parameter value(s) tell you about this?</span>
+
+<span style="color:blue">6.  What is the predicted <strike>number of sparrows</strike> probability of sparrows being found for the two sites mentioned above?</span>
+(sorry: you can calculate the expected numbers because of the way the link function works, but the probabilities are more sensible in this module. If you have already answered this, keep your old answer and tell us what you did)
+
+<span style="color:blue">7. Comment briefly on the differences in the predictions from the linear and quadratic model.</span>

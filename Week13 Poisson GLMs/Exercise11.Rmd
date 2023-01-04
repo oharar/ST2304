@@ -1,0 +1,395 @@
+---
+title: "Exercise 11: Investigating fraud"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Needs to be completed and handed in by 30th April 23:59, 2022**
+
+# Instructions
+
+This document contains information, questions, R code, and plots.
+
+**Hints and reminders are bold**
+
+<span style="color:blue"> Questions appear in blue. </span>
+
+
+**In this exercise, the aim is to practice all of the modelling tools you
+learnt in this course. It is indicated how these questions might relate to
+an exam and how long an answer is required in each case. You can use the 
+solution to grade your own work and then direct your revision.**
+
+You can decide how much help you want. For each question there is a general hint
+and an R hint (if applicable). 
+
+In the exam you will not get hints. So, now is a time to practice without!
+
+
+### R this week:
+ 
+Things to remember:
+
+* `glm(Y ~ X1+X2, family=YOURFAMILY(link=YOURLINK), data=Data)`
+* `anova(NullModel, AltModel, test = "LRT")` for confirmatory model selection
+* `AIC(Model1), BIC(Model1)` for exploratory model selection
+* `plot(HastingsModel, which=4)` # Cook's distance
+* `plot(fitted,residuals)`  # residuals vs fitted
+* `qqnorm(residuals)` # normal QQ plot
+
+New this week:
+
+* `dispersion <- deviance(Model)/df.residual(Model)` to check for overdispersion
+* `summary(Model, dispersion = dispersion)` to correct for overdispersion
+* `MASS:glm.nd(Y~X)` to run a negative binomial GLM
+
+-----
+
+# The challenge: Investigating fraud in the bird world.
+
+Back in 1962 some British birders (people who spend a lot of time looking at rare birds) 
+suspected that a lot of observations from around [Hastings](https://en.wikipedia.org/wiki/Hastings) 
+from betwen 1890 and 1930 were frauds.
+John Nelder (co-inventor of GLMs) took a look at the data, 
+and compared Hastings with two nearby areas.
+
+This 'scandal' even has it's own wikipedia page. The link is hidden; 
+try to solve the mystery yourselves before looking
+at the answer.
+
+<details><summary>Wikipedia</summary>
+<p>
+https://en.wikipedia.org/wiki/Hastings_Rarities
+</details>
+
+<span style="color:blue"> Your job is to find out whether there were more 
+rare birds seen in Hastings
+than in surrounding areas before 1925 compared to after 1925? </span>
+
+-----
+
+## The data
+
+You have data on:
+
+* Year (1895 to 1954)
+* Era (pre-1925 and after-1925)
+* Area (Hastings, Sussex, Kent) These are three regions in the UK.
+* Count: number of records (number of reports of a rare species: could be the same species at different times)
+
+We are only looking at the rarest species, nationally categorised as "Very Rare". 
+We have numbers observed
+in nearby areas and the focus area (Hastings) from two time periods. 
+**The 'pre' time period is when we suspect 
+fraud might have occurred, the 'post' time period is after.**
+
+Data can be found at:
+https://www.math.ntnu.no/emner/ST2304/2019v/Week13/HastingsData.csv it is a .csv
+file with column headers.
+
+**Remember to add stringsAsFactors = TRUE**
+
+```{r ReadHastings, warning = FALSE, error = FALSE, include = FALSE, echo = TRUE}
+HastingsData <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week13/HastingsData.csv", 
+                         header=TRUE, stringsAsFactors = TRUE)
+head(HastingsData)
+```
+
+-----
+
+## Part A: Choosing an appropriate model
+
+In this section, the aim is to practice explaining and justifying different modelling concepts.
+
+Before you begin any analyses, you should to think about what steps you will need to conduct 
+in order to reach a conclusion. This relates to the modelling process.
+
+<span style="color:blue"> A1. What steps would you want to take to model the 
+Hastings data? (at least 4 steps) (4 marks) </span>
+
+<details><summary>General hint</summary>
+
+Think back to steps you've taken in previous analyses 
+or look at Section G of last week's model for some prompts. 
+
+</details>
+
+<span style="color:blue"> A2. What are the response and
+explanatory variable(s) and what data type are they, be specific? (4 marks) </span>
+
+<details><summary>General hint</summary>
+
+Remember we have been introduced to several different data types. The 
+main distinction is categorical/continuous. But continuous can be 
+discrete or fully continuous. 
+
+</details>
+
+
+<span style="color:blue"> A3. What model would you use for this data and why? Include
+which distribution you would choose for the random part and if you need a link function 
+(say which if you do). (3 marks) </span>
+
+<details><summary>General hint</summary>
+
+Think about all of the models we have covered in the course: distributions,
+linear models, T-tests, generalised linear models. Which works best here? 
+
+Then think about what distribution it is using for error.  
+
+</details>
+
+-----
+
+## Part B: Running the model
+
+<span style="color:blue"> B1. How would you fit the model from A3 in R, 
+write one line of code. (3 marks) </span>
+
+<details><summary>General hint: if you are not sure about the model</summary>
+
+If you were not sure you got A3 correct: the key thing is that the
+response variable is count data. This will not be normally distributed in terms of 
+error, so cannot be modelled with a linear model. We will need a GLM. A 
+Poisson GLM with a log link is the appropriate chose for count data. 
+
+</details>
+ 
+<details><summary>R hint</summary>
+
+The code you need to edit slightly is in the R section of this document.
+
+</details>
+```{r GLM1, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE}
+HastingsModel <- glm(Count ~ Area*Era, family="poisson"(link=log), data=HastingsData)
+```
+
+<span style="color:blue"> B2. Run the model in R (this would not be in the exam but it is 
+helpful here). </span>
+
+```{r Params, warning = FALSE, error = FALSE, include = FALSE, echo = TRUE}
+coef(HastingsModel)
+confint(HastingsModel)
+```
+
+-----
+
+## Part C: Model selection
+
+<span style="color:blue"> C1. How can you test the hypothesis: 'there is an interaction 
+between Era and Area' i.e.
+Is the effect of area different before and after 1925? Include the name of the method
+you would use and say why you picked that method. (3 marks) </span> 
+
+<details><summary>General hint</summary>
+
+The hypothesis mentioned above is asking if there is an interaction. This
+is the same as asking which variables to include in a model. We have a
+specific idea of which variables we think are important, we are not 
+testing lots of different ones. We need to find if including the interaction
+is needed and select the model that balances explanation and complexity.
+
+</details>
+ 
+<details><summary>R hint</summary>
+
+The code you need to edit slightly is in the R section of this document.
+You won't need all the code listed, so pick the right part!
+It should take 2 lines.
+
+</details>
+
+<span style="color:blue"> C2. Run the method you chose for C1. 
+What is your conclusion regarding the hypothesis? (again, in an exam you 
+wouldn't run yourself in R) </span>
+
+<details><summary>General hint</summary>
+
+Make sure to include support for your conclusion. Which part 
+of the output did you use to make the choice?
+
+</details>
+
+
+```{r ModelSelec, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE}
+
+NullModel <- glm(Count ~ Area+Era, family="poisson"(link=log), data=HastingsData)
+anova(NullModel, HastingsModel, test = "LRT")
+```
+
+
+-----
+
+## Part D: Model checking
+
+<span style="color:blue"> D1. What are the assumptions of this model? 
+(I count 6) (so 6 marks)</span>
+
+<details><summary>General hint</summary>
+
+These were listed in [the GLM module](https://www.math.ntnu.no/emner/ST2304/2021v/Week12/GLM_module11_2021.html) 
+but can also be found on google. 
+There are several different ways to write them. But I am looking for approx. 6. 
+
+</details>
+
+<span style="color:blue"> D2. How can we test these assumptions? 
+(I expect 4 checks) (again 4 marks) </span>
+
+<details><summary>General hint</summary>
+
+Just list the different methods here with the assumptions they test. 
+You run them in the next part.
+
+They are not all plots.
+
+</details>
+
+<span style="color:blue"> D3. Run the checks in R for your preferred
+GLM model. This should be decided by the outcome of C2 (again, wouldn't need to in an 
+exam) </span>
+
+<details><summary>R hint</summary>
+
+All the necessary code is at the top of this document.
+
+</details>
+
+
+```{r PLotResid, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE}
+# We can test lack of outliers with Cook's distance plot
+plot(HastingsModel, which=4)
+
+# We can test correct distribution and link from our knowledge of data
+# We can also look at whether the deviance residuals have equal variance and seem normal
+# use residuals vs fitted
+# this also checks linearity
+residuals <- residuals(HastingsModel)
+fitted <- fitted(HastingsModel)
+plot(fitted,residuals)
+
+# and normal QQ
+qqnorm(residuals)
+qqline(residuals)
+
+# We can test variance with overdispersion and deviance ratio
+deviance(HastingsModel)/df.residual(HastingsModel)
+```
+
+<span style="color:blue"> D4. How good is the fit of the model based on your
+checks? (5 marks) </span>
+
+<details><summary>General hint</summary>
+
+Go through each check and determine if the assumption is met.
+
+</details>
+
+
+<span style="color:blue"> D5. Would you want to improve it? If so, how? (2 marks)</span>
+
+<details><summary>General hint</summary>
+
+Think about which assumption wasn't met. How do you fix it? 
+
+</details>
+
+
+
+<span style="color:blue"> D6. Try an improvement. (would not be in exam) </span>
+
+<details><summary>R hint</summary>
+
+The code for possible corrections is also included at the start of this 
+document. 
+
+</details>
+
+```{r NBmodel, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE}
+HastingsModelNB <- MASS::glm.nb(Count ~ Area*Era, data = HastingsData)
+summary(HastingsModelNB)
+
+# correct likelihood
+dispersion <- deviance(HastingsModel)/df.residual(HastingsModel)
+summary(HastingsModel, dispersion = dispersion)
+```
+
+
+-----
+
+## Part E: Conclusions
+
+<span style="color:blue"> E1. Interpret the output (coefficient values) 
+for your final model (the one you decided on in C2 and used in D). (14 marks) </span>
+
+<details><summary>General hint</summary>
+
+Focus on the size of effects and whether they have statistical support, i.e.
+when we include uncertainty are we still clear about the direction? and
+remember to include the correct uncertainty numbers in your answer. 
+
+Deciding what this means for bird fraud is the next part.
+
+</details>
+
+
+```{r ModelSumm, warning = FALSE, error = FALSE, include = FALSE, echo = FALSE}
+coef(HastingsModel)
+
+# Results - corrected the likelihood
+summary(HastingsModel, dispersion = dispersion)
+
+# Results - negative binomial glm
+summary(HastingsModelNB)
+```
+
+
+<span style="color:blue"> E2. Do you think there was fraud 
+going on in Hastings pre-1925? Explain your answer (5 marks) </span>
+
+We have plotted the data to help with this too. You can use this as well as the 
+other information to support your conclusion. 
+
+<details><summary>General hint</summary>
+
+Now use the interpretation you had before to draw a conclusion.
+
+</details>
+
+```{r PlotResults, warning = FALSE, error = FALSE, include = TRUE, echo = FALSE}
+# Might want to plot
+# colour code by Area
+HastingsData$Colour <- c("red2", "blue", "orange")[as.numeric(HastingsData$Area)]
+
+plot(HastingsData$Year, 
+     HastingsData$Count, type="n", xlab="Year", ylab="Frequency")
+# put a rectangle below 1925
+rect(1850, -5, 1925, 59, col="grey90", border=NA)
+# plot counts colour coded by area
+points(HastingsData$Year, 
+       HastingsData$Count, col = HastingsData$Colour, pch=18, cex=1.5)
+
+# add legend to show different colours
+legend(x=1935, y=20, levels(HastingsData$Area), 
+       col=c("red2", "blue", "orange"), 
+       pch=18, cex=1)
+```
+
+
+-----
+
+## Part F: Reflection
+
+<span style="color:blue"> F1. Think about how this went. Were you still using most
+of the hints? What were you still unsure of? </span>
+
+<span style="color:blue"> F2. Are there some areas you want to 
+prioritise for revision? </span>
+
+<span style="color:blue"> F3. Is there anything you are very proud of from
+your group? </span>
+
+<span style="color:blue"> F4. Anything specific for your final feedback? </span>

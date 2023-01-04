@@ -1,0 +1,178 @@
+---
+title: 'Exercises Week 11: GLMs'
+output: html_document
+---
+
+
+## Instructions:
+ 
+*Hints and reminders are italic*
+
+<span style="color:blue"> Questions appear in blue. </span>
+ 
+**Needs to be completed and handed in by 8th April, 2022**
+
+### Remember to read ALL questions carefully and answer ALL parts
+
+-----
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Part 1: GLMs in Theory
+
+<span style="color:blue">0. Why do we use GLMs? </span>
+
+This is the log-likelihood for a binomial distribution (from Week 2):
+
+$$
+log(Pr(n = r | N, p)) = \log \left( \frac{N !}{r! (N-r)!} \right) + r \log{p} + (N-r) \log(1-p)
+$$
+
+We want to model $p$, but is it a GLM? In other words, does the likelihood have this form?
+
+$$
+l(\theta | y) = \frac{y \theta -b(\theta)}{a(\phi)} + c(y, \phi)
+$$
+
+It's not obvious, is it? But we can re-arrange things:
+
+$$
+\begin{aligned}
+l(p | r, N) &= \log \left( \begin{array}{c} N \\ r  \end{array} \right) + 
+r \left( \log{p} - \log{(1-p)} \right)  + N \log{(1-p)} \\
+            &= \log \left( \begin{array}{c} N \\ r  \end{array} \right) + 
+            r \log \left(\frac{p}{1-p} \right)  + N \log{(1-p)} \\
+            &= \log \left( \begin{array}{c} N \\ r  \end{array} \right) + 
+            \frac{ \frac{r}{N} \log \left(\frac{p}{1-p} \right)  + \log{(1-p)}}{1/N}
+\end{aligned}
+$$
+This is makes things a bit easier to pull apart. 
+
+<span style="color:blue"> 1a. Have a go at identifying $y$, $\theta$, $b(\theta)$, $a(\phi)$, $c(y, \phi)$.</span>
+
+Remember, $y$ is the data, and $\theta$ is the linear predictor. Also, $\phi$ is the dispersion parameter, but here it is a constant.
+
+Then: <details><summary>CLICK HERE</summary>
+<p>
+
+$$
+\begin{aligned}
+y &= \frac{r}{N} \\
+\theta &= \log \left(\frac{p}{1-p} \right) \\
+b(\theta) &= \log (1-p) \\ 
+a(\phi) &= {1/N} \\
+c(y, \phi) &= \log \left( \begin{array}{c} N \\ r  \end{array} \right)
+\end{aligned}
+$$
+
+</details>
+
+<span style="color:blue">1b. What is the link function in this model? *Look at the Poisson example in the lecture to see where you find it* </span>
+
+-----
+
+# Part 2: Bumpus' Sparrows
+
+![Sparrow](Sparrow.jpg)
+* Photo credit Wikipedia
+
+In 1898 Bumpus (or, probably,  one of his technicians) collected some sparrows that had been blown out of their trees during a snow storm. He wanted his team (you) to look at which sparrows survived. <span style="color:blue"> It is your job to take the data and try to do this! </span>
+
+The data can be found at:
+https://www.math.ntnu.no/emner/ST2304/2019v/Week11/BumpusSparrows.csv 
+
+There are many variables in this dataset. Today, we want to focus on just a few - **Status** (whether they are alive or dead) and **Total length** (total length of sparrow in mm).
+
+
+```{r WriteBumpusData, echo=FALSE, eval=FALSE}
+# This just does some slight re-formatting
+Bumpus <- read.csv("../Data/31396_Bumpus_English_Sparrow_Data.csv")
+names(Bumpus) <- gsub("\\.+[[:alpha:]]*$", "", names(Bumpus))
+write.csv(Bumpus, file="../Data/BumpusData.csv", row.names = FALSE)
+```
+
+
+and a scan of the paper is here:
+
+https://biodiversitylibrary.org/page/5071528
+
+Below your team wants to take some summaries of the different variables. You use the function tapply() which creates a summary (defined in the third argument) of the first argument, split by the second argument. e.g. to get the mean height per year you could do tapply(height, year, mean).
+
+
+```{r GetBumpusData, echo=TRUE}
+Bumpus <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week11/BumpusSparrows.csv")
+Bumpus$Survived <- as.numeric(Bumpus$Status=="Alive")
+
+# Calculate the mean survival for each size
+MeanSurv <- tapply(Bumpus$Survived, list(Bumpus$Total.Length), mean)
+# Count the number who survived & died for each size
+TotSurv <- tapply(Bumpus$Survived, list(Bumpus$Total.Length), sum)
+TotDied <- tapply(1-Bumpus$Survived, list(Bumpus$Total.Length), sum)
+
+```
+
+The calculations for the mean survival and numbers who survived/died for each size are going to be used to plot the data.
+
+
+```{r PlotData, echo=TRUE}
+plot(jitter(Bumpus$Total.Length), jitter(Bumpus$Survived, factor=0.4), col="grey70",
+     xlab="Total Length", ylab="Proportion Survived")
+# add the empirical proportion who survived
+lines(as.numeric(names(MeanSurv)), MeanSurv, col="darkblue")
+# add the counts of the numbers who survived and died
+text(as.numeric(names(TotSurv)), 1, TotSurv)
+text(as.numeric(names(TotDied)), 0, TotDied)
+
+```
+
+<span style="color:blue">2. Use the plot to describe the main features of the relationship between total length and survival. i.e. look at the plot and describe the patterns you can see, relate these patterns back to total length and survival </span>
+
+Now your team decides to fit a model (lm) with Total Length and Total Length squared as covariates, and survival as a response (i.e. `lm(Survived ~Total.Length + I(Total.Length^2), data=Bumpus)`). Previous work has shown that the quadratic term improves the model fit, which is why we do it here.
+
+<span style="color:blue">3. How well does the model fit the data? How much of the variance it does it explain, and how do the residuals look? </span>
+
+<span style="color:blue">4. Explain why the plot of the residuals against the fitted values (or against total length) looks like it does? </span>
+
+```{r BadModel, echo=FALSE, eval=TRUE}
+mod.lm <- lm(Survived ~Total.Length + I(Total.Length^2), data=Bumpus)
+
+```
+
+Based on the results of the linear model, your team now decides to fit a GLM assuming a binomial distribution and a logit link:
+
+```{r FitGLM, echo=TRUE}
+mod.glm <- glm(Survived ~ Total.Length + I(Total.Length^2), data=Bumpus, 
+               family = binomial(link="logit"))
+```
+
+We can't plot the fitted line with `abline()`, so we need to predict the proportion for each size. Here is some code: you should plot it yourself.
+
+```{r PlotGLM, echo=TRUE, eval=FALSE}
+# create data to predict for: this goes a bit beyond the data, to make things clearer
+# create new vector of total length from 5 lower than min to 5 more than max
+Total.Length.pred <- data.frame(Total.Length=(min(Bumpus$Total.Length)-5):(max(Bumpus$Total.Length)+5))
+# predict survival probability based on your glm model
+Total.Length.pred$PredSurv <- predict(mod.glm, newdata = Total.Length.pred, type="response")
+# also predict based on the lm
+Total.Length.pred$PredSurv.lm <- predict(mod.lm, newdata = Total.Length.pred, type="response")
+
+# plot the data
+plot(jitter(Bumpus$Total.Length), jitter(Bumpus$Survived, factor=0.4), col="grey70",
+     xlab="Total Length", ylab="Proportion Survived")
+# add the empirical proportion who survived
+lines(as.numeric(names(MeanSurv)), MeanSurv, col="lightblue")
+# now add a line for the glm predictions
+lines(Total.Length.pred$Total.Length, Total.Length.pred$PredSurv, lty=2, col="darkred")
+# and one for the lm predictions
+lines(Total.Length.pred$Total.Length, Total.Length.pred$PredSurv.lm, lty=3, col="darkblue")
+
+
+```
+
+
+<span style="color:blue">5. How good do the fitted models look? i.e. how do the glm (red) and lm (blue) predicted lines look?</span>
+
+<span style="color:blue">6. Are the predictions from each model reasonable for large birds? What would happen if we extrapolated just a bit beyond the largest bird? *Think about each model separately and compare*</span>
+
+<span style="color:blue">7. What conclusions can you draw about length of sparrows and survival probability in snow storms? What could this mean for the future of the population?</span>

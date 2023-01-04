@@ -1,0 +1,192 @@
+---
+title: "Dataset 1: Iris Flowers Analysis"
+author: "Bob O'Hara"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+```
+
+# Introduction
+
+This is a summary of the analsis of the iris data. There is a recording of me doing the analysis, which has been lightly edited, and split into 3 parts. The text follows what I did.
+
+The code used in the analysis [can be found here](IrisCode.R). The markdown document used to create this html document [is here](Week10aIrisAnswers.Rmd), if you want to see the inner workings. One of the points worth emphasising abot how to organise analyses is abot using scripts: you can see that it is quicker and easier to re-run or edit scripts than to type them in by hand. And you also have a record of what you did, which you can come back to later.
+
+There is no one correct way to do this analysis, and indeed I am not sure there is one correct model. But there are some things that should be done:
+
+- Look at your data at the start, e.g. plot it in a few ways
+- Start with simple models and build on them
+- Check your model assumptions
+- Don't worry about going back to an earlier stage of the analysis: we all do it.
+- At the end, go back to the biology.
+
+## The Problem 
+
+<a title="Frank Mayfield, CC BY-SA 2.0 &lt;https://creativecommons.org/licenses/by-sa/2.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Iris_virginica.jpg"><img width="512" alt="Iris virginica" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Iris_virginica.jpg/512px-Iris_virginica.jpg"></a>
+
+These data are from three species of the plant, iris. They include measures of petal width and length. Here you will look at how the length of petals influences their width.
+
+
+# Preliminary Look at the Data
+
+If you want to watch the video, [follow this link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7a2d2e39-ecab-41f9-b47c-acf200e632c9) or watch the embed. Note that I was wrong: there are only 3 species. in the data (but the full data has 4 variables).
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7a2d2e39-ecab-41f9-b47c-acf200e632c9&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+First we read in the data and look at it:
+
+```{r ReadIrisData}
+irisdata <- read.csv("https://www.math.ntnu.no/emner/ST2304/2020v/Week09/irisdata.csv", header=T)
+irisdata$Species <- as.factor(irisdata$Species)
+irisdata$colour <- as.numeric(irisdata$Species)
+
+irisdata$colour <- c("grey", "blue", "pink")[as.numeric(irisdata$Species)]
+
+str(irisdata)
+```
+
+The columns in the dataframe are:
+
+- PetalWidth = width of the petal in cm.
+- PetalLength = length of the petal in cm.
+- Species = which species it is.
+
+Now we have the data, we should take a look at it. For more complex data, calculating simple statistics (e.g. means or correlations) might be helpful, but this is simple enough that a plot tells us most things. 
+
+
+```{r PlotIrisData}
+plot(irisdata$PetalLength, irisdata$PetalWidth, col=irisdata$colour)
+legend(x=1.5, y=2.3, legend=levels(irisdata$Species), pch=1, col=1:3)
+
+```
+
+We see that length and width are positively correlated, and by eye it looks like it might be the same both within and between species, but one cannot be too certain.
+
+# Initial Modelling
+
+[Click here if you want to follow the link to the video](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=13f54b41-39e7-4be4-8bb0-acf200e64496).
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=13f54b41-39e7-4be4-8bb0-acf200e64496&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+So, now let's try fitting some models. We will start simple, with the single-term models
+
+```{r FitModels1}
+model1 <- lm(PetalWidth ~ Species, data=irisdata)
+summary(model1)
+model2 <- lm(PetalWidth ~ PetalLength, data=irisdata)
+summary(model2)
+```
+
+From these we see that 
+
+- both explain about `r round(100*summary(model1)$r.square)`% of the variation in the data, which is not surprising from the plot
+- the effect of Length and Species are, separately, strong.
+
+So from this we could take one or the other . But what about both?
+
+```{r FitModels2}
+model3 <- lm(PetalWidth ~ Species + PetalLength, data=irisdata)
+summary(model3)
+```
+
+Now the model has improved, with an $R^2$ of `r round(100*summary(model3)$r.square)`%, up by `r round(100*(summary(model3)$r.square-summary(model1)$r.square), 1)`%. Even after taking the species into account, there is still a positive effect of petal length, although the coefficient has reduced, from `r round(coef(model2)["PetalLength"],1)` to `r round(coef(model3)["PetalLength"],1)`.
+
+But is the model with both effects better? Let's see 
+
+```{r CompareModels}
+anova(model1, model3)
+anova(model2, model3)
+```
+
+The bottom line is yes - it is extremely unlikely to get this data if only species or petal length was having an effect. So even though the change in $R^2$ is not huge, this is probably a better model.
+
+The next thing to look at is whether the effect of petal length is is different in the different species. In other words, we want to look at the interaction between Species and Petal Length:
+
+```{r InteractionModel}
+model4 <- lm(PetalWidth ~ Species * PetalLength,
+data=irisdata)
+anova(model3, model4)
+summary(model4)
+
+```
+
+The ANOVA table suggests that it is not that unlikely to get this data (or more extreme) if there was no effect: the p-value is just above 5%. So if we were to be strict, we should say it is "not significant" and move on. But we should probably be more honest and admit that any effect is marginal. 
+
+The summary shows that the $R^2$ has gone from `r round(100*summary(model3)$r.square, 1)`% to `r round(100*summary(model4)$r.square, 1)`%, i.e. a change of `r round(100*(summary(model4)$r.square-summary(model3)$r.square), 1)`%, which is not very much. On this basis I would stick with the model with only main effects, i.e. Species + PetalLength.
+
+# Model Checking
+
+[Click here if you want to follow the link to the video](
+https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=903999e1-04f1-4f91-a671-acf200e644bd).
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=903999e1-04f1-4f91-a671-acf200e644bd&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+Now we have a preliminary model that we like, we can see if the assumptions are reasonable. First, a residual plot:
+
+```{r ModelCheck}
+plot(fitted(model3), resid(model3))
+```
+
+We can see the 3 species, and the variance might be increasing with the mean. But there are no obvious outliers or skewness in the data. But is it normal?
+
+```{r QQPlot}
+qqnorm(resid(model3))
+qqline(resid(model3))
+```
+
+The tails look a bit too thick. Not massively, but a bit thick.
+
+So what to do? The model looks OK, except for the possibility of heteroscedasticity and leptokurtosis (the thick tails, which may actually be a consequence of the heteroscedasticity). The typical thing to try with heteroscedasticity is a Box-Cox transformation (there are other solutions, but we haven't discussed these).
+
+## Box-Cox transformations
+
+Let's see what the Box-Cox transformation does. Because the variance seemed to increase with the mean, we might expect a transformation with a power less than 1 to work (e.g. a square root or log transformation). If we try it and restrict the range to between 0 and 1 we get this:
+
+```{r BoxCox2}
+library(MASS)
+boxcox(model3, lambda=seq(0,1, length=20))
+
+```
+
+So the optimal model is about 0.55, and 0.5 is well within the confidence interval, so a square root transformation is worth trying.
+
+
+# The Final (?) model
+
+So, we will try a square root transformation. First, we can create a new variable and then fit the model:
+
+```{r FitFinalModel}
+irisdata$sqrtWidth <- sqrt(irisdata$PetalWidth)
+model5 <- lm(sqrtWidth ~ Species + PetalLength, data=irisdata)
+summary(model5)
+```
+
+As always, large $R^2$, positive effects of petals and differences between species.
+
+```{r PlotFinalModel}
+plot(fitted(model5), resid(model5))
+```
+
+The residuals look OK, although there might be heteroscedasticity with the smaller species having more variation.
+
+# Conclusion
+
+I think one could end up with either of these models:
+
+```{r FinalsModels, eval=FALSE}
+model5 <- lm(sqrtWidth ~ Species + PetalLength, data=irisdata)
+model3 <- lm(PetalWidth ~ Species + PetalLength, data=irisdata)
+```
+
+and be able to argue that it is good enough. One could also look at further models, (e.g. extend model 5 by adding an interaction, or trying to add quadratic terms) but we are already explaining most of the variation in the data, so any gains are likely to be small.
+
+I also have a suspicion that the best model would be one where each species had its own residual variance. But this is not a topic we have covered.
+
+So, what does this tell us? I think that when petal size varies, both length and width vary together, and are tightly linked. And also that species have different sized flowers, but the linage between width and length is still strong.
+

@@ -1,0 +1,200 @@
+---
+title: "Dataset 2: Cow Diet Analysis"
+author: "Bob O'Hara"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+```
+
+# Introduction
+
+This is a summary of the analysis of the cow data. There is a recording of me doing the analysis, which has been lightly edited, and split into 4 (or 5) parts. The text below follows what I did, and cleans it up.
+
+The code used in the analysis [can be found here](CowCode.R). The markdown document used to create this html document [is here](Week10aCowAnswers.Rmd), if you want to see the inner workings. One of the points worth emphasising abot how to organise analyses is about using scripts: you can see that it is quicker and easier to re-run or edit scripts than to type them in by hand. And you also have a record of what you did, which you can come back to later. I have successfullybre-run analyses after over 10 years had passed, because I still had the code.
+
+There is no one correct way to do this analysis, and indeed I am not sure there is one correct model. But there are some things that should be done:
+
+- Look at your data at the start, e.g. plot it in a few ways
+- Start with simple models and build on them
+- Check your model assumptions
+- Don't worry about going back to an earlier stage of the analysis: we all do it.
+- At the end, go back to the biology.
+
+## The Problem 
+
+<a title="Keith Weller/USDA, Public domain, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Cow_female_black_white.jpg"><img width="512" alt="A cow, on a diet" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Cow_female_black_white.jpg/512px-Cow_female_black_white.jpg"></a>
+
+
+These data are from an experiment on cows. Cows were split into 6 groups, each given a different diet treatment. Here you will look at how these different treatments influenced the dry matter intake (DMI) of the cows.
+
+You can find the data [here](https://www.math.ntnu.no/emner/ST2304/2020v/Week09/cowdata.csv): it is a .csv with a header.
+
+
+# Preliminary Look at the Data
+
+If you want to watch the video, [follow this link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=240f8057-aef5-422f-a230-acf4011d431d) or watch the embed:
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=240f8057-aef5-422f-a230-acf4011d431d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+First we read in the data and look at it. There were a couple of missing values (NAs), so I removed them. This isn't necessary (and is probably generally better not to), but I wanted to avoid getting warning messages later.
+
+```{r ReadCowData}
+cowdata <- read.csv("https://www.math.ntnu.no/emner/ST2304/2020v/Week09/cowdata.csv", header=T)
+cowdata$Treatment <- as.factor(cowdata$Treatment)
+cowdata$Baseline <- as.numeric(cowdata$Baseline)
+# Remove NAs
+cowdata <- cowdata[!is.na(cowdata$Baseline),]
+
+```
+
+The columns in the dataframe are:
+
+- DMI = the dry matter intake during the experiment (grams)
+- Baseline = the baseline dry matter intake before the experiment (grams)
+- Treatment = the diet treatment group (1 to 6)
+
+Now we have the data, we should take a look at it. For more complex data, calculating simple statistics (e.g. means or correlations) might be helpful, but this is simple enough that a plot tells us most things. 
+
+
+```{r PlotCowData}
+cowdata$Colour <- as.numeric(as.character(cowdata$Treatment))
+plot(cowdata$Baseline, cowdata$DMI, col=cowdata$Colour, pch=16)
+
+```
+
+There seems to be a slight positive correlation between `Baseline` and `DMI`, but no obvious pattern in the diets.
+
+# Initial Modelling
+
+[Click here if you want to follow the link to the video](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9892c5b6-c47a-4e61-9b10-acf4011d4345).
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=9892c5b6-c47a-4e61-9b10-acf4011d4345&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+So, we want to know the effects of diet on `DMI`. But we have `Baseline` as a covariate: the idea here is that some cows naturally eat more than others, so we need to account for that in the analysis (if we do not, we might find, say, that hungrier cows were more likely to be given Diet 3, and any difference was due to hte cows, not the diets).
+
+So, now let's try fitting some models. We will start simple, with the single-term models
+
+```{r FitModels1}
+model1 <- lm(DMI ~ Treatment, data=cowdata)
+summary(model1)
+model2 <- lm(DMI ~ Baseline, data=cowdata)
+summary(model2)
+```
+
+From these we see that 
+
+- diet explain about `r round(100*summary(model1)$r.square)`% of the variation in the data, which is almost nothing
+- baseline explains `r round(100*summary(model2)$r.square)`% of the variation in the data, suggesting some cows eat more than others.
+
+So the baseline is more informative about what the cows ate, and the diets (what we are interested in) do not explain much on their own.  But what about both? Could cow-to-cow variation be hiding any diet effect?
+
+```{r FitModels3}
+model3 <- lm(DMI ~ Baseline + Treatment, data=cowdata)
+summary(model3)
+
+```
+
+The model has improved, with an $R^2$ of `r round(100*summary(model3)$r.square)`%, up by `r round(100*(summary(model3)$r.square-summary(model2)$r.square), 1)`%, but the effects are fairly uncertain. We can test if the model with both effects better, i.e. if it explains the data better than we would expect a model without both effects.
+
+```{r CompareModels13}
+anova(model1, model3)
+```
+
+So, the model with both fits better than the model with just diet...
+
+```{r CompareModels23}
+anova(model2, model3)
+```
+
+But the improvement of the model with both is not better than we would expect by random from a model with only `Baseline`in it.
+
+So, we can conclude (at least for the moment) that there is no evidence for an effect of diet, but there is of the baseline amount that the cows eat. i.e. some cows eat more than others.
+
+# Model Checking
+
+[Click here if you want to follow the link to the video](
+https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7135a0fa-4d8e-4c01-84e1-acf4011d436f).
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7135a0fa-4d8e-4c01-84e1-acf4011d436f&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+Now we have a preliminary model that we like, we can see if the assumptions are reasonable. First, a residual plot:
+
+```{r ModelCheck}
+plot(fitted(model3), resid(model3), col=cowdata$Colour, pch=16)
+```
+
+This generally looks OK, but there are 3 values that might be suspect.
+
+```{r QQPlot}
+qqnorm(resid(model3))
+qqline(resid(model3))
+
+```
+
+The tails look a bit too thick. Not massively, but a bit thick.
+
+```{r CooksDPlot}
+plot(model3, which=4)
+```
+
+Only point 5 might be too large, so I think we could put this down to there being thicker tails in the distribution, rather than outliers.
+
+# Is there an interaction?
+
+[Click here if you want to follow the link to the video](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=d4e6a356-6127-4ddb-806e-acf4011d42df).
+
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=d4e6a356-6127-4ddb-806e-acf4011d42df&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+
+
+Well, Is there?
+
+```{r FitFinalModel}
+model4 <- lm(DMI ~ Baseline*Treatment, data=cowdata)
+anova(model4)
+
+```
+
+No.
+
+# Conclusion
+
+I think this is the best model to explain the data:
+
+```{r FinalsModels, eval=FALSE}
+modelFinal <- lm(DMI ~ Baseline, data=cowdata)
+```
+
+Unfortunately it doesn't have Diet in the model, which suggests that diet did not have a large effect. But given we have a specific question about diet, we should probably include it, so this might be the best model to report (along with the ANOVA test that says it is not better than the model with just `Baseline`):
+
+```{r FinalsModels2}
+# centre the baseline. 
+cowdata$BaselineC <- scale(cowdata$Baseline, scale=FALSE)
+modelFinalReally <- lm(DMI ~ BaselineC + Treatment-1, data=cowdata)
+```
+
+I have centred the `Baseline` so the next plot makes a bit more sense. The `-1` in the model removes the intercept. This can be dangerous, unless you know what you are doing. Here I am doing it so that in the lot I can plot the response for each treatment at the mean of the baseline: this should be easier for a cow biologist to understand. If Treatment 1 was a control, then I would not do this, and I would report the differences from the control as treatment effects. Essentially, I should report what is biologically interesting (and if I'm not sure, I should ask a biologist).
+
+We can use this plot to summarise the estimated treatment effects:
+
+```{r PlotFinalsModels2}
+
+TreatmentMeans <- cbind(
+  coef(modelFinalReally)[grep("Treat", names(coef(modelFinalReally)))],
+  confint(modelFinalReally)[grep("Treat", names(coef(modelFinalReally))),]
+)
+plot(TreatmentMeans[,1], 1:6, xlim=range(TreatmentMeans), xlab="Dry Matter Intake (g)",
+     ylab="Treatment")
+segments(TreatmentMeans[,2], 1:6, TreatmentMeans[,3], 1:6)
+```
+
+And report it as saying there is not much going on.
+
+## Afterward
+
+There is also an alternative approach, [which I describe here](Week10aCowAnswersVersion2.html). It gets us to look at some modelling ideas we don't cover in the course (in paticular nested models, and random effects), but which we would if we had time.

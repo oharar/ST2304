@@ -1,0 +1,561 @@
+---
+title: "Exercise 3, Regression"
+author: "Bob O'Hara"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Due midnight 18th February 2022**^[if this is after 2022, you will be given extra time to invent a time machine]
+
+## Question 1: Dragonfire
+
+As part of our investigation of the re-introduction of dragons into Trondheim, 
+we have been looking at fire precautions. We sent a student out to measure the 
+lengths of 50 dragons, and (from a safe distance) recorded how far they could 
+breath fire after being poked with a very long stick. 
+Each dragon was only tested once. 
+Note that no major cities were destroyed during this experiment. 
+
+```{r SimulateData, echo=FALSE}
+set.seed(2021)
+alpha <- 5 # intercept
+beta <- 0.7 # slope
+sigma <- 1 # standard deviation
+Size <- runif(50, 10, 20) # random uniform distribution
+mu <- alpha + beta*Size
+Distance <- rnorm(length(mu), mu, sigma)
+Flames <- data.frame(Size=Size, Distance=Distance)
+#FileFlames <- "https://www.math.ntnu.no/emner/ST2304/2021v/Week05/DragonFire.csv"
+#if(!file.exists(FileFlames)) write.csv(Flames, file=FileFlames)
+```
+
+This is the data:
+
+```{r ReadDragonData, echo=TRUE}
+DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2021v/Week05/DragonFire.csv")
+
+plot(DragonFire$Size, DragonFire$Distance, xlab="Length (m)", ylab="Distance (m)")
+
+```
+</br>
+
+It looks like there is a linear relationship between distance and the length of a dragon. We can fit a linear model, that looks like:
+
+$$
+y = \alpha + \beta x + \epsilon
+$$
+ß
+Remember, we are using a maximum likelihood approach to calculate estimates for 
+the parameters $\alpha$ (the intercept) and $\beta$ (the slope). 
+That means we are looking for estimates that have the highest probability of 
+having produced the data (maximum likelihood estimators; MLEs).
+
+<span style="color:blue">1. Fit a linear model to the Dragon Fire data using R and
+get the coefficient estimates (MLEs for the intercept and slope)</span>
+
+```{r FitModel, eval = FALSE}
+
+mod <- lm(Distance~Size, data=DragonFire)
+coef(mod)
+
+```
+
+```{r FitModel2, eval = TRUE, echo=FALSE}
+
+mod <- lm(Distance~Size, data=DragonFire)
+
+
+```
+
+How certain can we be about the estimates? We can answer this by calculating confidence intervals. Remember the definition of a confidence interval: 
+
+    If we repeat our sample many times, 95% of the confidence intervals drawn would contain the true population value
+
+So, we assume the MLEs represent the true parameter values, and every time we repeat the sampling of our data, we can calculate slightly different MLEs. Lets inspect fit of the model visually by adding a mean line to the scatter plot:
+
+```{r plotLinear}
+
+plot(DragonFire$Size, DragonFire$Distance, xlab="Length (m)", ylab="Distance (m)")
+abline(lm(Distance~Size, data=DragonFire), col=2) # add mean line
+
+```
+
+If we retrieve estimates from a model every time we sample data, we get a distribution of the slope estimator. We can do this artificially by simulation. For that, we have to assume that we know the true values of the parameters. First we have a function to simulate the data that takes the true parameter values as input, and a second function that calculates an estimate of the slope from the simulated data.
+
+```{r SimDataFunction, echo=TRUE}
+alpha.hat <- coef(mod)[1]
+beta.hat <- coef(mod)[2]
+sigma.hat <- summary(mod)$sigma # std deviation
+
+# function to simulate the data, fit the model & return the slope estimate
+SimData <- function(alpha, beta, sigma, X) {
+  E.y <- alpha + beta*X # calculate the line
+  y.sim <- rnorm(length(X), E.y, sigma) # simulate the data
+  model <- lm(y.sim ~ X) # fit the model
+  coef(model)[2] # return the estimated slope
+}
+
+# Run one simulation, to check the function works
+SimData(alpha=alpha.hat, 
+        beta=beta.hat, 
+        sigma=sigma.hat, 
+        X=DragonFire$Size)
+
+```
+You should read the function to check that you understand what each line does, and what the function produces. For example, the code `coef(model)[2]` takes the second element of the
+object of coefficients from the model. This is the estimate of the slope value
+for the linear regression. 
+
+With this function, we can "sample" the data lots of times, 
+and get a distribution for the estimator of the slope:
+
+<span style="color:blue">1.1. Run the code, plot the histogram, 
+and use `quantile()` to find the 95% confidence interval for the MLE of the slope parameter. </span>
+
+```{r SimDataHide, echo=TRUE, eval=FALSE}
+Rep.beta <- replicate(1000, SimData(alpha=alpha.hat, 
+                                    beta=beta.hat, 
+                                    sigma=sigma.hat, 
+                                    X=DragonFire$Size))
+
+hist(Rep.beta)
+
+# Calculate the 95% confidence interval
+quantile(Rep.beta, c(0.025, 0.975))
+```
+
+This is the distribution of the estimates of the slope that would come if the 
+data were repeatedly sampled. 
+The mean of this distribution should be similar to the value of the "true" parameter:
+
+```{r}
+
+Rep.beta <- replicate(1000, SimData(alpha=alpha.hat, 
+                                    beta=beta.hat, 
+                                    sigma=sigma.hat, 
+                                    X=DragonFire$Size))
+
+mean(Rep.beta) # Mean of sampling distribution
+beta.hat # "True" parameter used in simulation
+
+```
+
+The confidence intervals are a way of summarising the whole distribution: 
+they put limits on the most likely values.
+
+R can also calculate the confidence interval itself using the `confint()` function. 
+
+<span style="color:blue">1.2. Use `confint()` to calculate the confidence 
+interval for your Dragon Fire model. 
+Is it the same/similar/different to the one you got by 
+simulation? Why? </span>
+
+<span style="color:blue">1.3 Discuss the interpretation of the confidence interval. 
+Explain exactly what it means.</span>
+
+```{r Confint, echo=FALSE, eval=FALSE}
+confint(mod)
+```
+
+Now we can do some prediction. One released dragon has taken residence in a small lake, 
+and it will sometimes sit at the water's edge and breath fire. 
+We want to know what distance away from the lake is safe, 
+and for example where should trees be cut down so they aren't burnt down. 
+We know this dragon is 12m long, so we want to predict how far it can breathe fire.  
+We do this using the model:
+
+$$
+y_{pred} = \hat{\alpha} + \hat{\beta} x
+$$
+where $\hat{\alpha}$ and $\hat{\beta}$ are the MLEs, and $x$ is the value we want to predict for.
+
+<span style="color:blue">1.4. calculate the predicted value of $y$ with $x=12$ 
+and the MLEs for the parameters. Use the equation above and fill in the MLEs you
+calculated in qu 1. </span>
+
+We can summarise our uncertainty in the prediction with more confidence intervals. 
+
+The function below is a modification of the function above: 
+this one simulates the prediction. 
+By simulate, we mean that this mimics what would happen if we repeated
+our sampling (to get our data) many many times and each time made a prediction. 
+In reality, we don't do this, but we use the maths involved in 
+maximum likelihood estimation to
+represent this. R will do this with mathematics. 
+
+<span style="color:blue">1.5. simulate 1000 predictions for $x=12$ and calculate
+the confidence interval for the prediction. 
+You can use the code below but you will need to edit it to predict for the right
+$x$ value. </span>
+
+```{r SimPredFunction, echo=TRUE}
+
+# function to simulate the data, fit the model & return a prediction
+SimPrediction <- function(alpha, beta, sigma, X, x.pred) {
+  E.y <- alpha + beta*X 
+  y.sim <- rnorm(length(X), E.y, sigma) # simulates values of y
+  model <- lm(y.sim ~ X) # run model on this simulated data
+  pred.mu <- coef(model)[1] + coef(model)[2]*x.pred # mean prediction
+  pred.mu
+}
+
+# Run one simulation, to check the function works
+SimPrediction(alpha=alpha.hat, 
+              beta=beta.hat, 
+              sigma=sigma.hat, 
+              X=DragonFire$Size,
+              x.pred=1)
+```
+
+```{r SimPred, echo=TRUE, eval=FALSE}
+
+# use the SimPrediction function to predict for 1000 different data sets
+
+# make sure to change x.pred to the value of x you want to predict for
+Rep.pred <- replicate(1000, SimPrediction(alpha=alpha.hat, 
+                                          beta=beta.hat, 
+                                          sigma=sigma.hat, 
+                                          X=DragonFire$Size, 
+                                          x.pred=20))
+
+hist(Rep.pred)
+
+# Calculate the 95% confidence interval of the predictions
+quantile(Rep.pred, c(0.025, 0.975))
+
+```
+
+Above you simulated new repeating sampling of dragon fire, 
+fitting a model to each new sample, and each time using the model to make a prediction. 
+
+Below, is a very similar function. But in this function there is an extra process
+included, `new <- rnorm(length(x.pred), pred.mu, sigma)`. This second
+function should more closely represent what would happen if repeated the dragon
+fire sampling many times, fit the model each time, and then went to collect one
+more sample for a given size of dragon e.g. $x$ = 12. 
+
+<span style="color:blue"> 1.6. in this second function we have to use `rnorm()` twice.
+Why is it used a second time (in `new <- rnorm(length(x.pred), pred.mu, sigma)`)?
+What are we calculating if we don't do that i.e. in the first function? (hint: what are the different sources of uncertainty in predictions?)</span>
+
+<span style="color:blue"> 1.7. simulate 1000 predictions for $x=12$ using the
+SimPrediction2 function and calculate
+the confidence interval for these predictions. 
+How is this different to the confidence interval in 1.5? </span>
+
+<span style="color:blue"> 1.8. the confidence interval from 1.7 more accurately 
+represents a 95% prediction interval (the confidence interval for a prediction) 
+how would you interpret these confidence intervals for the prediction? i.e. give 
+a definition of what they mean/represent.</span>
+
+```{r SimNewObs, echo=TRUE}
+
+# function to simulate the data, fit the model & return a prediction
+SimPrediction2 <- function(alpha, beta, sigma, X, x.pred) {
+  E.y <- alpha + beta*X 
+  y.sim <- rnorm(length(X), E.y, sigma) # simulates values of y
+  model <- lm(y.sim ~ X) # run model on this simulated data
+  pred.mu <- coef(model)[1] + coef(model)[2]*x.pred # mean prediction
+  new <- rnorm(length(x.pred), pred.mu, sigma) # simulated new observations
+  new
+}
+
+# Run one simulation, to check the function works
+SimPrediction2(alpha=alpha.hat, 
+              beta=beta.hat, 
+              sigma=sigma.hat, 
+              X=DragonFire$Size,
+              x.pred=1)
+```
+
+```{r SimNewObs2, echo=TRUE, eval=FALSE}
+
+Rep.pred2 <- replicate(1000, SimPrediction2(alpha=alpha.hat, 
+                                          beta=beta.hat, 
+                                          sigma=sigma.hat, 
+                                          X=DragonFire$Size, 
+                                          x.pred=20))
+
+hist(Rep.pred2)
+
+# Calculate the 95% interval of the data
+quantile(Rep.pred2, c(0.025, 0.975))
+
+```
+
+R can also calculate the prediction itself using the `predict()` function:
+
+```{r Pred, echo=TRUE, eval=FALSE}
+
+# create new data to predict for
+PredictionData <- data.frame(Size=20)
+# get a point prediction
+predict(mod, newdata = PredictionData)
+# get a point prediction plus prediction interval
+predict(mod, newdata = PredictionData, interval="prediction")
+
+```
+
+<span style="color:blue">1.9. Try out `predict(mod, newdata = PredictionData, interval="confidence")` instead of `predict(mod, newdata = PredictionData, interval="prediction")`. What is different
+about these two types of prediction. (Hint: compare these to the simulations in qu 1.5-1.8).</span>
+
+<span style="color:blue">1.10. What distance away from the lake would YOU consider safe from dragon fire? 
+Why is the predicted distance not a good suggestion? Explain your answer.</span>
+
+<!---
+The questions comparing the prediction and confidence intervals might be too hard - we might have to walk them up to them.
+--->
+
+## Question 2: How long will the Deathly Hallows be?
+
+Here we have the lengths of the Harry Potter book plotted against their order. 
+This analysis was originally done in 2006, where the question was how long the next book would be. 
+
+<span style="color:blue">First, you can just run the following code, 
+to create the data and plot it.</span>
+
+```{r HarryPotterAndTheAnnoyedEditor, echo=TRUE}
+
+# Make the data frame using function data.frame()
+# each name before the = is the name of a column
+# the elements after the = are the values for that column
+HPbooks <- data.frame(
+  Book = c("Philosopher's Stone", "Chamber of Secrets", "Prisoner of Azkaban",
+          "Goblet of Fire", "Order of the Phoenix", "Half-Blood Prince", 
+          "Deathly Hallows"),
+  Length = c(223, 251, 317, 636, 766, 607, NA), # 607
+  Date = c(1997, 1998, 1999, 2000, 2003, 2005, 2007)
+)
+
+HPbooks$BookOrder <- 1:nrow(HPbooks) # nrow() = count number of rows
+# This will make the book titles easier to read
+
+# Feel free to ignore this: you don't need to know about gsub() for this course
+HPbooks$BookLabels <- gsub("Harry Potter and the ", "", HPbooks$Book)
+
+# set margins of the plot
+par(mar=c(6.1,4.1,1,1))
+
+plot(HPbooks$BookOrder, HPbooks$Length, 
+     xlab="", 
+     ylab="Number of pages", 
+     xaxt="n") # xaxt = "n" tells R not to include an x-axis
+# instead we add it manually
+axis(1, at=HPbooks$BookOrder, padj=0.8, cex.axis=0.8, 
+     labels = gsub(" ", "\n", HPbooks$BookLabels))
+text(7, 600, "?", col=2, cex=5)
+```
+
+Your task is to look at the relationship between the length of a book and the order it is in the series. In particular, do later books tend to be longer than earlier ones? 
+You should use `lm()` to regress the number of pages (`Length`) against where the book is in the series (`BookOrder`). 
+Question 1 should help you with using the right code 
+(and, yes, you can use the easy built in R functions).
+
+<span style="color:blue">2. Run the linear regression model in R for `Length` 
+as a response to `BookOrder`. Look at the results from the model. </span>
+
+<span style="color:blue">2.1. Is there evidence that the books are getting longer?</span>
+
+<span style="color:blue">2.2. how much longer is each book getting (on average)? What is the uncertainty around this?</span>
+
+<span style="color:blue">2.3. how long do you predict Book 7 should be? What is the prediction interval around that?</span>
+
+<span style="color:blue">2.4. The final Harry Potter book was actually 607 pages long. How good was the prediction? What does this tell us about making predictions from linear regression analyses?</span>
+
+<!---   
+It was good in that the actual value was within the CI, but the interval was so broad that it would include most modern fantasies, as well as War and Peace and all of the A Song of Ice and Fire books
+--->
+
+```{r HarryPotterandtheExerciseAnswers, echo=FALSE, results='hide'}
+Hpmod <- lm(Length ~ BookOrder, data=HPbooks)
+# Is there evidence that the books are getting longer?
+summary(Hpmod)
+# how much longer is each book getting (on average)? What is the uncertainty around this?
+coef(Hpmod)["BookOrder"]
+confint(Hpmod)["BookOrder",]
+# how long would Book 7 be? What is the confidence interval around that?
+predict(Hpmod, interval = "predict", newdata = HPbooks)[7,]
+
+```
+
+
+## Question 3: The Climate Change of Crime
+
+```{r Data, echo=FALSE, eval=FALSE}
+Data <- read.csv("../Data/TempCrimeChicago.csv")
+Data$TempC <- (Data$DayTempF - 32)*5/9
+names(Data) <- gsub("Day", "", names(Data))
+DataPlus <- Data[Data$TempC>0,c("TempC", "Crime")]
+
+write.csv(DataPlus, "../Data/NoFreezeTempCrimeChicago.csv", row.names = FALSE)
+```
+
+There are many effects of the changing climate, with species moving futher north, and great tits (_Parus major_) becoming more murderous. But even humans are not immune. There have been suggestions that people [also become more violent when the temperature get hotter](https://www.theguardian.com/science/grrlscientist/2013/aug/02/climate-change-global-warming-violence-conflict). We can explore some of the evidence about this, thanks to the Chicago Police Department. 
+
+Our data comes from their online resources: these are:
+
+* Daily mean temperatures. These have been converted from Fahrenheit to Celsius therefore
+are no long integers. 
+* Mean number of daily crimes for each temperature between January 1st 2001 and January 23rd 2019. i.e. all days with the same mean daily temperature were grouped together and their
+crime counts averaged. 
+
+We have removed data where the man temperature was below freezing 
+(the full data will appear later in the course). 
+We can read in the data from the web:
+
+```{r ReadData, echo=TRUE, eval=FALSE}
+ChicagoCrime <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/NoFreezeTempCrimeChicago.csv")
+str(ChicagoCrime)
+```
+```{r ReadData2, echo=FALSE, eval=TRUE}
+ChicagoCrime <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/NoFreezeTempCrimeChicago.csv")
+#str(ChicagoCrime)
+```
+
+```{r PlotData, echo=FALSE, eval=FALSE}
+ChicagoCrime$N <- 1:nrow(ChicagoCrime)
+plot(ChicagoCrime$TempC, ChicagoCrime$Crime, type="n")
+text(ChicagoCrime$TempC, ChicagoCrime$Crime, ChicagoCrime$N)
+
+```
+
+<span style="color:blue">3.1. Plot the data, and describe the general patterns you see.</span>
+
+We suggest a scatter plot. 
+
+<span style="color:blue">3.2. What seems to be the overall effect of temperature on crime?</span>
+(use the plot to answer this question)
+<!---
+A higher temperature means more crime. Presumably most reported crime is attacks on ice cream men. Or when it's hot, the police can't be bothered to fiddle the numbers.
+--->
+
+<span style="color:blue">3.3. are there any features of the data that stand out (either from looking at the plots, or the numbers themselves)?</span>
+
+<!---
+Looking at the plot, there are 3 points with more crime that the trend: row numbers 25, 52, 56. Perhaps the Cubs lost at home on those nights.
+Eyeballing the plot, there might be some cuvrature in the trend.
+If we look at the numbers, the temperatures are all integers when multiplied by 9. This is because they were in degrees F, but were converted to C. I BET NOBODY GETS THIS
+Even thought they are averages, the number of crimes are integers, so have been rounded.
+--->
+
+<span style="color:blue">3.4. does a regression seem like a reasonable idea? Does it make sense to fit a straight line?</span> 
+
+<!---
+Yes it does: the relationship is fairly straight, and is continuous
+--->
+
+Now you should use `lm()`to fit a regression line. 
+
+<span style="color:blue">3.5. what is the coefficient for the temperature effect? What are the confidence intervals?</span>
+
+<span style="color:blue">3.6. Interpret the fitted model: what is the effect of warmer temperatures on the crime numbers? How strong is the effect?</span>
+
+<span style="color:blue">3.7. The prediction is that Chicago will be about 3&deg;C warmer in 2050. What effect is this likely to have on crime numbers?</span>
+
+<span style="color:blue">3.8. From this model, predict how much crime there will be if the temperature is -10&deg;C</span>
+
+```{r FitReg, echo=FALSE, results='hide'}
+reg <- lm(Crime~TempC, data=ChicagoCrime)
+summary(reg)
+# Temperature coefficient: 
+coef(reg)["TempC"]
+# Confidence interval
+confint(reg)["TempC",]
+# Effect of increasing temp. by 3C
+3*coef(reg)["TempC"]
+# Predict -10C crime
+predict(reg, newdata=data.frame(TempC=-10), interval = "pred")
+
+```
+
+-----
+
+## Feedback
+
+<span style="color:blue"> F1. How do you think this exercise went? What do
+you think your group did well, what are you less sure about? 
+(2 examples of each) </span>
+
+<span style="color:blue"> F2. What do you think you improved from last 
+week? </span>
+
+<span style="color:blue"> F3. Are there any concepts you are very unsure of? </span>
+
+<span style="color:blue"> F4. What would you like feedback on this 
+week? </span>
+
+
+<!---
+We can also do this for A Song of Ice and Fire:
+
+```{r ASongOfIrritatedReaders}
+SoIaF <- data.frame(Name=c("A Game of Thrones", "A Clash of Kings", "A Storm of Swords", "A Feast for Crows", "A Dance with Dragons", "The Winds of Winter"),
+                    BookOrder=1:6, 
+                    Length = c(694, 761, 973, 753, 1016, NA),
+                    Date = c(1996, 1998, 2000, 2005, 2011, NA))
+# SoIaF$TimeWriting <- diff(c(1991, SoIaF$Date))
+plot(SoIaF$BookOrder, SoIaF$Length)
+
+```
+
+- Does a similar relationship hold? 
+- How long will Winds of Winter (the next book, which hasn't been published yet) be? How certain is that?
+- How long do you think Winds of Winter will be based on the information here? This includes the fact it hasn't been published yet! (information which could be out into the model, but makes it horrible)
+
+```{r ASongOfIrritatedBiologists}
+GoTmod <- lm(Length ~ BookOrder, data=SoIaF)
+# Is there evidence that the books are getting longer?
+summary(GoTmod)
+# how much longer is each book getting (on average)? What is the uncertainty around this?
+coef(GoTmod)["BookOrder"]
+confint(GoTmod)["BookOrder",]
+# how long would Book 7 be? What is the confidence interval around that?
+predict(GoTmod, interval = "predict", newdata = SoIaF)[6,]
+
+```
+--->
+
+<!---
+
+```{r SimSimpleData, echo=FALSE}
+x <- -10:10
+eps <- rnorm(length(x), 0, 10)
+y <- pi*x + eps - mean(eps)
+dput(round(y, 2))
+```
+
+Here is some simple data. Both X and Y have been mean-centered, so the regression line have to go through the origin. Your task is to try to find the best line (without cheating!). Here we have plotted a first guess at the line: `abine(0,1)` adds a line that goes through the origin (i.e. the intercept is zero) and has a slope of 1. Obviously the slope should be steeper.
+
+```{r SimpleData}
+x <- -10:10
+y <- c(-41.64, -11.04, -20.71, -3.89, -23.71, -18.42, -16.21, 
+       -23.22, -16.47, 15.72, -7.43, 14.1, -6, -12.04, 7.53, 23.26, 
+       28.44, 36.9, 5.45, 46.78, 22.58)
+plot(x,y)
+abline(0, 1, col=2)
+```
+
+We can measure how well the line fits the data:
+
+```{r Resid}
+E.y <- 0 + 1*x
+residual <- y - E.y
+SS <- residual^2
+sum(SS)
+plot(x, y) # plot data
+lines(x, E.y, col=2) # add fitted line
+points(x, E.y, col=2, pch=16) # add expected values
+segments(x, E.y, x, y, col=4) # draw residuals
+```
+
+So, the curve should be steeper. 
+
+- Now you should try a steeper curve, calculate the sums of square (`sum(SS)` above), and plot the line and the residuals. 
+- Try this a few times until you get a line that you are satisfied with (it doesn't have to be the best fit).
+- Why do you prefer this line to the others?
+- You could try exploring different values of the slope, and plotting the sum of squares against each slope value. If you did this, what would that curve be? And what would it look like?
+- This might be too advance - you would end up with the likelihood curve for the slope, so it would look Gaussian
+--->
