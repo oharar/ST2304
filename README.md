@@ -6,7 +6,16 @@ Each module is written as an R markdown file. It includes explanations of the to
 
 ## Videos
 
-The videos are hosted on NTNU's Panopto site. If you need to render the R Markdown files to create a new html file, the videos don't embed properly. So instead you need to embed them by hand:
+The videos are hosted on NTNU's Panopto site. If you need to render the R Markdown files to create a new html file, the videos don't embed properly. So instead you need to embed them by hand. There are two ways to do this, depending on what we've done:
+
+The easiest is if we have already added the html code in the RMarkdown document. If we have done this it will be commented out, so try this:
+
+- search the html file for "<!---". 
+- check that this comments out a video: it should start with an iframe tag ("<iframe src=...."), and should be next to a link to the video
+- remove the commenting out: "<!---" and "--->"
+- save the file (and check it's OK)
+
+If you do not find any videos this way, we probably added them with Plan B. So you need to do this:
 
 - search the html file for "ADD EMBED". 
 - work out which video goes with this. The link to the video should be just above the ADD EMBED.
@@ -14,6 +23,8 @@ The videos are hosted on NTNU's Panopto site. If you need to render the R Markdo
 - Paste the code into the html file, in place of the "ADD EMBED X"
 
 If that doesn't work, you could try to extract them from [previous years' pages](https://wiki.math.ntnu.no/st2304/2022v/start).
+
+Note that you will have to do this evert time you re-make the html document.
 
 ## Acknowledgements
 
