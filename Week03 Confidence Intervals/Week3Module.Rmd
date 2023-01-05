@@ -3,17 +3,10 @@ title: "Maximising the Binomial Likelihood"
 author: "Bob O'Hara"
 output:
   html_document:
+    css: "../ST2304RMarkdown.css"
     df_print: paged
 ---
 
-```{css, echo=FALSE}
-details > summary {
-  padding: 20px 6px;
-  background-color: #ddd;
-  border: none;
-  cursor: pointer;
-}
-```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
