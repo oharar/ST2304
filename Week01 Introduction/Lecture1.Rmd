@@ -37,11 +37,10 @@ By the end of the practical the students should be able to run R and use simple 
 --->
 (we will deal with these in more detail later)
 
-- Exams this month
 - Reference Group
 
 - Blackboard
-- web page: https://www.math.ntnu.no/emner/ST2304/2022v/
+- web page: https://www.math.ntnu.no/emner/ST2304/2023v/
 
 ## How the Course Will Run: Modules
 
@@ -87,40 +86,27 @@ Complete 8 exercise sets (of about 10)
 - first couple of weeks won't count 
     - we will tell you when they start to count
 
-Examination 
-
-- home exam
-
-## Online/Physical
-
-If we go back to being on campus, do you want be on campus or live, or bits of both?
-
-<!---
-![https://www.menti.com/kemafew5ei](mentimeter_qr_code.png){height=50%}
---->
-(this is to give me some idea of what you want: I plan to ask again if we are told we can be on campus)
-
 
 ## Teachers
 
 Me
 
-TAs:
+Bert van der Veen
 
-- TA1
-- TA2
-- TA3
+TA: Kenneth Aase
+
 
 ## Resources
 
 Blackboard
 
-- Discussion board (under "learning materials")
 - announcements
 - links to more material
 - exercises
 
-Web page: ...
+Discussion board on Discord
+
+Web page: https://wiki.math.ntnu.no/st2304/2023v/start
 
 - modules
 
@@ -150,6 +136,8 @@ Generalized Linear Models With Examples in R
 
 Blackboard
 
+Discord
+
 Wiki
 
 Google (yes, use it!)
@@ -161,9 +149,8 @@ What do you remember from ST0103?
 Discuss in your groups, 
 
 - Come up with 3 topics you learned about, and for each give an example where they are used in biology (or biotechnology!)
-- Add the topics to padlet: https://padlet.com/bobohara/34qn1yw4ww0ggr3s
+- Add the topics to padlet: https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb
 
-(remind me to give the padlet link in the chat)
 
 <!---
 Begin with a recap of why we use statistics in biology inc. an in-lecture exercise on what they can remember from before christmas, as we assume they don’t think about stats in the holiday.

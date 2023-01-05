@@ -1,7 +1,7 @@
 ---
 subtitle: "ST2304 Statistical modelling for Biologists and Biotechnologists V2021"
 title: "Rbeginner: R and RStudio -- a first tour"
-author: "Mette Langaas and Martina Hall, Department of Mathematical Sciences, NTNU. Editted by Emily Simmonds"
+author: "Mette Langaas and Martina Hall, Department of Mathematical Sciences, NTNU. Edited by Emily Simmonds"
 date: "week 1, 2021"
 output:
 html_document:
@@ -12,14 +12,6 @@ pdf_document:
 keep_tex: yes
 ---
 
-```{css, echo=FALSE}
-details > summary {
-  padding: 20px 6px;
-  background-color: #ddd;
-  border: none;
-  cursor: pointer;
-}
-```
 
 ## Instructions:
 

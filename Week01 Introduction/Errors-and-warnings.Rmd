@@ -3,12 +3,10 @@ title: "Errors, warnings, and general help"
 author: "Emily G Simmonds"
 output:
   html_document:
+    css: "../ST2304RMarkdown.css"
     df_print: paged
 ---
 
-</br>
-</br>
-</br>
 
 ```{r setup, eval=TRUE, include=FALSE}
 
@@ -93,7 +91,7 @@ Sometimes the error itself will tell us what has gone wrong.
 <span style="color:blue"> Read all of the errors above, what do you think 
 has gone wrong with the line of code? </span>
 
-<details><summary><span style="color:red">I had a go, now show me the answers.</span></summary>
+<details><summary>I had a go, now show me the answers.</summary>
 
 Error 1: tells us that there is an error in the call of function `mean()` of
 object `x`, R cannot find object `x`. <span style="color:red"> This means that
@@ -130,7 +128,7 @@ done.
 
 You can have a go first and then look at the answers. 
 
-<details><summary><span style="color:red">I had a go, now show me the answers.</span></summary>
+<details><summary>I had a go, now show me the answers.</summary>
 
 ### Error 1
 
@@ -303,7 +301,7 @@ end is easiest.
 
 <span style="color:blue">Try and find a list of all of the colour options in R.</span> 
 
-<details><summary><span style="color:red">I had a go, now show me the answers.</span></summary>
+<details><summary>I had a go, now show me the answers.</summary>
 
 Just one option is to Google 'colours in r'
 
