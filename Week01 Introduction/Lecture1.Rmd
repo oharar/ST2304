@@ -86,6 +86,11 @@ Complete 8 exercise sets (of about 10)
 - first couple of weeks won't count 
     - we will tell you when they start to count
 
+## Virtual or in Person?
+
+https://www.menti.com/al6sim51dgx9
+
+![](mentimeter_qr_codeVirtual.png){height=70%}
 
 ## Teachers
 
@@ -104,9 +109,10 @@ Blackboard
 - links to more material
 - exercises
 
-Discussion board on Discord
+Discussion board on Discourse: https://mattelab2023v.math.ntnu.no/c/st2304/52
 
-Web page: https://wiki.math.ntnu.no/st2304/2023v/start
+Web page: https://wiki.math.ntnu.no/st2304/2023v/start 
+(this includes other links from this presentation)
 
 - modules
 
@@ -136,7 +142,7 @@ Generalized Linear Models With Examples in R
 
 Blackboard
 
-Discord
+Discourse
 
 Wiki
 
@@ -146,10 +152,10 @@ Google (yes, use it!)
 
 What do you remember from ST0103?
 
-Discuss in your groups, 
+Discuss in groups, 
 
 - Come up with 3 topics you learned about, and for each give an example where they are used in biology (or biotechnology!)
-- Add the topics to padlet: https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb
+- Add the topics to TaskCard: https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb
 
 
 <!---
@@ -265,7 +271,7 @@ Then can start modelling. linear models is complicated regression
 
 GLMs are complicated linear models
 
-## Likelihoood
+## Likelihood
 
 The statistical framework to do this
 
