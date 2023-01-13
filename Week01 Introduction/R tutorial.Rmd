@@ -279,7 +279,7 @@ To draw the plot in the way you want, check the help pages of the plot function 
 
 <details><summary>If you get stuck</summary> 
 
-You do this using the arguments `colour = "CHOSENCOLOUR"` and 
+You do this using the arguments `col = "CHOSENCOLOUR"` and 
 `pch = CHOSENNUMBER`
 
 </details>
