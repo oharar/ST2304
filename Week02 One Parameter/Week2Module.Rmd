@@ -364,10 +364,10 @@ hist(simGlobe(0.6, 12, 100)["Land",], xlab = "Number of land",
  
  <span style="color:blue"> Watch the **final video**.</span>
  
- Either [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=41ced04a-52e9-4d07-a9cf-ae2000d0a23d)
+ Either [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c)
  or watch below.
 <!---
-<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=41ced04a-52e9-4d07-a9cf-ae2000d0a23d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&captions=true&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
 
  As we said above, the likelihood is the probability of getting our observed 
