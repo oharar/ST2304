@@ -2,7 +2,12 @@
 title: 'Week 4: The Normal Distribution'
 output:
   html_document:
+    css: "../ST2304RMarkdown.css"
     df_print: paged
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    highlight: null
 ---
 
 ```{r setup, include=FALSE}
@@ -10,6 +15,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Recap
+
+<span style="color:blue">Begin with the intro video </span>
+
+[Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=1b0ae7b6-cc95-47c9-8897-acc300a71a2c) or watch below
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=1b0ae7b6-cc95-47c9-8897-acc300a71a2c&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
 
 So far we have 
 
@@ -59,13 +71,15 @@ write.csv(GD, file="../Data/GroundhogDayta.csv")
 
 Every 2nd of February, the town of Punxsutawney in the US has a ritual where they go to Gobbler's Knob, drag a groundhog out of the ground, call it Phil, and ask it if it sees ~~Bill Murray's~~ its shadow. If Punxsutawney Phil sees his shadow, he'll decide to retreat, because there will be another 6 weeks of winter.
 
+The data can be found here: https://www.math.ntnu.no/emner/ST2304/2021v/Week04/GroundhogDayta.csv It is a .csv file and can be downloaded AND imported using `read.csv()` and the full url above.
+
 The question is whether Punxsutawney Phil is actually any good at predicting the weather. We will answer that by looking at whether he sees his shadow, and the temperature for the following 6 weeks.
 
-```{r ReadPuxPhil, echo=TRUE}
+```{r ReadPuxPhil, echo=FALSE, include = TRUE}
 # read in the functions for this module
-source("../Functions/NormalDistFunctions.R")
+source("https://www.math.ntnu.no/emner/ST2304/2023v/Week04/NormalDistFunctions.R")
 # Read the data
-GDay <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2019v/Week4/GroundhogDayta.csv")
+GDay <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2023v/Week04/GroundhogDayta.csv")
 
 plot(GDay$Year, GDay$Temperature, cex=1, pch=3, 
      col=c("red", "blue")[1+GDay$Shadow],
@@ -75,7 +89,7 @@ abline(h=32, col="hotpink")
 
 ```
 
-Before getting to the question of whether Phil is any good as a weatherman, we'll look at the distribution of the temperature. Of the `r nrow(GDay)` observations, `r sum(GDay$Temperature>32)` are above freezing. But we want to summarise the data in more detail, partly so we can ask more complicated questions and also so we can develop the theory. We will do this with the normal distribution.
+Before getting to the question of whether Phil is any good as a weatherman, we'll look at the distribution of the temperature. Of the `r nrow(GDay)` observations, `r sum(GDay$Temperature>32)` are above freezing (above 32 degrees Fahrenheit as it is the USA). But we want to summarise the data in more detail, partly so we can ask more complicated questions and also so we can develop the theory. We will do this with the normal distribution.
 
 ## The Normal Distribution
 
@@ -123,63 +137,195 @@ plot(x,log(y), type="l")
 
 ## The Normal Distribution: Exercises
 
+For these exercises you will need a few extra functions. You
+can find them by using `source()` to import and run a script
+found here https://www.math.ntnu.no/emner/ST2304/2023v/Week04/NormalDistFunctions.R
+
 Let's look at the normal distribution, and some R functions we can use to play with it. In particular:
-- `rnorm()` - this simulates from a normal distribution
-- `dnorm()` - this calculates the density of a normal distribution for values `x`. 
-- `pnorm()` - this calculates the cumulative density of a normal distribution for values `x`. This is the probability that a random draw from the distribution would be less than `x`.
-- `qnorm()` - this calculates the values of `x` that would be the `q`th quantile
 
-<span style="color:blue">Simulate 1000 data points from a normal distribution with the same mean and standard deviation as the temperature data, using `rnorm()`.</span>
+* `rnorm()` - this simulates from a normal distribution. Takes arguments: `n` = number of observations to simulate, `mean` = mean
+of the normal distribution you simulate from, `sd` = standard deviation of the normal distribution you simulation from. 
+* `dnorm()` - this calculates the density of a normal distribution for values `x`. First argument is `x`, then `mean`. `sd`, and `log` which can = TRUE or FALSE. 
+* `pnorm()` - this calculates the cumulative density of a normal distribution for values `x`. This is the probability that a random draw from the distribution would be less than `x`. First argument is `q` = quantiles you want the probability for, then `mean` and `sd`. 
+* `qnorm()` - this calculates the values of `x` that would be the `q`th quantile. First argument is `p` = probabilities you want `x` for, then `mean` and `sd`. 
 
-```{r rnorm, echo=TRUE, eval=F, fig.height=3}
-MeanTemp <- mean(GDay$Temperature)
-sdTemp <- sd(GDay$Temperature)
-sim.data <- rnorm(5, mean = MeanTemp, sd = sdTemp)
+<span style="color:blue">Simulate 1000 data points from a normal distribution with the same mean and standard deviation as the temperature data, using `rnorm()` and plot with `hist()`</span>
+
+<details><summary>R help</summary>
+
+You will need to edit this code.
+
+```{r rnorm, echo=TRUE, eval=FALSE, fig.height=3}
+MeanTemp <- mean(YOURDATA$Temperature)
+sdTemp <- sd(YOURDATA$Temperature)
+sim.data <- rnorm(n=5, mean = MeanTemp, sd = sdTemp)
 hist(sim.data)
 ```
 
-<span style="color:blue">Calculate the density data from the distribution for values using `dnorm()`, but for more than 4 points.
-    - why is the density different from the probability (hint: the normal is continuous)</span>
-    
-    ```{r hidden, eval=T, echo=F, fig.height=3}
-# First, create a sequence of numbers to calculate the density on
+</details>
+
+<details><summary>ANSWER</summary>
+
+```{r rnorm-answer, echo=TRUE, eval=TRUE, fig.height=3}
 MeanTemp <- mean(GDay$Temperature)
 sdTemp <- sd(GDay$Temperature)
-sim.data <- rnorm(5, mean = MeanTemp, sd = sdTemp)
+sim.data <- rnorm(n=1000, mean = MeanTemp, sd = sdTemp)
+hist(sim.data)
+```
+
+</details>
+
+</br>
+
+<span style="color:blue">Calculate the density data from the distribution for values using `dnorm()`, but for more than 4 points and plot it with `plot()`
+    - why is the density different from the probability (hint: the normal is continuous)</span>
+    
+You might also want to use `seq()` to create the input for `dnorm()`. This will
+mean that the numbers are in ascending order rather than mixed like the raw data
+from the question above. 
+
+```{r hidden, eval=TRUE, echo=FALSE, fig.height=3}
+# First, create a sequence of numbers to calculate the density on
 At.data <- seq(min(GDay$Temperature), 
-               max(GDay$Temperature), length=4)
+               max(GDay$Temperature), 
+               length=4)
 dens.data <- dnorm(At.data, mean = MeanTemp, sd = sdTemp)
 cumul.data <- pnorm(At.data, mean = MeanTemp, sd = sdTemp)
 Quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
 quants.data <- qnorm(Quantiles, 
                      mean = MeanTemp, sd = sdTemp)
 ```
-    
-```{r dnorm, eval=F, echo=TRUE, fig.height=3}
+  
+<details><summary> R help if you need it </summary>
+
+```{r dnorm, eval=FALSE, echo=TRUE, fig.height=3}
 # First, create a sequence of numbers to calculate the density on
-At.data <- seq(min(GDay$Temperature), 
-               max(GDay$Temperature), length=4)
+At.data <- seq(min(YOURDATA$Temperature), # takes the minimum temperature value
+               max(YOURDATA$Temperature), # takes the maximum temperature value
+               length = 4) # tells R how many to have in the sequence
+
+# create the density data
 dens.data <- dnorm(At.data, mean = MeanTemp, sd = sdTemp)
-plot(At.data, dens.data, type="l")
+
+# plot it
+plot(x = At.data, y = dens.data, type="l")
 ```
 
-<span style="color:blue">Calculate the cumulative density data from the distribution for values using `pnorm()`.</span>
+</details>
 
-```{r pnorm, eval=F, echo=TRUE, fig.height=3}
-cumul.data <- pnorm(At.data, mean = MeanTemp, sd = sdTemp)
+
+<details><summary> ANSWER </summary>
+
+The density is different to the probability for the normal distribution because
+it is a continuous distribution. Therefore, the likelihood of observing any
+combination of observed data points for a given parameter value is 0 because 
+there are infinite possibilities of observed data. So, instead we take the 
+probability density of observed data points being between two values (often
+very close together).
+
+R answers:
+
+```{r dnorm-answer, eval=TRUE, echo=TRUE, fig.height=3}
+# First, create a sequence of numbers to calculate the density on
+At.data <- seq(min(GDay$Temperature), # takes the minimum temperature value
+               max(GDay$Temperature), # takes the maximum temperature value
+               length = 10) # tells R how many to have in the sequence
+
+# create the density data
+dens.data <- dnorm(At.data, mean = MeanTemp, sd = sdTemp)
+
+# plot it
+plot(x = At.data, y = dens.data, type="l")
+```
+
+</details>
+
+</br>
+
+<span style="color:blue">Calculate the cumulative density data from the distribution for values using `pnorm()` and plot this.</span>
+
+R code:
+
+```{r pnorm, eval=FALSE, echo=TRUE, fig.height=3}
+# At.data = a sequence from min to max temperature values
+cumul.data <- pnorm(At.data, 
+                    mean = MeanTemp,
+                    sd = sdTemp)
+
 plot(At.data, cumul.data, type="l")
 ```
 
-<span style="color:blue"> Calculate the 2.5th, 25, 50th, 75th, and 97.5th quantiles from the distribution using `qnorm()`</span>
-```{r qnorm, eval=F, echo=TRUE, fig.height=3}
-Quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
-quants.data <- qnorm(Quantiles, 
-                     mean = MeanTemp, sd = sdTemp)
-plot(Quantiles, quants.data, type="l")
+<details><summary>ANSWER</summary>
 
+```{r pnorm-answer, eval=TRUE, echo=TRUE, fig.height=3}
+# At.data = a sequence from min to max temperature values
+cumul.data <- pnorm(At.data, 
+                    mean = MeanTemp,
+                    sd = sdTemp)
+
+plot(At.data, cumul.data, type="l")
 ```
 
+</details>
+
+</br>
+
+<span style="color:blue"> Calculate the 2.5th, 25, 50th, 75th, and 97.5th 
+quantiles from the distribution using `qnorm()`</span>
+
+R code:
+
+```{r qnorm, eval=FALSE, echo=TRUE, fig.height=3}
+# create vector of probabilities as input
+Quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+# calculate quantiles
+quants.data <- qnorm(Quantiles, 
+                     mean = MeanTemp, sd = sdTemp)
+# plot
+plot(Quantiles, quants.data, type="l")
+```
+
+<details><summary>ANSWER</summary>
+
+```{r qnorm-answer, eval=TRUE, echo=TRUE, fig.height=3}
+# create vector of probabilities as input
+Quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+# calculate quantiles
+quants.data <- qnorm(Quantiles, 
+                     mean = MeanTemp, sd = sdTemp)
+# plot
+plot(Quantiles, quants.data, type="l")
+```
+
+</details>
+
+</br>
+
 <span style="color:blue">What is the difference between `pnorm()` and `qnorm()`?</span>
+
+<details><summary>I had a go at explaining it myself now I want to see the ANSWER</summary>
+
+`pnorm()` takes quantiles as an input and calculates the cumulative density
+function at those quantiles. It shows the probability of having an observed
+value less than or equal to each quantile. 
+
+`qnorm()` is the inverse of `pnorm()`. It takes a vector of probabilities as 
+an input and gives quantiles as an output. i.e. it finds the value of `x` (our
+variable of interest) at a given percentile of the distribution. 
+
+There is quite a nice summary with examples here: https://www.datascienceblog.net/post/basic-statistics/distributions/ 
+
+</details>
+
+</br>
+
+<span style="color:blue">Once you have had a go, you can watch the summary
+video to go through this section.</span>
+
+[Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=839a12c2-78d6-439d-89d0-acc300a7737c) or watch below
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=839a12c2-78d6-439d-89d0-acc300a7737c&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
 
 ## The Normal Distribution: the log likelihood
 
@@ -201,6 +347,8 @@ And we can  calculate this using  `sum(dnorm(..., log=TRUE))`.
 
 ```{r NormSimEst, echo=TRUE, fig.height=3}
 Means <- seq(25, 35, length=500)
+# sapply applies a function (here CalcNormlogLh) across a set of numbers
+# (here Means)
 loglhoods <- sapply(Means, CalcNormlogLh, sigma=sdTemp, 
                  data=GDay$Temperature)
 plot(Means, exp(loglhoods-max(loglhoods)), type="l", 
@@ -286,20 +434,33 @@ $$
 
 For details, you can do it yourself or follow the proof at the [StatLect site](https://www.statlect.com/fundamentals-of-statistics/normal-distribution-maximum-likelihood).
 
-The estimate $\hat{\mu}$ is just the sample mean, and $\hat{\sigma}^2$ is the sample variance. These two statistics can be used to summarise the whole distibution. Note that the denominator for the estimate of $\hat{\sigma}^2$ is $n$, not $n-1$. But nobody actually uses this: it assumes the MLE for $\hat{\mu}$ is the true value, but in reality we do not know the true value of $\mu$, so it turns out that using $(n-1)$ is better because it takes into account the uncertainty
+**The estimate $\hat{\mu}$ is just the sample mean, and $\hat{\sigma}^2$ is the sample variance.** 
+
+These two statistics can be used to summarise the whole distibution. Note that the denominator for the estimate of $\hat{\sigma}^2$ is $n$, not $n-1$. But nobody actually uses this: it assumes the MLE for $\hat{\mu}$ is the true value, but in reality we do not know the true value of $\mu$, so it turns out that using $(n-1)$ is better because it takes into account the uncertainty
 
 
 ## Confidence Intervals
 
-We can simulate data and calculate the likelihood for different values of the mean (we will fix the standard deviation for now)
+<span style="color:blue">This next video is a bit long. It tries to put the
+maximum likelihood estimation in the context of modelling and explain
+how all of the different things we have covered so far link together. Hopefully
+it is helpful.</span>
+
+[Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7c75a9f1-5512-4d49-b304-acc300a7794d) or watch below
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7c75a9f1-5512-4d49-b304-acc300a7794d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+We can simulate data and calculate the likelihood for different values of the mean (we will fix the standard deviation for now).
 
 
 We can look at the distribution of $\hat{\mu}$, and (for example) estimate confidence intervals:
 
+You will need to download and source the script
+
 ```{r SimMu, echo=TRUE, eval=FALSE}
-# Simulate data sets with mean 1, standard deviation 2 and 10 data points
-# For each one calcualte the MLE for the mean
-Sims <- SimNormMeans(mu=1, sigma=2, N=10, nReps = 1e4)
+# Simulate data sets with mean 1 (mu in function below), standard deviation 2 (sigma in function below) and 10 data points (N in the function)
+# For each one calculate the MLE for the mean
+Sims <- SimNormMeans(mu=1, sigma=2, N=10, NReps = 10000)
 hist(Sims)
 quantile(Sims, c(0.025, 0.975))
 
@@ -308,14 +469,79 @@ quantile(Sims, c(0.025, 0.975))
 <span style="color:blue">Use this to simulate the Punxsutawney temperature data to estimate the mean temperature and its 95% confidence interval. To do this you should:
 
 - <span style="color:blue">estimate the MLEs for $\mu$ and $\sigma^2$</span>
-- <span style="color:blue">Use these and `SimNormMean()` to simulate replicate data (with the same number of data points as in the original data), and estimate the means of each simulated data point</span>
+- <span style="color:blue">Use these and `SimNormMeans()` to simulate replicate data (with the same number of data points as in the original data), and estimate the means of each simulated data set</span>
 - <span style="color:blue">from the distribution of estimated means, calculate the 95% confidence interval (using the quantiles of the distribution)
 
+Use the code above as a basis for this but use R hints if you get stuck.
 
+<details><summary> R help if you need it </summary>
+
+**First**, find MLE for $\mu$ and $\sigma^2$ for the Punxsutawney temperature data.
+
+It says above that you find these by taking the mean and variance of `x`, respectively. In this case, `x` is
+temperature data from Punxsutawney. 
+
+You can do this in R using the functions `mean()` and `var()`.
+
+**Second**, use the `SimNormMeans()` function to simulate 
+repeat data collection of the temperature, pick a high number
+of repeat samples e.g. 1000-10000. (Too high will take too
+long). For this part, you need one extra bit of information:
+argument `N`, which is the number of data points. This needs
+to match the number in the original data. 
+
+**Remember: although $\sigma^2$ is the parameter we wanted the MLE for, `SimNormMeans()` takes the input $\sigma$. So take the
+square root of $\sigma^2$ using `sqrt()` to get $\sigma$.**
+
+You can find this using `length()` e.g. 
+
+
+```{r mlesim, echo=TRUE, eval=FALSE}
+
+N = length(YOURDATA$Temperature)
+
+```
+
+`SimNormMeans()` will calculate the mean for you.
+
+**Third**, use the quantile function like the example above to get a 95% confidence interval. 
+
+</details>
+
+<details><summary> ANSWER </summary>
+
+```{r SimMu-answer2, echo=TRUE, eval=TRUE}
+# Find MLE estimates of mean and variance
+mu <- mean(GDay$Temperature)
+sigma2 <- var(GDay$Temperature)
+sigma <- sqrt(sigma2)
+
+# Find number of data points
+N <- length(GDay$Temperature)
+
+MySims <- SimNormMeans(mu=mu, sigma=sigma, N=N, 
+                       NReps = 10000)
+
+# Plot the results of the simulation (yours will be a bit different)
+hist(MySims,
+     xlab = "Mean of simulated data",
+     ylab = "Frequency",
+     main = "Simulated results")
+
+# Get confidence intervals
+quantile(MySims, c(0.025, 0.975))
+
+```
+
+Your answers will not be exactly the same (simulations are random)! But should be close. 
+
+</details>
+
+</br>
 
 ## The distribution of $\hat{\mu}$
 
-We could use the simuations whenever we want to calculate the confidence intervals, but instead we can rely on some beer-inspired mathematics. It turns out that the distribution of $\hat{\mu}$ is a t-distribution.
+We could use the simulations whenever we want to calculate the confidence intervals, but instead we can rely on some beer-inspired mathematics. It turns out that the distribution of $\hat{\mu}$ is a t-distribution.
 
 So, we can calculate the density, quantiles etc. in the same way we did for the normal distribution:
 
@@ -327,7 +553,7 @@ rt(n=2, df=5)
 
 ```
 
-The t-distribution has a parameter, called `df`, which is there 'degrees of freedom', and is rough the amount of information in the distribution.
+The t-distribution has a parameter, called `df`, which is there 'degrees of freedom', and is roughly the amount of information in the distribution.
 
 "But what about the mean and variance?" you're thinking. Well, what we have above is the standard t-distribution. Recall that for the normal distribution we can calculate this:
 
@@ -344,7 +570,7 @@ $(\hat{\mu} + t_{n-1}(0.025)\frac{\hat{\sigma}}{\sqrt{n}}, \hat{\mu} + t_{n-1}(0
 
 
 ```{r tCI, echo=TRUE, eval=F}
-# Use this function to calculate the confidence inteval for the mean.
+# Use this function to calculate the confidence interval for the mean.
 #  This is a trivial example, doing it for the numbers 1 to 5
 CalcNormalMeanCI(1:5)
 
@@ -352,7 +578,24 @@ CalcNormalMeanCI(1:5)
 
 If we have enough data, this distribution look like a normal distribution
 
-<span style="color:blue">Calculate the 95% confidence interval for the mean of the Patuxwarney temperature data.</span>
+<span style="color:blue">Calculate the 95% confidence interval for the mean of the Punxsutawney temperature data.</span>
+
+<details><summary> ANSWER </summary>
+
+Use the code from above and plug in the temperature data. 
+
+```{r tCI-answer, echo=TRUE, eval=TRUE}
+
+# Use this function to calculate the confidence interval for the mean.
+CalcNormalMeanCI(GDay$Temperature)
+
+```
+
+These answers should be the same because there are no simulations, it is observed data. 
+
+</details>
+
+</br>
 
 ## How the amount of data affects confidence intervals
 
@@ -360,8 +603,84 @@ Those of you who are comfortable with mathematics might be able to work out from
 
 <span style="color:blue">Simulate data with the same mean & standard deviation as the Groundhog Day data, but with different sample sizes: 10, 100 and 100 data points. For each of these calculate the confidence intervals. How do they change as the sample size increases?
 
+To do this you should use `rnorm()` for the simulation. With
+`n` = number of observations, `mean` = mu, `sd` = sigma.
+
+Then use `CalcNormMeanCI()`.
+
+<details><summary> ANSWER </summary>
+
+```{r SimMu-answer, echo=TRUE, eval=TRUE}
+
+MySims10 <- rnorm(n = 10, 
+                  mean=mean(GDay$Temperature), 
+                  sd=sd(GDay$Temperature))
+
+MySims100 <- rnorm(n = 100, 
+                  mean=mean(GDay$Temperature), 
+                  sd=sd(GDay$Temperature))
+
+MySims1000 <- rnorm(n = 1000, 
+                  mean=mean(GDay$Temperature), 
+                  sd=sd(GDay$Temperature))
+
+# Get confidence intervals
+CalcNormalMeanCI(MySims10)
+
+CalcNormalMeanCI(MySims100)
+
+CalcNormalMeanCI(MySims1000)
+
+```
+
+Your results will not be the same because each simulation is 
+random, but you should see the confidence interval gets narrower
+as we get more observations (higher sample size).
+
+</details>
+
+</br>
+
 <span style="color:blue">(Optional) If you want to some more advanced coding, calculate the standard errors for different sample sizes, and plot the standard error against sample size.</span>
 
+<details><summary> ANSWER </summary>
+
+To do this, you need to create your own function to calculate
+the standard error. Then apply it to your simulated datasets
+above and then plot the result. 
+
+The standard error = $$\frac{\hat{\sigma}}{\sqrt{n}}$$
+
+```{r SE-answer, echo=TRUE, eval=TRUE}
+
+# Function
+SECalc <- function(x){
+  # calculate sigma (standard deviation)
+  sigma <- sd(x)
+  # find number of data points and take squareroot
+  n <- sqrt(length(x))
+  
+  # calculate SE
+  
+  SE <- sigma/n
+  
+  return(SE)
+}
+
+# try it out on simulated data
+
+SECalc(MySims10)
+SECalc(MySims100)
+SECalc(MySims1000)
+
+```
+
+Again, your answers won't be the same as mine but you should see a
+pattern of the SE getting smaller as the sample size increases. 
+
+</details>
+
+</br>
 
 ## Predicting the End of Winter
 
@@ -389,6 +708,18 @@ mtext("Phil can predict weather", 3)
 mtext("Mean Temperature,  \u00b0 F", 1, outer=TRUE)
 
 ```
+
+<details><summary> ANSWER </summary>
+
+If Phil cannot predict winter, you would expect to see no 
+difference in the temperature when Phil can see his shadow or not.
+
+If Phil can predict winter, you would expect temperatures to be
+colder when he can see his shadow and warmer when he cannot. I.e you expect to see a **difference**.
+
+</details>
+
+</br>
 
 We have to build a model where there are different mean temparatures when he does see his shadow, and when he does not.
 
@@ -461,7 +792,33 @@ SimttestLhood(XX=GDay$Shadow, YY=GDay$Temperature, nSims=5)
 
 ```
 
-<span style="color:blue">Run more than 5 simulations and look at the likeihood for the difference. What is the mean and the 95% confidence interval?</span>
+<span style="color:blue">Run more than 5 simulations and look at the likelihood for the difference. What is the mean and the 95% confidence interval?</span>
+
+<details><summary> ANSWER </summary>
+
+```{r Ttest-answer, echo=TRUE, eval = TRUE}
+# Use this function to simulate mean differences between 2 groups
+
+# This will give 100 simulated datasets
+
+SimDifferences <- SimttestLhood(XX=GDay$Shadow, 
+                             YY=GDay$Temperature, 
+                             nSims=100)
+
+# Look at the simulated mean differences
+
+hist(SimDifferences)
+
+# Calculate confidence intervals using quantile function
+
+quantile(SimDifferences, c(0.025, 0.975))
+
+```
+
+
+</details>
+
+</br>
 
 ## t-tests In Practice
 
@@ -477,4 +834,49 @@ There is much more about this in Chapter 3 of _A New Stats with R_.
 - <span style="color:blue">how sure can you be about the direction of any difference? And how large could a difference be?</span>
 - <span style="color:blue">do you think Punxsutawney Phil can predict whether there will be another 6 weeks of winter?</span>
 
+<details><summary> ANSWER </summary>
 
+This takes a few steps. First, run the t-test, it will print a result.
+
+Read the result carefully to find the information you need.
+
+```{r Ttest-answer2, echo=TRUE, eval = TRUE}
+# Run t-test
+
+t.test(GDay$Temperature[GDay$Shadow], GDay$Temperature[!GDay$Shadow], var.equal = TRUE)
+
+# Find the difference
+
+31.51937 - 31.14068
+
+```
+
+The output does not directly show the difference but you can
+calculate it from the means of x and y which are shown at the
+bottom of the output. Here it is a
+difference of 0.37869 degrees Fahrenheit.
+
+To work out the direction, you need to know which group is which. 
+In this case, Shadow = TRUE is the higher mean. So, when Phil
+sees his shadow, the temperature is 0.37869 degrees warmer than 
+when he doesn't. 
+
+The 95% confidence interval is -1.22 to 1.98, which spans 0. 
+Therefore, you cannot be sure of any direction of difference. It 
+could be as low as over -1 and up to +2 (for the most plausible
+range). 
+
+As a result, I do not think Phil can predict the end of winter
+(sorry Phil).
+
+</details>
+
+</br>
+
+<span style="color:blue"> Finish with Video 4 </span>
+
+[Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=75f68d0f-5990-4a30-857f-acc300a782f2) or watch below
+
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=75f68d0f-5990-4a30-857f-acc300a782f2&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
