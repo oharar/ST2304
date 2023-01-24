@@ -43,7 +43,7 @@ fitting the data, and drawing the right conclusions.**
 
 * P60-65 in 'The New Statistics with R'
 * Google (or any other search engine) - especially "diagnostic plots in R"
-* [Week 6 module](https://www.math.ntnu.no/emner/ST2304/2022v/Week06/ModelCheckingModule.html)
+* [Week 6 module](https://www.math.ntnu.no/emner/ST2304/2023v/Module06/ModelCheckingModule.html)
 
 ## R this week:
 
@@ -74,7 +74,7 @@ Things to remember:
 x and y here correspond to an 
 explanatory variable (x) and a response (y)
 * `plot()` and `abline()` **hint: you can use `abline(a=intercept, b=slope)` OR `abline(YOURMODEL)`**
-* `install.packages()` **if you can't remember go [here](https://www.math.ntnu.no/emner/ST2304/2020v/RIntro/R_tutorial.html)** Part F.
+* `install.packages()` **if you can't remember go [here](https://www.math.ntnu.no/emner/ST2304/2023v/RIntro/R_tutorial.html)** Part F.
 * `predict()` **hint: remember to use `lm()` with a data argument**
 
 -----
@@ -103,7 +103,7 @@ police officers you would recommend to be on duty on Saturday.** </span>
 ## Part A: First recommendation
 
 The data from last week's exercise can be found at
- https://www.math.ntnu.no/emner/ST2304/2019v/Week5/NoFreezeTempCrimeChicago.csv
+ https://www.math.ntnu.no/emner/ST2304/2023v/Module05/NoFreezeTempCrimeChicago.csv
 
 The first step is to import the data and assign it to an object. You can use the whole
 web link above to import the data. It is a csv file with column names (header) included.
@@ -174,7 +174,7 @@ This is just what you needed!**
 
 You can find the new complete dataset here:
 
-https://www.math.ntnu.no/emner/ST2304/2019v/Week6/TempCrimeChicago.csv  
+https://www.math.ntnu.no/emner/ST2304/2023v/Module06/TempCrimeChicago.csv  
 
 It is important to import the data and **plot it**.
 

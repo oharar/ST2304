@@ -35,7 +35,7 @@ Flames <- data.frame(Size=Size, Distance=Distance)
 This is the data:
 
 ```{r ReadDragonData, echo=TRUE}
-DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2021v/Week05/DragonFire.csv")
+DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2023v/Module05/DragonFire.csv")
 
 plot(DragonFire$Size, DragonFire$Distance, xlab="Length (m)", ylab="Distance (m)")
 
@@ -407,11 +407,11 @@ We have removed data where the man temperature was below freezing
 We can read in the data from the web:
 
 ```{r ReadData, echo=TRUE, eval=FALSE}
-ChicagoCrime <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/NoFreezeTempCrimeChicago.csv")
+ChicagoCrime <- read.csv("https://www.math.ntnu.no/emner/ST2304/2023v/Module05/NoFreezeTempCrimeChicago.csv")
 str(ChicagoCrime)
 ```
 ```{r ReadData2, echo=FALSE, eval=TRUE}
-ChicagoCrime <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/NoFreezeTempCrimeChicago.csv")
+ChicagoCrime <- read.csv("https://www.math.ntnu.no/emner/ST2304/2023v/Module05/NoFreezeTempCrimeChicago.csv")
 #str(ChicagoCrime)
 ```
 
