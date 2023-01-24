@@ -5,4 +5,20 @@ details > summary {
   border: none;
   cursor: pointer;
 }
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+
+<style>
+div.green { background-color:#e6fff8; border-radius: 5px; padding: 20px;}
+</style>
+
+<style>
+div.greentwo { background-color:#b4f28d; border-radius: 5px; padding: 20px;}
+</style>
+
+<style>
+div.greenthree { background-color:#d6d12f; border-radius: 5px; padding: 20px;}
+</style>
 ```

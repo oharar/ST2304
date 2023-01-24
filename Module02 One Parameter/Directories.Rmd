@@ -31,14 +31,14 @@ Although there are differences between different operating systems in the detail
 
 If we want to find a file on a computer, we need to know what directory it is in. We write this by writing the directories as a _filepath_. For example, the file path for this course on my laptop is `/work/bohara/Dropbox/Teaching/ST2304/`. At the base of the tree are directories like `bin/` and `dev/`, which hold files that the operating system needs. It also has a directory called `work/`, which has one subdirectory: `bohara/`.
 
-The `/work/bohara/` directory is my "home" when I log onto my laptop. Everything under this in the tree is specific to me: if I added an account for Zaphod Beeblebrox, then he would have a `/home/zaphodb/` folder, and could put his files in there. We can follow the same logic further: `Dropbox/Teaching/ST2304/` is the rest of the filepath, and gets us to the directory for this course. This file is in the Week 2 sub-directory, so this file is (before I move it to the web!):
-`/work/bohara/Dropbox/Teaching/ST2304/Week02 One Parameter/Directories.html`
+The `/work/bohara/` directory is my "home" when I log onto my laptop. Everything under this in the tree is specific to me: if I added an account for Zaphod Beeblebrox, then he would have a `/home/zaphodb/` folder, and could put his files in there. We can follow the same logic further: `Dropbox/Teaching/ST2304/` is the rest of the filepath, and gets us to the directory for this course. This file is in the Module 2 sub-directory, so this file is (before I move it to the web!):
+`/work/bohara/Dropbox/Teaching/ST2304/Module02 One Parameter/Directories.html`
 
 Note that we use forward slashes between the directory names. Other operating systems might be different.
 
 So, if I want to (say) copy this file to the directory for next week, I could fire up the command line and do this:
 
-`copy /work/bohara/Dropbox/Teaching/ST2304/Week02/Directories.html /work/bohara/Dropbox/Teaching/ST2304/Week03/Directories.html`
+`copy /work/bohara/Dropbox/Teaching/ST2304/Module02/Directories.html /work/bohara/Dropbox/Teaching/ST2304/Module03/Directories.html`
 
 (modern operating systems have a GUI ("Graphical User Interface") which hides this from you: you click on a file, use Ctrl-C to copy, navigate to the new folder and use Ctrl-V to paste)
 
@@ -46,19 +46,19 @@ But that is horrible to write. So there are a couple of shortcuts:
 
 One is the use of the home directory. If the computer thinks I am in my home directory (`/work/bohara/`), then if I save a file from somewhere else, it will save it in my home directory. Some programmes don't do this, for example my web browser will, by default, save a file in `/work/bohara/Downloads`. So if I want to copy a file into my home directory, I could do this:
 
-`copy /work/bohara/Dropbox/Teaching/ST2304_2020/Week02/Directories.html Directories.html`
+`copy /work/bohara/Dropbox/Teaching/ST2304_2020/Module02/Directories.html Directories.html`
 
-The other shortcut is the use of _relative paths_. If I am in my home directory, I can use directories relative to that. So, for example, if I am in my home directory, I can refer to the Dropbox sub-directory as `/work/bohara/Dropbox/`, or more simply as `Dropbox/`. The advantage of this is that if I cange to another directory that has Dropbox installed, I can still use the same relative path.
+The other shortcut is the use of _relative paths_. If I am in my home directory, I can use directories relative to that. For example, if I am in my home directory, I can refer to the Dropbox sub-directory as `/work/bohara/Dropbox/`, or more simply as `Dropbox/`. The advantage of this is that if I change to another directory that has Dropbox installed, I can still use the same relative path.
 
 Relative paths can be used like this to got down the directory tree, but what about up? To do this you can use `../`. So, if I wanted to go from my home directory to say, Zaphod Beeblebrox's, I could use `../zaphodb/`. The `..` takes me up one level, and then `zaphodb/` is his home directory.
 
 ### Windows
 
-(note: this is being written by someone who hasn't used Windows seriously for over a decade)
+(note: this is being written by someone who hasn't used Windows seriously for well over a decade)
 
 Windows uses the basic system described above, but it tries to hide the details. But there are a couple of notable differences:
 
-- Windows uses back slashes, `\`, between directory names. So on Windows `Dropbox/Teaching/ST2304_2020/Week02/Directories.html` is `Dropbox\\Teaching\\ST2304_2020\\Week02\\Directories.html`
+- Windows uses back slashes, `\`, between directory names. So on Windows `Dropbox/Teaching/ST2304_2020/Module02/Directories.html` is `Dropbox\\Teaching\\ST2304_2020\\Module02\\Directories.html`
 - Windows is not case sensitive, so `Dropbox\\Teaching` is the same as `Dropbox\\TEACHING`
 - Windows uses drives in the file structure. Your hard drive is `C:`. When you add other drives, e.g. an external drive, or a USB stick, or a network drive, it gets a new letter. For example, NTNU uses `M:` as your home drive on the NTNU system.
 - For some files, Windows give you a name in Norwegian (or whatever language you are using), even though internally the English name is used. This will get confusing, because if you access the files through R, you will have to use the English name.
@@ -79,7 +79,7 @@ Finder:
 ![Finder](Finder.png)
 
 Then right-click the file and select 'Get info'/ 'Vis info'. In the example below, you can see that my file is
-saved at `~/Users/emilygs/Dropbox/ST2304_2020/Week02 One Parameter/Directories.Rmd`.
+saved at `~/Users/emilygs/Dropbox/ST2304_2020/Module02 One Parameter/Directories.Rmd`.
 
 ![Result of Get Info](GetInfo.png)
 
@@ -94,7 +94,7 @@ getwd()
 You can see that this is not my home directory. This is because I ran this code from a different directory. If I want to change my working directory, I can use `setwd()`:
 
 ```{r setwd, eval=FALSE}
-setwd("~/Dropbox/Teaching/ST2304/Week03 Confidence Intervals/")
+setwd("~/Dropbox/Teaching/ST2304/Module03 Confidence Intervals/")
 ```
 
 Which is the directory for the material for week 3. So once I start working on that material, I can use that as my working directory.
@@ -107,7 +107,7 @@ file.copy("Arwen.JPG", "ABird.JPG") # copy a file
 file.remove("ABird.JPG") # remove a file
 
 # Look in Week 3's directory
-dir("../../ST2304/Week03 Confidence Intervals/")
+dir("../../ST2304/Module03 Confidence Intervals/")
 
 file.exists("Directories.html") # Does this file exist?
 file.exists("https://www.math.ntnu.no/emner/ST2304/2020v/Week01/test_data.csv") # Yes, web addresses also work!

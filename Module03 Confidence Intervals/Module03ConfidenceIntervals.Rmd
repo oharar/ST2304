@@ -1,5 +1,5 @@
 ---
-title: "Maximising the Binomial Likelihood"
+title: "Having Confidence in the Binomial Likelihood"
 author: "Bob O'Hara"
 output:
   html_document:
@@ -93,7 +93,7 @@ Because different samples give different estimates, we want to quantify this, to
 
 ```{r SimData}
 # Source the script directly from the internet
-# source('https://www.math.ntnu.no/emner/ST2304/2020v/Week02/Week2Functions.R')
+# source('https://www.math.ntnu.no/emner/ST2304/2023v/Module03/InferenceFunctions.R')
 source('InferenceFunctions.R')
 nTrials <- 13
 nLand <- 6
