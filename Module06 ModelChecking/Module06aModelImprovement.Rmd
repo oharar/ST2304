@@ -50,6 +50,7 @@ WomenMod <- lm(WomenTimes~Year, data=Times)
 ```
 
 # How can we improve the model?
+
 <!---
 
 [Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3eabac64-48e6-4966-8c51-acd00115b138) or watch below

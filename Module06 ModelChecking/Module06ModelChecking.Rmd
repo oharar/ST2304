@@ -4,6 +4,7 @@ title: "How good is our straight line?"
 author: "Bob O'Hara"
 output:
   html_document:
+    css: "../ST2304RMarkdown.css"
     df_print: paged
     toc: true
     toc_depth: 3
@@ -62,7 +63,7 @@ Part 5: QQ plots
 Here is the data on the winning times from the women's 100m sprint at the Olympics (we will compare this data to the men's times later in the course)
 
 ```{r WomensTimes, fig.height=5}
-Times <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week5/Times.csv")
+Times <- read.csv("https://www.math.ntnu.no/emner/ST2304/2023v/Module05/Times.csv")
 WomenMod <- lm(WomenTimes~Year, data=Times)
 plot(Times$Year, Times$WomenTimes, lwd=2,
      xlab="Year", ylab="Winning Time")
@@ -79,7 +80,7 @@ Here are some simulated data sets. For all of them I used the the same errors, b
 - <span style="color:blue">if it is not, can you do something simple to improve the fit? (for some you cannot, for some you can)</span>
 
 ```{r CreateSimData, echo=FALSE, results='hide'}
-if(!file.exists("../Data/SimRegression.csv")) {
+if(!file.exists("SimRegression.csv")) {
   set.seed(5)
   alpha <- 1; beta <- 1
   sigma <- c(0.3, 0.9, 5)
@@ -100,7 +101,7 @@ if(!file.exists("../Data/SimRegression.csv")) {
   SimData$y6[2] <- SimData$y6[2]*5
   SimData$x7[2] <- SimData$x7[2] + 10
   
-  write.csv(SimData, "../Data/SimRegression.csv", row.names = FALSE)
+  write.csv(SimData, "SimRegression.csv", row.names = FALSE)
   
   ToPDF <- TRUE
   if(ToPDF) {
@@ -121,7 +122,7 @@ if(!file.exists("../Data/SimRegression.csv")) {
 ```
 
 ```{r PlotSimData, echo=FALSE, fig.height=8}
-SimData <- read.csv("../Data/SimRegression.csv")
+SimData <- read.csv("SimRegression.csv")
 par(mfrow=c(4,2), mar=c(1.1,1.1,4,1))
 plot(SimData$x, SimData$y1, main="Data Set 1")
 plot(SimData$x, SimData$y2, main="Data Set 2")
@@ -958,6 +959,8 @@ The residuals should have no pattern. Here we try look at them graphically, beca
 - Residual plots can show curvature, outliers and heteroscedasticity
 - Normal Probability Plots can show a lack of normality (e.g. skewness), and also outliers
 - Cook's D can be used to identify influential points.
+
+
 # How can we improve the model?
 
 [Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3eabac64-48e6-4966-8c51-acd00115b138) or watch below
