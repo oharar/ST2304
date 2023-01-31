@@ -3,6 +3,7 @@ title: "Multiple Regression"
 author: "Bob O'Hara"
 output:
   html_document:
+    css: "../ST2304RMarkdown.css"
     df_print: paged
 ---
 
@@ -39,7 +40,7 @@ We will look at
 ## More Monsters
 
 ```{r SimData, echo=FALSE}
-if(!file.exists("../Data/ScheyData.csv")) {
+if(!file.exists("ScheyData.csv")) {
   set.seed(3.14)
   N <- 100
   muX <- c(5, 10)
@@ -55,9 +56,9 @@ if(!file.exists("../Data/ScheyData.csv")) {
   Dust <- rnorm(N, mu, sigma)
   
   ScheySim <- data.frame(cbind(X, Dust))
-  write.csv(ScheySim, file="../Data/ScheyData.csv", row.names = FALSE)
+  write.csv(ScheySim, file="ScheyData.csv", row.names = FALSE)
 } else {
-  ScheySim <- read.csv("../Data/ScheyData.csv")
+  ScheySim <- read.csv("ScheyData.csv")
 }
 
 # summary(lm(Dust ~ GapeSize, data=ScheySim))$r.squared
@@ -440,7 +441,7 @@ quadmod <- lm(y8 ~ x + I(x^2), data=SimData)
 
 ```
 
-We need to write `I(x^2)` rather than just `x^2` for slightly obscure reasons, to do with writing more complex models^[essentially, we want `(A + b)^2 = A + A:B + B`. We will explain more about this later].
+We need to write `I(x^2)` rather than just `x^2` for slightly obscure reasons, to do with writing more complex models^[essentially, we want `(A + B)^2 = A + A:B + B`. We will explain more about this later].
 
 If we want to plot a polynomial, we can't use `abline()`, unfortunately. Instead we have to predict new data, and plot that.
 

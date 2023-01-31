@@ -1,0 +1,228 @@
+---
+title: "A very short introduction to R Markdown"
+author: "Lisa Dickel"
+date: "2/12/2021"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+https://rmarkdown.rstudio.com/articles_intro.html
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+## Why is it useful 
+
+&rarr; An "authoring framework" in which we can combine text and code
+
+- Sharing analyses with other people - including code, output, and text 
+
+- No copying of code, output or plots 
+
+- No need for reader to have software installed which you used
+
+- To create reproducible reports - change e.g. the data and reproduce the report! 
+
+- Communicate our findings in a readable, well formatted way 
+
+
+<br>
+<br>
+<br>
+<br>
+
+# How does it work 
+
+- Code chunks 
+
+- Text and headlines 
+
+- Output options: (html, word, pdf) 
+
+- You can also do small modifications and produce presentations, ebooks.. 
+
+- Where does the output get saved &rarr; in your working directory! 
+
+- If you change something and knit again - it will be updated and overwritten 
+
+<br>
+<br>
+<br>
+<br>
+
+# Getting started  
+
+- install.packages("rmarkdown") 
+
+- Info about installation and really everything else: The definitive guide to RMarkdown! 
+
+![](https://www.math.ntnu.no/emner/ST2304/2021v/Week05/cover.png)
+
+https://bookdown.org/yihui/rmarkdown/installation.html
+
+- Set up a new file: File &rarr; New File &rarr; RMarkdown &rarr; choose which type of document you prefer! 
+
+- Knit: click on the 'knit' icon 
+
+- If you produce pdf output needs latex installed (e.g. tinytex does the job already and can be installed from R console) 
+
+- Knit to another format than specified in the header: dropdown menu beside 'knit' icon 
+
+- Boring to install Latex? &rarr; export as html and print to pdf in your web browser (e.g. easy to do in chrome)
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+## Including code and plots 
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2021v/Week05/DragonFire.csv")
+
+plot(DragonFire$Size, DragonFire$Distance, xlab="Length (m)", ylab="Distance (m)")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+## We can also include the code and the plot 
+
+```{r}
+DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2021v/Week05/DragonFire.csv")
+
+plot(DragonFire$Size, DragonFire$Distance, xlab="Length (m)", ylab="Distance (m)")
+```
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+## And in some cases we want to see only the code 
+
+```{r, message=FALSE}
+library(dplyr)
+```
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+## Or we can just run the code and show nothing! 
+
+
+```{r, include=FALSE}
+library(dplyr)
+```
+
+&rarr; here I loaded a package, but noone can see it! 
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+---
+
+# Formatting the text (#)
+
+## Headers of different levels (##)
+
+### Determined by number of hashtags  (###)
+
+*italian*  (*) 
+
+**and bold** (**) 
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+# What can go wrong 
+
+- If there is a problem anywhere in your script or it is missing some information, it will not knit and give an error 
+
+- Everything needed in the script (data, functions, packages) need to be loaded in the same script! 
+
+- The error that will be displayed will not necessarily refer to the line in the R script but possibly to the log file in your working directory 
+
+- You can maybe not see that file in your working directory - you need change settings to enable 'show hidden files' 
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+# Need more help with R, RStudio etc? 
+
+&rarr; Soon, soon there will be an introductory course again! 
+
+https://innsida.ntnu.no/start/#/feed//3873e72f-79ec-3867-9651-61a52da11a98
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+

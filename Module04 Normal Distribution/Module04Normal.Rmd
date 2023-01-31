@@ -1,5 +1,5 @@
 ---
-title: 'Week 4: The Normal Distribution'
+title: 'Module 4: The Normal Distribution'
 output:
   html_document:
     css: "../ST2304RMarkdown.css"
