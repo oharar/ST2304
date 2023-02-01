@@ -106,7 +106,7 @@ Or, for those who like equations, like this:
 $$
 f(x| \mu, \sigma^2) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(x - \mu)^2}{2\sigma^2} }
 $$
-$x$ is the thing that follows a normal distribution (e.g. temperature). $f(x|\mu, \sigma^2)$ is the density: a higher density means that value of $x$ is more likely^[this is not strictly correct, as $Pr(X=x)=0$ for a continuous density. More strictly a higher density means that an interval around that value is more likely to contain $x$]. We call $f(x|\mu, \sigma^2)$ the **probability density function**, and use it to calculate the probability that $x$ is between two values (e.g. $Pr(-1.96 < x < 1.96| \mu=0, \sigma^2 = 1) = 0.95$ ) The parameters are $\mu$ and $\sigma^2$: the mean and variance (sometikmes we use the standard deviation, $\sigma$, rather than $\sigma^2$, or even $1/\sigma^2$, the precision). 
+$x$ is the thing that follows a normal distribution (e.g. temperature). $f(x|\mu, \sigma^2)$ is the density: a higher density means that value of $x$ is more likely^[this is not strictly correct, as $Pr(X=x)=0$ for a continuous density. More strictly a higher density means that an interval around that value is more likely to contain $x$]. We call $f(x|\mu, \sigma^2)$ the **probability density function**, and use it to calculate the probability that $x$ is between two values (e.g. $Pr(-1.96 < x < 1.96| \mu=0, \sigma^2 = 1) = 0.95$ ) The parameters are $\mu$ and $\sigma^2$: the mean and variance (sometimes we use the standard deviation, $\sigma$, rather than $\sigma^2$, or even $1/\sigma^2$, the precision). 
 
 We can split the function up into bits. The first part is 
 
@@ -329,7 +329,7 @@ video to go through this section.</span>
 
 ## The Normal Distribution: the log likelihood
 
-If we are modelling our data, we have observations $y_i$, then we assume they were drawn from a normal distribution with mean $\mu$ and variance $\sigma^2$. The likeihood for this data is the probability density function (now as a function of the parameters): the log-likelihood for a single datapoint is 
+If we are modelling our data, we have observations $y_i$, then we assume they were drawn from a normal distribution with mean $\mu$ and variance $\sigma^2$. The likelihood for this data is the probability density function (now as a function of the parameters): the log-likelihood for a single datapoint is 
 
 $$
 l(\mu, \sigma^2|y_1) = -\frac{1}{2} log({2 \pi \sigma^2)  -\frac{(y_1 - \mu)^2}{2\sigma^2} }
@@ -375,7 +375,7 @@ plot(Means, exp(loglhoods-max(loglhoods)), type="l",
 
 ```
 
-You may notice that `loglhoods` is the log-likeihood, but we plot the likelihood, so we have to back-transform it, using `exp(loglhoods-max(loglhoods))`. This is the same as `likelihood/(maximum likelihood)`, so we are just scaling the y-axis. if we don't do this, we can get numerical problems: the largest value of the log-likelihood is `r round(max(loglhoods), 2)`, which give a likelihood of `r exp(max(loglhoods))`. 
+You may notice that `loglhoods` is the log-likelihood, but we plot the likelihood, so we have to back-transform it, using `exp(loglhoods-max(loglhoods))`. This is the same as `likelihood/(maximum likelihood)`, so we are just scaling the y-axis. if we don't do this, we can get numerical problems: the largest value of the log-likelihood is `r round(max(loglhoods), 2)`, which give a likelihood of `r exp(max(loglhoods))`. 
 
 Given this, we can estimate the maximum likelihood estimate with 
 
@@ -447,9 +447,11 @@ how all of the different things we have covered so far link together. Hopefully
 it is helpful.</span>
 
 [Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7c75a9f1-5512-4d49-b304-acc300a7794d) or watch below
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7c75a9f1-5512-4d49-b304-acc300a7794d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 We can simulate data and calculate the likelihood for different values of the mean (we will fix the standard deviation for now).
 
 
@@ -563,7 +565,7 @@ $$
 
 and $z$ follows a normal distirbution with mean 0 and variance 1. If we do the same transformation and $x$ follows a t distribution, $z$ follows a standard t distribution.
 
-So, to calculate the confidence interval for our mean, we can use the same approach as we use for the normal distribution. For the normal distribution, the interval is the mean plus/minus 1.96 times the standard error. We use 1.96 because that is the 97.5% quantile of the standard normal distribution (and -1.96 is the 2.5% quantile). So, we can just replace $\pm 1.96$ with the relevant quantiles. We call the q^th quantile $t_{\nu}(q)$, where $\nu$ is the degrees of freedom. For the mean of the normal distribution this is $n-1$, where $n$ is the sample size:
+So, to calculate the confidence interval for our mean, we can use the same approach as we use for the normal distribution. For the normal distribution, the interval is the mean plus/minus 1.96 times the standard error. We use 1.96 because that is the 97.5% quantile of the standard normal distribution (and -1.96 is the 2.5% quantile). So, we can just replace $\pm 1.96$ with the relevant quantiles. We call the $q^{th}$ quantile $t_{\nu}(q)$, where $\nu$ is the degrees of freedom. For the mean of the normal distribution this is $n-1$, where $n$ is the sample size:
 
 $(\hat{\mu} + t_{n-1}(0.025)\frac{\hat{\sigma}}{\sqrt{n}}, \hat{\mu} + t_{n-1}(0.975)\frac{\hat{\sigma}}{\sqrt{n}})$
 
@@ -781,7 +783,7 @@ The log-likelihood is not too difficult to write down
 $$
 \log L(\mu_i, \sigma| x_1, ..., x_n) = C - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (x_i - \mu_i)^2
 $$
-where $mu_i$ is described above.  We now have 3 parameters (two for the means, and the standard deviation). We can look at the likelihood for the difference, using the MLEs for the other parameters.
+where $\mu_i$ is described above.  We now have 3 parameters (two for the means, and the standard deviation). We can look at the likelihood for the difference, using the MLEs for the other parameters.
 
 ```{r Ttest, echo=TRUE, eval = F}
 # Use this function to simulate the MLE for the difference between 2 groups.
