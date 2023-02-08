@@ -47,7 +47,7 @@ $$
 But we usually work on the log-likelihood scale, where we have: 
 
 $$
-l(\theta|X_1, X_2,...,X_n) = \sum_{i=1}^{n} \log(Pr(X_i|\theta))
+l(X_1, X_2,...,X_n \vert \theta) = \sum_{i=1}^{n} \log(Pr(X_i|\theta))
 $$
 
 So, we just add the log-likelihoods together, which is easier than multiplying, and makes a lot of the maths easier.
