@@ -593,9 +593,11 @@ The residuals for Model 8 look unhappy: they are obviously curved. So fitting a 
 ## Normal Probability Plots
 
 [Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c0813cb6-a4cc-49b3-874e-acd000c34b68) or watch below
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=c0813cb6-a4cc-49b3-874e-acd000c34b68&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 Residual plots can show some deviant patterns, but they are poor as a test of normality. There are formal tests of normality, but they generally don't work too well. Instead we can use normal probability plots. These are a particular sort of 'Q-Q plot' (Q-Q = quantile-quantile). The idea of a Q-Q- plot is that if we have $N$ samples from a distribution, then the smallest should be approximately the same as the $1/(N+1)$th quantile, the next smallest approximately the  $2/(N+1)$th quantile etc.
 
 So, for example, for a uniform distribution the quantiles should be evenly spaced:
@@ -848,6 +850,7 @@ qqnorm(resid(mod.tailed)); qqline(resid(mod.tailed))
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=1891e049-05f5-47ce-8bf7-acd00100aaf1&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 This is less well know, but can be a problem, and can't always be seen with residuals. We can use data sets 6 and 7 to see the problem. First. here are the data sets, with the troublesome points highlighted.
 
 ```{r Plot76, echo=FALSE, fig.height=6}

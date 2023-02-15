@@ -35,9 +35,8 @@ We will look at
 
 ## More Monsters
 
-![](Schey.png)
+![](Schey.png){width=60%}
 
-## More Monsters
 
 ```{r SimData, echo=FALSE}
 if(!file.exists("ScheyData.csv")) {
@@ -83,16 +82,37 @@ We caught 100 and measured the amount of dust they could eat in 5 mins, and want
 
 ## The Data
 
+We can read in the data, and plot the difference variables against each other.
+
 ```{r ReadData}
 File <- "https://www.math.ntnu.no/emner/ST2304/2020v/Week07/ScheyData.csv"
   Schey <- read.csv(File)
 plot(Schey, labels=c("Gape\nSize (mm)", "Body\nSize (g)", "Dust\nEaten (g)"))
+```
+
+From this plot it appears that there is no relationship between body size and the amount of dust eaten, and ther may be a weak relationship between gape size and the amount of dust eaten.
+
+The pairwise plots show the data in only two dimensions per plot. But the data are in three dimensions. We can look at that using an interactive plot, which you can spin around to try to work out how the data are related. Remember Dust Eaten is the response, so try to keep it on the z axis (i.e. up-down).
+
+```{r InteractivePlot, message=FALSE}
+
+library(plotly)
+
+fig <- plot_ly(Schey, x = ~GapeSize, y = ~BodySize, z = ~Dust, 
+               colors = '#BF382A')
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(scene = list(xaxis = list(title = 'Gape Size (mm)'),
+                     yaxis = list(title = 'Body Size (g)'),
+                     zaxis = list(title = 'Dust Eaten (g)')))
+fig
 
 ```
 
-Before we have looked at regression against a single covariate. Now we want to look at regression against two covariates: the extension to more than 2 is straightforward.
+## Modelling 
 
-This is a more common situaiton in practice than regression against a single covariate. Several factors often affect a response, so we need to take this into account. Even worse, they might interact, i.e. the effect of one covariate might depend on the value of another. Sometimes we are interested in all of the effects, at other times we are only interested in some, but we are worried that there are others that might have an effect, and need to be included in the analysis (not including them can bias the results, and also make the estimates worse).
+Now we have two covariates, so we ewant to fit a regression model with both covariates in it. The extension to more than 2 is straightforward.
+
+This is a more common situation in practice than regression against a single covariate. Several factors often affect a response, so we need to take this into account. Even worse, they might interact, i.e. the effect of one covariate might depend on the value of another. Sometimes we are interested in all of the effects, at other times we are only interested in some, but we are worried that there are others that might have an effect, and need to be included in the analysis (not including them can bias the results, and also make the estimates worse).
 
 This is our model for simple regression
 
@@ -249,13 +269,9 @@ $$
 $$
 where $\mathbf{b}$ is the MLE for $\mathbf{\beta}$. We won't show you the proof, and you won't need to remember this. In practice the computer will do all the calculations for you.
 
-
-START CHANGING HERE: FOCUS THIS, CENTERING & STANDARDISATION ON INTERPRETATION.
-ALSO - CHANGE SLIDES
-
 ## Understanding the Model
 
-The plot below shows the data and the line fitted for the model with just body size. the code draws the line from the model with both body size and gape size, but we don't see it. 
+Before we had a model with a single covariate, so the model was a line. Now we have two covariates, so the model is a 2D extension of a line, i.e. a plane. We can see that (and the data) below 
 
 ```{r SimDataPlotLine, echo=TRUE}
 plot(Schey$BodySize, Schey$Dust)
@@ -263,58 +279,55 @@ abline(a=coef(BodyMod)["(Intercept)"], b = coef(BodyMod)["BodySize"])
 abline(a=coef(FullMod)["(Intercept)"], b = coef(FullMod)["BodySize"], col=2)
 legend(9.025, 105.6, c("Body Size", "Body & Gape"), lty=1:2, col=1:2)
 
+
+
+fig <- plot_ly(Schey, x = ~GapeSize, y = ~BodySize, z = ~Dust, 
+               colors = '#BF382A')
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(scene = list(xaxis = list(title = 'Gape Size (mm)'),
+                     yaxis = list(title = 'Body Size (g)'),
+                     zaxis = list(title = 'Dust Eaten (g)')))
+
+GetSeq <- function(x, n=10) seq(min(x), max(x), length=n) 
+pred.surf <- expand.grid(GapeSize=GetSeq(Schey$GapeSize), 
+                        BodySize=GetSeq(Schey$BodySize))
+pred.surf$Dust <- predict(FullMod, newdata=pred.surf)
+
+surface <- matrix(pred.surf$Dust, nrow=10) # gape size is row
+
+surf <- add_surface(plot_ly(z = ~surface))
+surf
+
+fig
+
 ```
 
-The reason the line isn't drawn is that it's in the wrong place. The model that was fitted was 
+The full model is a plane (or a hyper-plane if we have more than two covariates), but for this model we can make things simpler. The model that was fitted was 
 
 $$
 y_i = \color{red}{\hat{\alpha} + \hat{\beta_{1}} x_{i1} + \hat{\beta_{2}} x_{i2}} + \color{blue}{\varepsilon_i}
 $$
-($x_{i1}$ is Body Size, $x_{i2}$ is Gape Size. The hats on Greek letters show that we are using the estimates of the parameters). But this code
+($x_{i1}$ is Body Size, $x_{i2}$ is Gape Size. The hats on Greek letters show that we are using the estimates of the parameters). So if we want to know the effect of body size, we can ask how much it changes, 
 
-```{r Abline, echo=TRUE, eval=FALSE}
-abline(a = coef(BSMod)["(Intercept)"], 
-       b = coef(BSMod)["BodySize"])
-```
 
-draws the line $y_i = \color{red}{\hat{\alpha} + \hat{\beta_{1}} x_{i1}}$. There is no $\hat{\beta_{2}} x_{i2}$. The fitted model is a plane (in 3D), but we are drawing a line (in 2D) by taking a slice through the plane. Unfortunately we are taking a slice in the wrong place. The code above takes a slice through the plane where $x_{i2}=0$. But the smallest value of $x_{i2}$ (gape size) in the data is `r round(min(Schey$GapeSize),2)`. 
+$$
+y_i = \color{grey}{\hat{\alpha} +} \color{red}{\hat{\beta_{1}} x_{i1}} \color{grey}{+ \hat{\beta_{2}} x_{i2} + {\varepsilon_i}}
+$$
 
-We could cut the plane anywhere, by plugging in different values for gape size. For example here are some lines
+If we look at this, we can see that if we keep $x_{i2}$ constant, the model is 
+$y_i = \color{grey}{\hat{\alpha} + \hat{\beta_{2}} x_{i2}} + \color{red}{\hat{\beta_{1}} x_{i1}} + \color{blue}{\varepsilon_i}$, so we can think of it as a simple linear regression with an intercept of $\hat{\alpha} + \hat{\beta_{2}} x_{i2}$, i.e. a straight line. Of course, if we change $x_{i2}$ we change this, but the slope is the same.
 
-```{r RegressionValues, echo=TRUE, fig.height=5, results='hide'}
-GapePreds <- seq(floor(min(Schey$GapeSize)), ceiling(max(Schey$GapeSize)), by=0.25)
-BetterLines <- data.frame(
-  GapePreds = GapePreds, 
-Better.as = coef(FullMod)["(Intercept)"] +  
-  coef(FullMod)["GapeSize"]*GapePreds)
+Visually, fixing $x_{i2}$ is taking a slice through the 3D plot: the value of $x_{i2}$ determines where we make teh slice. If we fix $x_{i1}$ instead, we are slicing at 90&deg;.
 
-par(mar=c(4.1,4.1,1,1))
-plot(Schey$BodySize, Schey$Dust)
-abline(a=coef(BodyMod)["(Intercept)"], 
-       b = coef(BodyMod)["BodySize"])
-apply(BetterLines, 1, function(ln, b, at.ln=0) {
-  abline(a=ln["Better.as"], b=b, col=2)
-  text(at.ln, ln["Better.as"]+at.ln*b, ln["GapePreds"], cex=1.3, font=2)
-}, b = coef(FullMod)["BodySize"], at.ln=10.61)
+In practice, this means that for these simple models we can interpret the parameter as we would in a simple regression: they tell us how much the response (e.g. dust eaten) is affected if the covariate (e.g. gape size) changes by 1.
 
-```
 
-If we want to select a single line to draw, the mean of gape size is a good choice
-
-```{r RegressionKGmean, echo=TRUE, fig.height=5, results='hide'}
-Better.a <- coef(FullMod)["(Intercept)"] +  
-  coef(FullMod)["GapeSize"]*mean(Schey$GapeSize)
-par(mar=c(4.1,4.1,1,1))
-plot(Schey$BodySize, Schey$Dust)
-abline(a=coef(BodyMod)["(Intercept)"], 
-       b = coef(BodyMod)["BodySize"])
-abline(a=Better.a, b = coef(FullMod)["BodySize"], col=2)
-```
-
+START CHANGING HERE: FOCUS THIS, CENTERING & STANDARDISATION ON INTERPRETATION.
+ALSO - CHANGE SLIDES
 
 ## Mean Centering
 
-So far we have not been thinking about the intercept. It is a necessary part of the model, but is not so easy to interpret.
+So far we have not been thinking about the intercept. It is a necessary part of the model, but is not so easy to interpret. Often it is largely ignored, even though it still has to be in the model.
 
 For our data, we can extend the plot so that the x-axis includes 0. This is where the intercept is (because the prediction for there is $E(y_i) = \alpha + \beta_1 0 + \beta_2 0 = \alpha$). The interpretation is diffiuclt, because we cannot have any Schey with a size and gape of 0, so as a prediction this is silly. That's fine if we don't want to interpret the intercept.
 
@@ -323,10 +336,10 @@ par(mar=c(4.1,4.1,1,1))
 plot(Schey$BodySize, Schey$Dust, xlim=range(c(0, Schey$BodySize)), xaxs="i")
 abline(a=coef(BodyMod)["(Intercept)"], 
        b = coef(BodyMod)["BodySize"])
-abline(a=Better.a, b = coef(FullMod)["BodySize"], col=2)
+# abline(a=Better.a, b = coef(FullMod)["BodySize"], col=2)
 ```
 
-Sometimes we can find it helpful to have an intercept that is interpretable, if only so we can do a sanity check. We can easíly move the intercept like this:
+Sometimes we can find it helpful to have an intercept that is interpretable, if only so we can do a sanity check. We can easily move the intercept like this:
 
 ```{r PlotYAxes, fig.height=5, echo=TRUE}
 par(mfrow=c(1,2), mar=c(2,2,1,1), oma=c(2,2,0,0), bty="n", col="grey50")
@@ -348,7 +361,7 @@ plot(Schey$BodySize.c, Schey$Dust, col=2,
 axis(2, pos=0)
 ```
 
-
+There are technical reasons for doing this, but those are handled by the software. For our purposes, this can be useful to make sure the model is sensible, and to understand why you might see a strange value of the intercept. When we look at categorical variables, we will be thinking more about the intercept, and what it means.
 
 ## Your task
 
@@ -384,7 +397,7 @@ Why is the effect so massive? We want to you to think about this, and discuss th
 - <span style="color:blue">How do you interpret the regression coefficients? They say something about the change in Dust when body size changes, but can you say what?</span>
 - <span style="color:blue">can you interpret the slopes in terms of predictions?</span>
 
-Because we can re-scale the parameters, and still do the regression, we can (if we want) re-scale to anything we think is sensible. FOr example, we could swap temperatures between Kelvin, Celcius and Fahrenheit depending on our whims. One way of re-scaling them that is often used is to standardise them to have a variance (and standard deviation) of 1. Here are two ways of doing this in R, the first does it "by hand", the second uses an R function. But both do the same thing.
+Because we can re-scale the parameters, and still do the regression, we can (if we want) re-scale to anything we think is sensible. For example, we could swap temperatures between Kelvin, Celcius and Fahrenheit depending on our whims. One way of re-scaling them that is often used is to standardise them to have a variance (and standard deviation) of 1. Here are two ways of doing this in R, the first does it "by hand", the second uses an R function. But both do the same thing.
 
 ```{r Standardise, echo=TRUE}
 Schey$BodySize.s <- (Schey$BodySize - mean(Schey$BodySize))/
@@ -393,7 +406,7 @@ Schey$GapeSize.s <- scale(Schey$GapeSize)
 
 ```
 
-Now a difference of 1 mean a difference in 1 standard deviation in the data (e.g. 1 standard deviation in body size, rather tha 1g). But internally the model is the same ^[A quick bit of maths. The standardised model (for one variable) is $$y_i = \color{red}{\alpha + \beta \frac{ (x_{i}-\bar{x})}{s_{x}}} + \color{blue}{\varepsilon_i}$$ where $\bar{x}$ is the mean of $x$ and $s_x$ is the standard deviation of $x$. We can expand the brackets and re-arrange to get $$y_i = \color{red}{\alpha + \beta x_{i}/s_{x} - \beta \bar{x}/s_{x}} + \color{blue}{\varepsilon_i}$$ But $\bar{x}_{.j}$ is a constant - it does not vary for different y's, so we have the same model, but with $\alpha^* = \alpha - \frac{\beta_j}{s_{j}} \bar{x}_{.j}$ and $\beta_j^* = \frac{\beta_j}{s_{j}}$], although the parameters have different values and thus have to be interpreted slightly differently. 
+Now a difference of 1 mean a difference in 1 standard deviation in the data (e.g. 1 standard deviation in body size, rather than 1g). But internally the model is the same ^[A quick bit of maths. The standardised model (for one variable) is $$y_i = \color{red}{\alpha + \beta \frac{ (x_{i}-\bar{x})}{s_{x}}} + \color{blue}{\varepsilon_i}$$ where $\bar{x}$ is the mean of $x$ and $s_x$ is the standard deviation of $x$. We can expand the brackets and re-arrange to get $$y_i = \color{red}{\alpha + \beta x_{i}/s_{x} - \beta \bar{x}/s_{x}} + \color{blue}{\varepsilon_i}$$ But $\bar{x}_{.j}$ is a constant - it does not vary for different y's, so we have the same model, but with $\alpha^* = \alpha - \frac{\beta_j}{s_{j}} \bar{x}_{.j}$ and $\beta_j^* = \frac{\beta_j}{s_{j}}$], although the parameters have different values and thus have to be interpreted slightly differently. 
 
 
 ```{r SummStdModel, echo=TRUE, results='hide'}
