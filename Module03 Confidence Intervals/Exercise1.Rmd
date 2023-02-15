@@ -339,7 +339,7 @@ likelihoods.approx <- dnorm(Probabilities, phat, stderr)
 likelihoods.approx <- likelihoods.approx/max(likelihoods.approx)
 
 # plot the previous likelihood (binomial)
-plot(x=Probabilities, y=likelihoods, type="l", ylab="Likelihood", xlab="Probability")
+plot(x=Probabilities, y=likelihoods, type="l", ylab="Likelihood", xlab="Number of dragons")
 # add a line for the new normal approximation likelihood
 # need to multiply the relative likelhoods by the maximum from the binomial
 lines(Probabilities, likelihoods.approx*max(likelihoods), col="red")
