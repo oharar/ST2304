@@ -5,6 +5,8 @@ output:
   html_document:
     css: "../ST2304RMarkdown.css"
     df_print: paged
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +15,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 
-## This week: Multiple Regression
+# This week: Multiple Regression
 <!---
 Week 6: Multiple Regression
 By the end of the lecture the students should:
@@ -31,15 +33,21 @@ We will look at
 - explaining our dependent variable with more than one explanatory variable
 - how to fit these models in R
 - what a design matrix is (this will be helpful later)
-- how to fit a polynomial model
+- why and how to fit a polynomial model
 
 ## More Monsters
 
 ![](Schey.png){width=60%}
 
+<span style="color:blue">Begin with the intro video </span>
+
+[Click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=f3383899-0c3d-42ad-b650-acd201234286) or watch below
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=f3383899-0c3d-42ad-b650-acd201234286&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
 
 ```{r SimData, echo=FALSE}
-if(!file.exists("ScheyData.csv")) {
+if(!file.exists("../Data/ScheyData.csv")) {
   set.seed(3.14)
   N <- 100
   muX <- c(5, 10)
@@ -82,12 +90,11 @@ We caught 100 and measured the amount of dust they could eat in 5 mins, and want
 
 ## The Data
 
-We can read in the data, and plot the difference variables against each other.
-
-```{r ReadData}
-File <- "https://www.math.ntnu.no/emner/ST2304/2020v/Week07/ScheyData.csv"
-  Schey <- read.csv(File)
+```{r ReadData, echo=TRUE}
+File <- "https://www.math.ntnu.no/emner/ST2304/2021v/Week07/ScheyData.csv"
+Schey <- read.csv(File)
 plot(Schey, labels=c("Gape\nSize (mm)", "Body\nSize (g)", "Dust\nEaten (g)"))
+
 ```
 
 From this plot it appears that there is no relationship between body size and the amount of dust eaten, and ther may be a weak relationship between gape size and the amount of dust eaten.
@@ -108,9 +115,10 @@ fig
 
 ```
 
-## Modelling 
 
-Now we have two covariates, so we ewant to fit a regression model with both covariates in it. The extension to more than 2 is straightforward.
+## Modelling
+
+Before we have looked at regression against a single covariate. Now we want to look at regression against two covariates: the extension to more than 2 is straightforward.
 
 This is a more common situation in practice than regression against a single covariate. Several factors often affect a response, so we need to take this into account. Even worse, they might interact, i.e. the effect of one covariate might depend on the value of another. Sometimes we are interested in all of the effects, at other times we are only interested in some, but we are worried that there are others that might have an effect, and need to be included in the analysis (not including them can bias the results, and also make the estimates worse).
 
@@ -166,33 +174,107 @@ now it is
 
 `Y ~ X1 + X2`
 
-## Your Turn
+## Exercise
 
 For the data:
 
 - <span style="color:blue">first fit the model with each covariate individually (i.e. first explain dust eaten by gape size, then explain dust eaten by body size).</span>
-    - <span style="color:blue">use `summary()` to look at the parameter estimates and $R^2$. Write down the regression models (i.e. plug the correct values into $E(y_i) = \alpha + \beta_1 x_{i}$)</span>
+    - <span style="color:blue">use `summary()` to look at the parameter estimates and $R^2$ (the Multiple R-squared: ignore the adjusted $R^2$). Write down the regression models (i.e. plug the correct values into $E(y_i) = \alpha + \beta_1 x_{i}$)</span>
     - <span style="color:blue">What do the models suggest are the effects on dust eating, and how well do the variables individually explain the variation in the response?</span>
 - <span style="color:blue">fit a model with both covariates (i.e. explain dust eaten by both gape size and body size).</span>
     - <span style="color:blue">again, use `summary()` to look at the parameter estimates and $R^2$.Write down the regression model.</span>
     - <span style="color:blue">What does this model suggest are the effects on dust eating, and how well do the variables together explain the variation in the response?</span>
     - <span style="color:blue">How do these results compare to those from the single regression models?</span>
 
+<details><summary>Hint</summary>
 
-```{r FullRegression, echo=FALSE, results='hide'}
+The coefficients are in the `summary()` table, and the $R^2$ is at the bottom. There are several other statistics given, but ignore these (e.g. I've no idea why the Residuals are summarised).
+
+For the interpretation, remember that a regression coefficient says that if we increase the covariate (i.e. the $x$) by one unit, the response (the $y$) changes by that amount.
+
+</details>
+
+<details><summary>Answers</summary>
+
+- <span style="color:blue">first fit the model with each covariate individually (i.e. first explain dust eaten by gape size, then explain dust eaten by body size).</span>
+    - <span style="color:blue">use `summary()` to look at the parameter estimates and $R^2$. Write down the regression models (i.e. plug the correct values into $E(y_i) = \alpha + \beta_1 x_{i}$)</span>
+    - <span style="color:blue">What do the models suggest are the effects on dust eating, and how well do the variables individually explain the variation in the response?</span>
+
+
+First, gape size:
+
+```{r GapeRegression}
 
 GapeMod <- lm(Dust ~ GapeSize, data=Schey)
-BodyMod <- lm(Dust ~ BodySize, data=Schey)
-FullMod <- lm(Dust ~ GapeSize + BodySize, data=Schey)
-
 summary(GapeMod)
+
+```
+
+So, reading from this, $R^2$ is `r round(100*summary(GapeMod)$r.square, 1)`%. And the model is
+
+$$
+E(y_i) = `r round(coef(GapeMod)[1], 1)` + `r round(coef(GapeMod)[2], 1)` x_i
+$$
+
+i.e. the model explains about a quarter of the variation in dust eaten, and suggests an increase of 1mm in gape size means a Schey will eat (on average) `r round(coef(GapeMod)[2], 1)`g more dust.
+
+Next, bodysize:
+
+```{r BodyRegression}
+
+BodyMod <- lm(Dust ~ BodySize, data=Schey)
 summary(BodyMod)
+
+```
+
+So, reading from this, $R^2$ is `r round(100*summary(BodyMod)$r.square, 1)`%. And the model is
+
+$$
+E(y_i) = `r round(coef(BodyMod)[1], 1)` + `r round(coef(BodyMod)[2], 1)` x_i
+$$
+
+i.e. the model explains almost nothing, and suggests an increase of 1g in body size means a Schey will eat (on average) `r round(coef(BodyMod)[2], 1)`g more dust.
+
+Overall, the individual models explain some of the variation in the data, but not a huge amount, and suggest larger-mouthed Schey eat more dust.
+
+
+- <span style="color:blue">fit a model with both covariates (i.e. explain dust eaten by both gape size and body size).</span>
+    - <span style="color:blue">again, use `summary()` to look at the parameter estimates and $R^2$.Write down the regression model.</span>
+    - <span style="color:blue">What does this model suggest are the effects on dust eating, and how well do the variables together explain the variation in the response?</span>
+    - <span style="color:blue">How do these results compare to those from the single regression models?</span>
+
+Let's fit the full model:
+
+```{r FullRegression}
+
+FullMod <- lm(Dust ~ GapeSize + BodySize, data=Schey)
 summary(FullMod)
 
 ```
 
+$R^2$ for the model with both gape and body size is `r round(100*summary(FullMod)$r.square, 1)`%. And the model is
 
-## Regression More Generally
+$$
+E(y_i) = `r round(coef(FullMod)[1], 1)` + `r round(coef(FullMod)[2], 1)` x_{1i} + `r round(coef(FullMod)[3], 1)` x_{2i}
+$$
+
+So, to compare. First, the $R^2$ is now much larger, the variables together explain over three quarters of the variation in the data, so we now have a good model.
+
+The predicted effects are much larger too. Before, we predicted an increase of 1mm in gape size would increase the amount of dust eaten by `r round(coef(GapeMod)[2], 1)`g. But now we predict an increase of `r round(coef(FullMod)[2], 1)`g. Similarly for body size, before we predicted an increase of almost nothing,  `r round(coef(BodyMod)[2], 1)`g. But now we predict an increase of `r round(coef(FullMod)[3], 1)`g when body size increases by 1g.
+
+Hopefully this exercise has shown you that you can easily fit a multiple regression, and interpret the results. But a deeper point is adding covariates can change the whole model, not just the new covariate. In this case, the negative correlation between gape size and body size masked the large effects of each variable.
+
+</details>
+
+We can also use the same tools as we used in the univariate model, e.g. `coef()` to get the parameter estimates (of course there are now more of them), and `resid()` and `fitted()` to look at the model fit:
+
+```{r OtherFunctions}
+coef(FullMod)
+
+plot(fitted(FullMod), resid(FullMod))
+```
+
+# Regression More Generally
 
 The model above only has 2 covariates, but we can easily add more. The model will look like this
 
@@ -269,17 +351,203 @@ $$
 $$
 where $\mathbf{b}$ is the MLE for $\mathbf{\beta}$. We won't show you the proof, and you won't need to remember this. In practice the computer will do all the calculations for you.
 
-## Understanding the Model
 
-Before we had a model with a single covariate, so the model was a line. Now we have two covariates, so the model is a 2D extension of a line, i.e. a plane. We can see that (and the data) below 
+## Interpreting the Model
 
-```{r SimDataPlotLine, echo=TRUE}
-plot(Schey$BodySize, Schey$Dust)
-abline(a=coef(BodyMod)["(Intercept)"], b = coef(BodyMod)["BodySize"])
-abline(a=coef(FullMod)["(Intercept)"], b = coef(FullMod)["BodySize"], col=2)
-legend(9.025, 105.6, c("Body Size", "Body & Gape"), lty=1:2, col=1:2)
+In the exercise you were asked to interpret the coefficients by comparing the coefficients for the same covariate in different models. But this is only one problem that we might need to think about when interpreting what we've done. When we have a model with, say 10, covariates, how do we know which is the most important? Unfortunately we can't just compare the coefficients because they are measured on different scales. How does a change in weight of 1g compare to a change in size of 1mm? And the measurements may even be on different scales: a change of 1mm is different to 1m, but both are one unit.
+
+This is one motivation for what we are about to do, after which we will see another motivation. And then next week, when we look at categorical variables, some of the ideas will appear again. We are going to look at re-writing the model in different ways by adding and multiplying. Although the model is essentially the same, and it is easy to go between one model and another, some models are easier to interpret.
+
+# Mean Centering
+
+So far we have not been thinking about the intercept. It is a necessary part of the model, but is not so easy to interpret.
+
+The intercept is where the fitted line crosses the point where the covariate(s) equal 0 (because the prediction for there is $E(y_i) = \alpha + \beta_1 0 + \beta_2 0 = \alpha$). The interpretation is difficult, because we cannot have any Schey with a size and gape of 0, so as a prediction this is silly. That's fine as long we don't want to interpret the intercept.
+
+We can look a the Women's 100m data we have been using before. Here we plot the data with the intercept ($x=0$) included.
+
+```{r RegressionInterceptPlot, echo=TRUE, fig.height=5, results='hide'}
+Times <- read.csv('https://www.math.ntnu.no/emner/ST2304/2019v/Week5/Times.csv', header=T)
+OlympicModelW <- lm(WomenTimes ~ Year, data  = Times)
+
+par(mar=c(4.1,4.1,1,1))
+plot(Times$Year, Times$WomenTimes, xlim=range(c(0, Times$Year)), xaxs="i",
+     xlab="Year", ylab="Winning Time (s)")
+abline(OlympicModelW, col=2)
+
+```
+
+This looks a bit silly, and the suggestion that at 0 AD the winning time would be an unlikely `r round(coef(OlympicModelW)[1])`s. This is not usuallly a problem as long as we don't care about the intercept. But sometimes we can find it helpful to have an intercept that is interpretable, if only so we can do a sanity check. We can easíly move the intercept like this:
+
+```{r PlotYAxes, fig.height=5, echo=TRUE}
+
+par(mfrow=c(1,2), mar=c(2,2,1,1), oma=c(2,2,0,0), bty="n", col="grey50")
+plot(Times$Year, Times$WomenTimes, xlim=range(c(0, Times$Year+50)), 
+     xaxs="i", yaxt="n", xlab="", ylab="")
+abline(OlympicModelW, col=2)
+axis(2, pos=0)
+
+plot(Times$Year, Times$WomenTimes, xlim=range(c(0, Times$Year+50)), xaxs="i",
+     yaxt="n", xlab="", ylab="")
+abline(OlympicModelW, col=2)
+axis(2, pos=mean(Times$Year))
+mtext("Year", 1, outer=TRUE)
+mtext("Winning Time (s)", 2, outer=TRUE)
+
+```
+
+In practice this just means subtracting the mean from the $x$ (i.e. year)
+
+```{r CentreBS, echo=TRUE, fig.height=5}
+Times$YearCentred <- Times$Year - mean(Times$Year)
+OlympicModelWCentred <- lm(WomenTimes ~ YearCentred, data  = Times)
+
+par(mfrow=c(1,1), mar=c(2,2,1,1), oma=c(2,2,0,0), bty="n", col="grey50")
+plot(Times$YearCentred, Times$WomenTimes, 
+     yaxt="n", xlab="", ylab="")
+abline(OlympicModelWCentred, col=2)
+axis(2, pos=0); abline(v=0)
+mtext("Year", 1, outer=TRUE)
+mtext("Winning Time (s)", 2, outer=TRUE)
+
+```
+
+The intercept is now `r round(coef(OlympicModelWCentred)[1], 1)`s, which is the predicted time for the year `r mean(Times$Year)`. As a sanity check, this is reasonable.
+
+## Exercise
+
+- <span style="color:blue">For the Schey data, fit the models with the un-centred and centred Body Size and Gape Size. Look at the parameters (with `coef()`), and discuss any differences. Look at both the intercept and the slopes.</span>
+- <span style="color:blue">Can you interpret the parameters?</span>
+
+<details><summary>Hint</summary>
+
+This is the code to calculate the centred body size and fit the model.
+
+```{r CentreBSFit, echo=TRUE, eval=FALSE}
+Schey$BodySize.c <- Schey$BodySize - mean(Schey$BodySize)
+
+FullMod.c <- lm(Dust ~ GapeSize.c + BodySize.c, 
+                  data=Schey)
+coef(FullMod.c)
+
+```
+
+</details>
+
+<details><summary>Answers</summary>
+This is the code to calculate the centred body size and fit the model.
+
+```{r CentreScheyFit, echo=TRUE}
+Schey$BodySize.c <- Schey$BodySize - mean(Schey$BodySize)
+Schey$GapeSize.c <- Schey$GapeSize - mean(Schey$GapeSize)
+
+FullMod.c <- lm(Dust ~ GapeSize.c + BodySize.c, 
+                  data=Schey)
+FullMod <- lm(Dust ~ GapeSize + BodySize, 
+                  data=Schey)
+
+coef(FullMod)
+coef(FullMod.c)
+
+```
+
+The easy thing to notice is that the slopes - the Gape Size and Body Size effects - are the same. This is what we expect to see. But the intercept was `r round(coef(FullMod)[1], 1)`g and after centering it is `r round(coef(FullMod.c)[1], 1)`g. This is within the range of the observations of dust eaten (`r paste(round(range(Schey$Dust),1), collapse =" - ", "g", sep="")`), and actually equals the mean, `r round(mean(Schey$Dust),1)`.
+
+</details>
 
 
+# Scaling and Standardisation
+
+Body size was measure in grams, but it could also be measured in kg. If we fit the model with this, we see that the effect of body size is massive.
+
+```{r RegressionKG, echo=TRUE}
+Schey$BodySize.kg <- Schey$BodySize/1000
+mod.kg <- lm(Dust ~ GapeSize + BodySize.kg, data=Schey)
+
+round(coef(mod.kg), 2)
+
+```
+
+
+## Exercise
+
+ We want to you to think about this, and discuss the parameters, and what they mean.
+
+- <span style="color:blue">can you interpret the slopes in terms of predictions?</span>
+- <span style="color:blue">Why is the effect so massive?</span>
+
+<details><summary>Hint</summary>
+How do you interpret the regression coefficients? They say something about the change in Dust when body size changes, but can you say what?
+</details>
+
+<details><summary>Answers</summary>
+The slope tells you how much the dust eaten changes with a change in one unit of the covriate, i.e. body mass. So here it says that if the body mass increased by 1kg, we would expect `r round(coef(mod.kg)[3]/1000, 2)`kg more dust to be eaten. But as the largest Schey we caught only weighed `r round(max(Schey$BodySize), 1)`g (or `r round(max(Schey$BodySize), 1)/1000`kg) this amount of change seems unlkely.
+
+
+</details>
+
+## Standardisation
+
+Because we can re-scale the parameters, and still do the regression, we can (if we want) re-scale to anything we think is sensible. For example, we could swap temperatures between Kelvin, Celcius and Fahrenheit depending on our whims. One way of re-scaling them that is often used is to standardise them to have a variance (and standard deviation) of 1. Here are two ways of doing this in R, the first does it "by hand", the second uses an R function. But both do the same thing.
+
+```{r Standardise, echo=TRUE}
+Schey$BodySize.s <- (Schey$BodySize - mean(Schey$BodySize))/
+  sd(Schey$BodySize)
+Schey$GapeSize.s <- scale(Schey$GapeSize)
+
+```
+
+Now a difference of 1 mean a difference in 1 standard deviation in the data (e.g. 1 standard deviation in body size, rather tha 1g). But internally the model is the same ^[A quick bit of maths. The standardised model (for one variable) is $$y_i = \color{red}{\alpha + \beta \frac{ (x_{i}-\bar{x})}{s_{x}}} + \color{blue}{\varepsilon_i}$$ where $\bar{x}$ is the mean of $x$ and $s_x$ is the standard deviation of $x$. We can expand the brackets and re-arrange to get $$y_i = \color{red}{\alpha + \beta x_{i}/s_{x} - \beta \bar{x}/s_{x}} + \color{blue}{\varepsilon_i}$$ But $\bar{x}_{.j}$ is a constant - it does not vary for different y's, so we have the same model, but with $\alpha^* = \alpha - \frac{\beta_j}{s_{j}} \bar{x}_{.j}$ and $\beta_j^* = \frac{\beta_j}{s_{j}}$], although the parameters have different values and thus have to be interpreted slightly differently. 
+
+
+```{r SummStdModel, echo=TRUE, results='hide'}
+FullMod.s <- lm(Dust ~ GapeSize.s + BodySize.s, 
+                data=Schey)
+round(coef(FullMod.s), 3)
+```
+
+Why, you may be wondering, is this useful? The reason is that it can make the estimates more comparable. By standardising like this, we have one way to compare the effects of different covariates. Our argument is that the effect of gape size is the effect of changing gape size by one standard deviation, and the effect of body size is the effect of changing body size by one standard deviation. 
+
+So in some sense these are comparable. If we randomly sampled our Schey from the population, the standardised coefficients then say something about the variation in the population. This does require that we are sampling randomly from the population, so (for example) if we have an experiment where we set the different levels we can't do this as the standard deviations are not the same as the population-level standard deviations. e.g. if we wanted to look at the effects of temperature and humidity on dust eating, we might set the temperature to 10&deg;C, 15&deg;C, 20&deg;C, 25&deg;C and humidity to 50%, 60%, 70%, 80%. But these might not have any relationship to the distribution of actual temperatures and humidities.
+
+
+## Exercise 
+
+Fit the model with the standardised coefficients
+
+- <span style="color:blue">How would you interpret the standardised coefficients? </span>
+- <span style="color:blue">When might you prefer to use the standardised or un-standardised models?</span>
+
+<details><summary>Hint</summary>
+
+Think about how much a change in one unit of the covariate means.
+</details>
+
+<details><summary>Answers</summary>
+
+```{r StandardiseAnswer, echo=TRUE}
+Schey$BodySize.s <- (Schey$BodySize - mean(Schey$BodySize))/
+  sd(Schey$BodySize)
+Schey$GapeSize.s <- scale(Schey$GapeSize)
+
+
+mod <- lm(Dust ~ GapeSize + BodySize, data=Schey)
+mod.s <- lm(Dust ~ GapeSize.s + BodySize.s, data=Schey)
+
+round(coef(mod), 2)
+round(coef(mod.s), 2)
+
+```
+The first coefficients are for the unstandardised data, and the coefficient for Gape Size is larger. But when we look at the standardised coefficients, they are about the same - `r round(coef(mod.s)[2], 2)` and `r round(coef(mod.s)[3], 2)`. This suggests that in the population, the variation in gape size and body size have about the same effect on the amount of dust eaten.
+
+For the comparison in the previous paragraph, the standardised coefficients make more sense. But if we were working with Schey and measuring them in the field to see how much they could eat, we would probably prefer to use the unstandardised model, because it is easier to do the calculations. You can probably come up with other reasons to prefer one or the other (and "I prefer the unstandardised because I understand what it means" is a perfectly valid reason!). 
+</details>
+
+# Extending the Model: Fitting Surface
+
+The plot below shows the fitted model in 3D.
+
+```{r SimDataPlotLine, echo=FALSE}
 
 fig <- plot_ly(Schey, x = ~GapeSize, y = ~BodySize, z = ~Dust, 
                colors = '#BF382A')
@@ -295,135 +563,61 @@ pred.surf$Dust <- predict(FullMod, newdata=pred.surf)
 
 surface <- matrix(pred.surf$Dust, nrow=10) # gape size is row
 
-surf <- add_surface(plot_ly(z = ~surface))
-surf
+par(bg = "gray90")
+persp(surface, theta=30, 
+      xlab="Gape Size", ylab="Body Size", zlab="Dust Eaten")
 
-fig
 
 ```
 
-The full model is a plane (or a hyper-plane if we have more than two covariates), but for this model we can make things simpler. The model that was fitted was 
+We can see that the data form a plane. If we have more than 2 covariates, then we get a hyper-plane, which is more difficult to visualise.
+
+For other problems, we might have a more complicated surface than a plane. For example this surface:
+
+
+```{r MaungaWhau }
+z <- 2 * volcano        # Exaggerate the relief
+x <- 10 * (1:nrow(z))   # 10 meter spacing (S to N)
+y <- 10 * (1:ncol(z))   # 10 meter spacing (E to W)
+## Don't draw the grid lines :  border = NA
+par(bg = "slategray")
+persp(x, y, z, theta = 135, phi = 30, col = "green3", scale = FALSE,
+      ltheta = -120, shade = 0.75, border = NA, box = FALSE)
+
+```
+
+A plane will obviously not work to describe this surface, so we need something more complicated. There are a lot of different approaches to this now: essentially all of machine leaning in about fitting surfaces to data. Mathematically we want a model like this:
 
 $$
-y_i = \color{red}{\hat{\alpha} + \hat{\beta_{1}} x_{i1} + \hat{\beta_{2}} x_{i2}} + \color{blue}{\varepsilon_i}
-$$
-($x_{i1}$ is Body Size, $x_{i2}$ is Gape Size. The hats on Greek letters show that we are using the estimates of the parameters). So if we want to know the effect of body size, we can ask how much it changes, 
-
-
-$$
-y_i = \color{grey}{\hat{\alpha} +} \color{red}{\hat{\beta_{1}} x_{i1}} \color{grey}{+ \hat{\beta_{2}} x_{i2} + {\varepsilon_i}}
+y_i = f(X_i) + \varepsilon_i
 $$
 
-If we look at this, we can see that if we keep $x_{i2}$ constant, the model is 
-$y_i = \color{grey}{\hat{\alpha} + \hat{\beta_{2}} x_{i2}} + \color{red}{\hat{\beta_{1}} x_{i1}} + \color{blue}{\varepsilon_i}$, so we can think of it as a simple linear regression with an intercept of $\hat{\alpha} + \hat{\beta_{2}} x_{i2}$, i.e. a straight line. Of course, if we change $x_{i2}$ we change this, but the slope is the same.
+where $X_i$ can be several covariates, and $f()$ is some function. One common way to do this is to keep the linear regression model idea, and transform the $X_i$'s:
 
-Visually, fixing $x_{i2}$ is taking a slice through the 3D plot: the value of $x_{i2}$ determines where we make teh slice. If we fix $x_{i1}$ instead, we are slicing at 90&deg;.
+$$
+y_i = \sum_{j=1}^P \beta_j g(X_{ij}) + \varepsilon_i
+$$
 
-In practice, this means that for these simple models we can interpret the parameter as we would in a simple regression: they tell us how much the response (e.g. dust eaten) is affected if the covariate (e.g. gape size) changes by 1.
+Before $P$ was the number of covariates, now it is the number of "features", i.e. the number of $g()$'s. We will see in a moment what these could look like. So now we have a multiple regression of $y_i$ against $g(X_{ij})$. Which is fine, but how do we chose $g()$? Here we'll explain one way, which first needs a short excursion into some old mathematics.
 
+# Polynomials
 
-START CHANGING HERE: FOCUS THIS, CENTERING & STANDARDISATION ON INTERPRETATION.
-ALSO - CHANGE SLIDES
+In 1715 an English mathematician called Brook Taylor showed that any well enough behaved mathematical function can be approximated by a polynomial:
 
-## Mean Centering
+$$
+f(x,a) = \sum_{j=0}^{\infty}\frac{f^{(j)}(a)}{j!}(x-a)^j
+$$
+So the polymonial has terms $Ax$ (linear), $Bx^2$ (squared, or quadratic), $Cx^3$ (cubed) etc. This is called a *Taylor series expansion* around $a$: it provides an approximation for the curve around the point $a$, and as we add higher values of $j$ to the sum, the approximation gets better (and is better further away from $a$). In case you are wondering, $a$ is there because we want to approximate the function near that point: the further away from $a$, the worse the approximation. You may already be able to guess what we are going to use for $a$.
 
-So far we have not been thinking about the intercept. It is a necessary part of the model, but is not so easy to interpret. Often it is largely ignored, even though it still has to be in the model.
+For our purposes, we can re-write the function to look like a multiple regression, and not use all of the powers (i.e. we don't go up to $x^\infty$):
 
-For our data, we can extend the plot so that the x-axis includes 0. This is where the intercept is (because the prediction for there is $E(y_i) = \alpha + \beta_1 0 + \beta_2 0 = \alpha$). The interpretation is diffiuclt, because we cannot have any Schey with a size and gape of 0, so as a prediction this is silly. That's fine if we don't want to interpret the intercept.
+$$
+E(x|\mu) = \sum_{j=0}^{P}\beta_j(x-\mu)^j = \beta_0 + \beta_1 (x - \mu) + \beta_2 (x - \mu)^2 +  ... + \beta_P (x - \mu)^P
+$$
 
-```{r RegressionInterceptPlot, echo=TRUE, fig.height=5, results='hide'}
-par(mar=c(4.1,4.1,1,1))
-plot(Schey$BodySize, Schey$Dust, xlim=range(c(0, Schey$BodySize)), xaxs="i")
-abline(a=coef(BodyMod)["(Intercept)"], 
-       b = coef(BodyMod)["BodySize"])
-# abline(a=Better.a, b = coef(FullMod)["BodySize"], col=2)
-```
+So this is a $P^{th}$ order Taylor Series expansion around $\mu$, i.e. we centre the covariate and we only use the powers up to $x^P$. We can then regress our $y$ against powers of the covariate. We try to keep $P$ fairly small (if it goes above about 3 or 4 there is proabably a better model). Going back to the curve fitting idea, here the $g()$'s are simply powers of $x$.
 
-Sometimes we can find it helpful to have an intercept that is interpretable, if only so we can do a sanity check. We can easily move the intercept like this:
-
-```{r PlotYAxes, fig.height=5, echo=TRUE}
-par(mfrow=c(1,2), mar=c(2,2,1,1), oma=c(2,2,0,0), bty="n", col="grey50")
-plot(Schey$BodySize, Schey$Dust, col=2, xlim=c(0, max(Schey$BodySize)), yaxt="n")
-axis(2, pos=0)
-plot(Schey$BodySize, Schey$Dust, col=2, yaxt="n", xlim=c(0, max(Schey$BodySize)))
-axis(2, pos=mean(Schey$BodySize))
-mtext("Body Size", 1, outer=TRUE)
-mtext("Dust", 2, outer=TRUE)
-
-```
-
-In practice this just means subtracting the mean from Body Size
-
-```{r CentreBS, echo=TRUE, fig.height=5}
-Schey$BodySize.c <- Schey$BodySize - mean(Schey$BodySize)
-plot(Schey$BodySize.c, Schey$Dust, col=2, 
-     yaxt="n", bty="n")
-axis(2, pos=0)
-```
-
-There are technical reasons for doing this, but those are handled by the software. For our purposes, this can be useful to make sure the model is sensible, and to understand why you might see a strange value of the intercept. When we look at categorical variables, we will be thinking more about the intercept, and what it means.
-
-## Your task
-
-```{r CentreBSFit, echo=TRUE}
-Schey$BodySize.c <- Schey$BodySize - mean(Schey$BodySize)
-Schey$GapeSize.c <- Schey$GapeSize - mean(Schey$GapeSize)
-
-FullMod <- lm(Dust ~ GapeSize + BodySize, 
-                data=Schey)
-FullMod.c <- lm(Dust ~ GapeSize.c + BodySize.c, 
-                  data=Schey)
-
-```
-
-
-- <span style="color:blue">Fit the models with the un-centred and centred Body Size and Gape Size. Look at the parameters (with `coef()`), and discuss any differences.</span>
-- <span style="color:blue">Can you interpret the parameters?</span>
-
-## Scaling and Standardisation
-
-Body size was measure in grams, but it could also be measured in kg. If we fit the model with this, we see that the effect of body size is massive.
-
-```{r RegressionKG, echo=TRUE}
-Schey$BodySize.kg <- Schey$BodySize/1000
-mod.kg <- lm(Dust ~ GapeSize + BodySize.kg, data=Schey)
-
-round(coef(mod.kg), 2)
-
-```
-
-Why is the effect so massive? We want to you to think about this, and discuss the parameters, and what they mean.
-
-- <span style="color:blue">How do you interpret the regression coefficients? They say something about the change in Dust when body size changes, but can you say what?</span>
-- <span style="color:blue">can you interpret the slopes in terms of predictions?</span>
-
-Because we can re-scale the parameters, and still do the regression, we can (if we want) re-scale to anything we think is sensible. For example, we could swap temperatures between Kelvin, Celcius and Fahrenheit depending on our whims. One way of re-scaling them that is often used is to standardise them to have a variance (and standard deviation) of 1. Here are two ways of doing this in R, the first does it "by hand", the second uses an R function. But both do the same thing.
-
-```{r Standardise, echo=TRUE}
-Schey$BodySize.s <- (Schey$BodySize - mean(Schey$BodySize))/
-  sd(Schey$BodySize)
-Schey$GapeSize.s <- scale(Schey$GapeSize)
-
-```
-
-Now a difference of 1 mean a difference in 1 standard deviation in the data (e.g. 1 standard deviation in body size, rather than 1g). But internally the model is the same ^[A quick bit of maths. The standardised model (for one variable) is $$y_i = \color{red}{\alpha + \beta \frac{ (x_{i}-\bar{x})}{s_{x}}} + \color{blue}{\varepsilon_i}$$ where $\bar{x}$ is the mean of $x$ and $s_x$ is the standard deviation of $x$. We can expand the brackets and re-arrange to get $$y_i = \color{red}{\alpha + \beta x_{i}/s_{x} - \beta \bar{x}/s_{x}} + \color{blue}{\varepsilon_i}$$ But $\bar{x}_{.j}$ is a constant - it does not vary for different y's, so we have the same model, but with $\alpha^* = \alpha - \frac{\beta_j}{s_{j}} \bar{x}_{.j}$ and $\beta_j^* = \frac{\beta_j}{s_{j}}$], although the parameters have different values and thus have to be interpreted slightly differently. 
-
-
-```{r SummStdModel, echo=TRUE, results='hide'}
-FullMod.s <- lm(Dust ~ GapeSize.s + BodySize.s, 
-                data=Schey)
-round(coef(FullMod.s), 3)
-```
-
-Fit the model with the standardised coefficients
-
-- <span style="color:blue">How would you interpret the standardised coefficients? </span>
-- <span style="color:blue">When might you prefer to use the standardised or un-standardised models?</span>
-
-
-## Polynomials
-
-We can look back to Data Set 8 last week. This was the relationship that wasn't straight
+We can look back to Data Set 8 last week to see how to do this in practice.
 
 ```{r DS8, echo=TRUE}
 
@@ -432,21 +626,9 @@ plot(SimData$x, SimData$y8, main="Data Set 8")
 
 ```
 
-There are a few ways to deal with this. One is to use a curve rather than a straight line. There are many choices of curve, but one choice is to use polynomials. In practice most reasonable curves can be written as a Taylor series
+Fitting the curve is easy, we just regress $Y$ against $X$, $X^2$, $X^3$ etc. We don't have to centre (see footnote 1 below for why), although it might make the interpetation easier.
 
-$$
-f(x) = \beta_0 + \beta_1 (x- \bar{x}) + \beta_2 (x- \bar{x})^2 + \beta_3 (x- \bar{x})^3 + \dots + \beta_\infty (x- \bar{x})^\infty
-$$
-
-So in principle we could fit any curve like this, But fitting a curve with an infinite number of parameters is tricky, so instead we use an approximation with only $p$ terms
-
-$$
-f(x) \approx \beta_0 + \beta_1 (x- \bar{x}) + \beta_2 (x- \bar{x})^2 + \beta_3 (x- \bar{x})^3 + \dots + \beta_p (x- \bar{x})^p
-$$
-
-usually we would want $p$ to be small (if it gets any bigger than about 4 we should be rethinking what we are doing). Fitting the curve is easy, we just regress $Y$ against $X$, $X^2$, $X^3$ etc. We don't have to centre, of course, although it might make the interpetation easier.
-
-In R we can simply treat the extra terms as additional variables
+In R we can simply treat the extra terms as additional variables:
 
 ```{r FitQuad, echo=TRUE}
 linmod <- lm(y8 ~ x, data=SimData)
@@ -454,11 +636,11 @@ quadmod <- lm(y8 ~ x + I(x^2), data=SimData)
 
 ```
 
-We need to write `I(x^2)` rather than just `x^2` for slightly obscure reasons, to do with writing more complex models^[essentially, we want `(A + B)^2 = A + A:B + B`. We will explain more about this later].
+We need to write `I(x^2)` rather than just `x^2` for slightly obscure reasons, to do with writing more complex models^[essentially, we want `(A + b)^2 = A + A:B + B`. We will explain more about this later].
 
 If we want to plot a polynomial, we can't use `abline()`, unfortunately. Instead we have to predict new data, and plot that.
 
-```{r PlotQuad, echo=TRUE, fig.height=4}
+```{r PlotQuad, echo=TRUE, eval=FALSE}
 PredData <- data.frame(x=seq(min(SimData$x), 
                              max(SimData$x), length=50))
 PredData$y.quad <- predict(quadmod, newdata = PredData)
@@ -466,27 +648,62 @@ PredData$y.quad <- predict(quadmod, newdata = PredData)
 linmod <- lm(y8 ~ x, data=SimData)
 cubmod <- lm(y8 ~ x + I(x^2) + I(x^3), data=SimData)
 
-PredData$y.lin <- predict(quadmod, newdata = PredData)
-PredData$y.cub <- predict(cubmod, newdata = PredData)
+PredData$y.lin <- predict(quadmod, newdata = PredData, interval = "predict")
+PredData$y.quad <- predict(cubmod, newdata = PredData, interval = "predict")
 
 plot(SimData$x, SimData$y8, main="Data Set 8")
 lines(PredData$x, PredData$y.quad, col=2)
 ```
 
+## Exercise
 
-Your tasks are to (1) fit the linear and quadratic models to `y8`.
+Your task is to fit the linear and quadratic models to `y8`.
 
 - <span style="color:blue">Does the quadratic model fit better?</span>
 - <span style="color:blue">Are the parameters different?</span>
 - <span style="color:blue">What happens if you add an $x^3$ term?</span>
 - <span style="color:blue">Plot the curves. How different are they? Just by looking at the plots, which do you think is best, and why?</span>
 
-```{r PlotCub, echo=FALSE, eval=FALSE, fig.height=4, results='hide'}
+<details><summary>Hint</summary>
+You can use and adapt the code above. What other statistics could you use to look at model fit?
+
+</details>
+
+<details><summary>Answers</summary>
+- <span style="color:blue">Does the quadratic model fit better?</span>
+- <span style="color:blue">Are the parameters different?</span>
+- <span style="color:blue">What happens if you add an $x^3$ term?</span>
+- <span style="color:blue">Plot the curves. How different are they? Just by looking at the plots, which do you think is best, and why?</span>
+
+First, fit the linear, quadratic and cubic model:
+
+
+```{r FitQuadCub, fig.height=4}
+SimData <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week6/SimRegression.csv")
+
+linmod <- lm(y8 ~ x, data=SimData)
+quadmod <- lm(y8 ~ x + I(x^2), data=SimData)
+cubmod <- lm(y8 ~ x + I(x^2) + I(x^3), data=SimData)
+
+```
+
+and then look at the parameters:
+
+```{r coefQuadCub, fig.height=4}
+coef(linmod)
+coef(quadmod)
+coef(cubmod)
+```
+
+We see that the parameters change as the model changes, e.g. the intercapt increases when we add the quadratic term. Also note that the quadratic term is negative, i.e. the slope becomes smaller as $x$ increases.
+
+We can get a better feel for what is going on if we plot the curves:
+
+```{r PlotCub, fig.height=4}
 PredData <- data.frame(x=seq(min(SimData$x), 
                              max(SimData$x), length=50))
 PredData$y.quad <- predict(quadmod, newdata = PredData)
 
-cubmod <- lm(y8 ~ x + I(x^2) + I(x^3), data=SimData)
 
 PredData$y.lin <- predict(linmod, newdata = PredData)
 PredData$y.cub <- predict(cubmod, newdata = PredData)
@@ -494,6 +711,66 @@ PredData$y.cub <- predict(cubmod, newdata = PredData)
 plot(SimData$x, SimData$y8, main="Data Set 8")
 lines(PredData$x, PredData$y.lin, col=1)
 lines(PredData$x, PredData$y.quad, col=2)
-lines(PredData$x, PredData$y.cub, col=3)
+lines(PredData$x, PredData$y.cub, col=4)
+abline(v=0, lty=3)
 ```
+
+So we can see that the linear curve is a poor fit, but the quadratic and cubic models both fit well, and are not very different. It is also worth looking at $R^2$. This is `r round(100*summary(linmod)$r.square, 1)`% for the linear model, `r round(100*summary(quadmod)$r.square, 1)`% for the quadratic and `r round(100*summary(cubmod)$r.square, 1)`% for the cubic. So the linaer model fits quite a bit worse than the other two, and these have a very similar fit (the cubic will always fit better than the quadratic, because it is more flexible). But a difference of `r round(100*(summary(cubmod)$r.square-summary(quadmod)$r.square), 1)`% is almost nothing.
+
+</details>
+
+
+
+<!---
+
+# Why doesn't the univariate model fit well?
+
+(I have removed this from the main part of this module because I wasn't sure it helped. If you find this helpful, please tell me!)
+
+The reason the line isn't drawn is that it's in the wrong place. The model that was fitted was 
+
+$$
+y_i = \color{red}{\hat{\alpha} + \hat{\beta_{1}} x_{i1} + \hat{\beta_{2}} x_{i2}} + \color{blue}{\varepsilon_i}
+$$
+($x_{i1}$ is Body Size, $x_{i2}$ is Gape Size. The hats on Greek letters show that we are using the estimates of the parameters). But this code
+
+```{r Abline, echo=TRUE, eval=FALSE}
+abline(a = coef(BSMod)["(Intercept)"], 
+       b = coef(BSMod)["BodySize"])
+```
+
+draws the line $y_i = \color{red}{\hat{\alpha} + \hat{\beta_{1}} x_{i1}}$. There is no $\hat{\beta_{2}} x_{i2}$. The fitted model is a plane (in 3D), but we are drawing a line (in 2D) by taking a slice through the plane. Unfortunately we are taking a slice in the wrong place. The code above takes a slice through the plane where $x_{i2}=0$. But the smallest value of $x_{i2}$ (gape size) in the data is `r round(min(Schey$GapeSize),2)`. 
+
+We could cut the plane anywhere, by plugging in different values for gape size. For example here are some lines
+
+```{r RegressionValues, echo=TRUE, fig.height=5, results='hide'}
+GapePreds <- seq(floor(min(Schey$GapeSize)), ceiling(max(Schey$GapeSize)), by=0.25)
+BetterLines <- data.frame(
+  GapePreds = GapePreds, 
+Better.as = coef(FullMod)["(Intercept)"] +  
+  coef(FullMod)["GapeSize"]*GapePreds)
+
+par(mar=c(4.1,4.1,1,1))
+plot(Schey$BodySize, Schey$Dust)
+abline(a=coef(BodyMod)["(Intercept)"], 
+       b = coef(BodyMod)["BodySize"])
+apply(BetterLines, 1, function(ln, b, at.ln=0) {
+  abline(a=ln["Better.as"], b=b, col=2)
+  text(at.ln, ln["Better.as"]+at.ln*b, ln["GapePreds"], cex=1.3, font=2)
+}, b = coef(FullMod)["BodySize"], at.ln=10.61)
+
+```
+
+If we want to select a single line to draw, the mean of gape size is a good choice
+
+```{r RegressionKGmean, echo=TRUE, fig.height=5, results='hide'}
+Better.a <- coef(FullMod)["(Intercept)"] +  
+  coef(FullMod)["GapeSize"]*mean(Schey$GapeSize)
+par(mar=c(4.1,4.1,1,1))
+plot(Schey$BodySize, Schey$Dust)
+abline(a=coef(BodyMod)["(Intercept)"], 
+       b = coef(BodyMod)["BodySize"])
+abline(a=Better.a, b = coef(FullMod)["BodySize"], col=2)
+```
+--->
 
