@@ -21,7 +21,7 @@ This week you will be looking at multiple regression, working out when to use it
 ### Resources:
  
  * Google (or any other search engine) e.g. "multiple regression in R"
- * [Week 7 lectures](https://www.math.ntnu.no/emner/ST2304/2021v/Week07/)
+ * [Week 7 lectures](https://www.math.ntnu.no/emner/ST2304/2023v/Module07/)
  
 ### R this week:
  
@@ -113,13 +113,13 @@ Unfortunately, on the journey back, the ship hit a satellite and has crash lande
  <span style="color:blue"> **It is your job to predict where
  the alien organism will spread to and recommend how to deploy resources** </span>
  
- The data can be found at https://www.math.ntnu.no/emner/ST2304/2021v/Week07/Alien101LabData.csv
+ The data can be found at https://www.math.ntnu.no/emner/ST2304/2023v/Module07/Alien101LabData.csv
  
  The first step is to import the data and assign it to an object. You can use the whole
  web link above to import the data. It is a csv file with column names (header) included.
 
 ```{r ReadAlienData} 
-Alien <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/Alien101LabData.csv", 
+Alien <- read.csv("https://www.math.ntnu.no/emner/ST2304/2023v/Module07/Alien101LabData.csv", 
                   header=TRUE)
 ```
 
@@ -176,7 +176,7 @@ Alien <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/Alien101La
  actual average annual temperature and rainfall of Australia. The company have provided
  you with very simplified data of the average annual temperature and total annual rainfall
  for different coordinates in Australia. Found at:
- https://www.math.ntnu.no/emner/ST2304/2021v/Week07/AustraliaEnvironmentalData.csv
+ https://www.math.ntnu.no/emner/ST2304/2023v/Module07/AustraliaEnvironmentalData.csv
  
  This is plotted below.
  
@@ -191,7 +191,7 @@ library(tidyverse)
 library(ggplot2)
 library(patchwork)
 
-Australia <- read.csv("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/AustraliaEnvironmentalData.csv", 
+Australia <- read.csv("https://www.math.ntnu.no/emner/ST2304/2023v/Module07/AustraliaEnvironmentalData.csv", 
                       header=TRUE)
 
 Rain <- ggplot(Australia)+
@@ -287,7 +287,7 @@ PredictionsRain <- predict(ModelRain, newdata = newdataRain,
  Then load them using the `library()` function. e.g. `library(ggplot2)`
  
  The plotting function is available here:
-  https://www.math.ntnu.no/emner/ST2304/2021v/Week07/plotting_function.R. 
+  https://www.math.ntnu.no/emner/ST2304/2023v/Module07/plotting_function.R. 
   You can bring the function into your R by using the `source()` function.
  
 ### What does source really do?
@@ -308,7 +308,7 @@ PredictionsRain <- predict(ModelRain, newdata = newdataRain,
  <details><summary>R hint</summary>
 ```{r Source, eval = FALSE}
 # source the script
-source("https://www.math.ntnu.no/emner/ST2304/2021v/Week07/plotting_function.R")
+source("https://www.math.ntnu.no/emner/ST2304/2023v/Module07/plotting_function.R")
 
 plotting_function(InputData = Australia, Predictions = PredictionsRain[,1])
 
