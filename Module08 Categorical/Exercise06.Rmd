@@ -34,19 +34,20 @@ and how this is different to continuous explanatory variables.
 7, 4 or TRUE, FALSE, TRUE
 
 # Resources:
-
-* Background on Rothamsted and Fisher - why they are important in statistics (p8 The New Statistics with R)
+<!---
 * [Help on data types](https://qmbio.math.ntnu.no/theory/all-about-data/) 
-* Week 4 - t-test. [Module](https://www.math.ntnu.no/emner/ST2304/2021v/Week04/Lecture4Module.html) 
-* Week 5 - regression. [Module](https://www.math.ntnu.no/emner/ST2304/2021v/Week05/Regression_module.html)
-* Week 7 - design matrix. [Module](https://www.math.ntnu.no/emner/ST2304/2021v/Week07/MultipleRegressionModule.html)
+--->
+* Background on Rothamsted and Fisher - why they are important in statistics (p8 The New Statistics with R)
+* Week 4 - t-test. [Module](https://www.math.ntnu.no/emner/ST2304/2023v/Module04/Module04Normal.html) 
+* Week 5 - regression. [Module](https://www.math.ntnu.no/emner/ST2304/2023v/Module05/Module05Regression.html)
+* Week 7 - design matrix. [Module](https://www.math.ntnu.no/emner/ST2304/2021v/Module07/Module07MultipleRegression.html)
 * Your brain - we will spend more time on this part of the exercise thinking through **why**
 we are doing things and what it shows rather than just running the analyses.
 
 ## Extras (try to complete without these, but if you get stuck use them)
 
-* [How to read lm() output](https://www.math.ntnu.no/emner/ST2304/2020v/Week08/Reading_lm_output.pdf)
-* [Reminder of confidence interval definition1](https://en.wikipedia.org/wiki/Confidence_interval)
+* [How to read lm() output](https://www.math.ntnu.no/emner/ST2304/2023v/Module08/Reading_lm_output.pdf)
+* [Reminder of confidence interval definition](https://en.wikipedia.org/wiki/Confidence_interval)
 
 ## R this week:
 
@@ -98,7 +99,7 @@ the amount of insects killed on a crop. </span>
 
 # Part A: Choosing a model
 
-The data can be found at https://www.math.ntnu.no/emner/ST2304/2019v/Week8/InsectData.csv
+The data can be found at https://www.math.ntnu.no/emner/ST2304/2023v/Module08/InsectData.csv
 
 The first step is to import the data and assign it to an object. You can use the whole
 web link above to import the data. It is a csv file with column names (header) included.
@@ -294,7 +295,7 @@ You designed an experiment where you measured the level of werewolf hormone
 in known werewolves. You did this at two different times "New moon" and 
 "Full moon". 
 
-![Werefolf](Werewolf.png)
+![Werewolf](Werewolf.png)
 
 In this example the response we have is hormone concentration and the
 explanatory variable is moon stage. Moon stage has two groups/levels, which are
@@ -466,7 +467,7 @@ and the data collection was not perfect. Also our aims might have changed.
 With invertebrate declines
 being more common, we might not want an insecticide that kills everything.
 
-<span style="color:blue"> F1. If you were to re-design this experiment now in 2020 in Norway
+<span style="color:blue"> F1. If you were to re-design this experiment now in 2023 in Norway
 what would you do? **Write** a brief experimental design for this study. </span>
 
 You should include:
