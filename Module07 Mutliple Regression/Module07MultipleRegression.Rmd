@@ -648,8 +648,8 @@ PredData$y.quad <- predict(quadmod, newdata = PredData)
 linmod <- lm(y8 ~ x, data=SimData)
 cubmod <- lm(y8 ~ x + I(x^2) + I(x^3), data=SimData)
 
-PredData$y.lin <- predict(quadmod, newdata = PredData, interval = "predict")
-PredData$y.quad <- predict(cubmod, newdata = PredData, interval = "predict")
+PredData$y.lin <- predict(quadmod, newdata = PredData)
+PredData$y.quad <- predict(cubmod, newdata = PredData)
 
 plot(SimData$x, SimData$y8, main="Data Set 8")
 lines(PredData$x, PredData$y.quad, col=2)
