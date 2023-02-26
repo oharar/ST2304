@@ -479,7 +479,7 @@ summary(modFC)
 
 ```
 
-From the summary we can see that the Fertilised effect is larger than the intercept: the estimate is `r round(coef(modFC)[2], 2)`t/ha. The standard error is  `r round(summary(modFC)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modFC)[2,1], 2)` t/ha - `r round(confint(modFC)[2,2], 2)` t/ha.
+From the summary we can see that the Fertilised effect is positive, i.e. the so the mean for the Fertilised effect is larger than the intercept (the mean for the Control): the estimated difference is `r round(coef(modFC)[2], 2)`t/ha. The standard error is  `r round(summary(modFC)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modFC)[2,1], 2)` t/ha - `r round(confint(modFC)[2,2], 2)` t/ha.
 
 <span style="color:blue">Does farmyard manure improve yields compared to the unfertilised control?</span>
 
@@ -492,7 +492,7 @@ summary(modMC)
 
 ```
 
-From the summary we can see that the Manure effect is larger than the intercept: the estimate is `r round(coef(modMC)[2], 2)`t/ha. The standard error is  `r round(summary(modMC)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modMC)[2,1], 2)` t/ha - `r round(confint(modMC)[2,2], 2)` t/ha.
+From the summary we can see that the Manure mean is larger than the intercept mean: the estimated effect of Manure (i.e. the difference from the Control) is `r round(coef(modMC)[2], 2)`t/ha. The standard error is  `r round(summary(modMC)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modMC)[2,1], 2)` t/ha - `r round(confint(modMC)[2,2], 2)` t/ha.
 
 
 
@@ -507,7 +507,7 @@ summary(modFM)
 
 ```
 
-From the summary we can see that the Manure effect is larger than the intercept: the estimate is `r round(coef(modFM)[2], 2)`t/ha, so the manure has a larger effect (the intercept is the Fertilised level here). The standard error is  `r round(summary(modFM)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modFM)[2,1], 2)` t/ha - `r round(confint(modFM)[2,2], 2)` t/ha.
+From the summary we can see that the yield from the Manure treatment is larger than the Intercept (which is Fertilised here): the estimate is `r round(coef(modFM)[2], 2)`t/ha, so the manure has a larger effect (the intercept is the Fertilised level here). The standard error is  `r round(summary(modFM)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modFM)[2,1], 2)` t/ha - `r round(confint(modFM)[2,2], 2)` t/ha.
 
 
 <span style="color:blue">Did continuing farmyard manure improve yields compared to stopping in 1871?</span>
@@ -521,7 +521,7 @@ summary(modMS)
 
 ```
 
-From the summary we can see that the Stopped effect is smaller than the intercept: the estimate is `r round(coef(modMS)[2], 2)`t/ha, so stopping the manure treatment reduced the yield.. The standard error is  `r round(summary(modMS)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modMS)[2,1], 2)` t/ha to `r round(confint(modMS)[2,2], 2)` t/ha.
+From the summary we can see that the Stopped treatment has a smaller yield than the intercept: the estimate is `r round(coef(modMS)[2], 2)`t/ha, so stopping the manure treatment reduced the yield.. The standard error is  `r round(summary(modMS)$coefficients[2,2], 2)`t/ha, so the effect is clearly a long way from 0. Indeed the confidence interval is `r round(confint(modMS)[2,1], 2)` t/ha to `r round(confint(modMS)[2,2], 2)` t/ha.
 
 <span style="color:blue">C2. Do you reach the same conclusion as you did before?</span>
 
