@@ -15,7 +15,7 @@ This document contains information, questions, R code, and plots.
 
 <span style="color:blue"> Questions appear in blue. </span>
 
-**Needs to be completed and handed in by 19th March 23:59**
+**Needs to be completed and handed in by the end of 17th March 2023**
 
 # Resources:
 

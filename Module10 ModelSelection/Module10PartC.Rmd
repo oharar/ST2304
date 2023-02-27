@@ -239,6 +239,7 @@ The lower the better.
 
 If you want to watch the video, it's below, or 
 [you can click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=e9870003-7152-41a6-ae9c-acec00b6ac36)
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=e9870003-7152-41a6-ae9c-acec00b6ac36&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->

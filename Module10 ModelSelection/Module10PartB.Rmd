@@ -6,6 +6,7 @@ output:
     df_print: paged
     toc: true
     toc_float: true
+    css: "../ST2304RMarkdown.css"
 ---
 
 ```{r setup, include=FALSE}
@@ -102,6 +103,7 @@ You could plot the distribution of likelihoods with `hist()`. To get a p-value, 
 
 For those who want a video
 [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=77855a18-707e-437e-bce6-aceb01158fea) or watch:
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=77855a18-707e-437e-bce6-aceb01158fea&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
@@ -349,6 +351,7 @@ and you can use `anova()` to compare them.
 
 If you want to watch the video, it's below, or 
 [you can click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=a019e096-b58c-4d22-93c7-ace900f51e3d)
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=a019e096-b58c-4d22-93c7-ace900f51e3d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
