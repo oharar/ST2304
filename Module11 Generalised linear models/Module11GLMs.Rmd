@@ -64,6 +64,7 @@ the course.
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=10ae8bb3-2cf2-4d93-b4a7-acfd00e7d256&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=10ae8bb3-2cf2-4d93-b4a7-acfd00e7d256)
 
 
@@ -253,6 +254,7 @@ plot(bluetit, axes = FALSE)
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=b8db0807-0c86-4556-8195-acfd00e7d218&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=b8db0807-0c86-4556-8195-acfd00e7d218)
 
 <details><summary>Answer in words</summary>
@@ -463,9 +465,11 @@ Luckily the code is **very** similar to `lm()` function, but now you use the
 `glm()` function. 
 
 Video explaining how to fit in R:
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=d80ec95c-44f2-439c-8347-acfd00e7d23d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=d80ec95c-44f2-439c-8347-acfd00e7d23d)
 
 
@@ -549,6 +553,7 @@ for each model, can you find the differences in the two tables? </span>
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7e1471ec-82ed-4309-ad83-acfd00e7d1e1&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7e1471ec-82ed-4309-ad83-acfd00e7d1e1)
 
 <details><summary>Answer as words</summary>
@@ -673,9 +678,11 @@ plot(bluetit, axes = FALSE)
 should you use to model each example? </span>
 
 <details><summary>Check your answer</summary>
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=c01fa956-14ca-457b-a314-acfd00e85451&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c01fa956-14ca-457b-a314-acfd00e85451)
 
 
@@ -800,6 +807,7 @@ introduction video, more details in a couple of weeks:
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=ca3265ce-1bc6-4249-9d58-ad02007f8a66&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=ca3265ce-1bc6-4249-9d58-ad02007f8a66)
 
 
@@ -1092,9 +1100,11 @@ lines(x = c(1,2),
 clutch size of the phoenix?" </span>
 
 <details><summary>Answer</summary>
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=3d304312-bcd5-4a74-9b4d-acfd00e85a1c&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3d304312-bcd5-4a74-9b4d-acfd00e85a1c)
 
 
