@@ -3,8 +3,11 @@ title: 'Module 9: Interactions'
 author: "Emily Simmonds"
 date: "3/7/2022"
 output:
-  pdf_document: default
-  html_document: default
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    css: "../ST2304RMarkdown.css"
 ---
 
 # Instructions
@@ -39,17 +42,21 @@ outputs from R appear like the above ^^^^
 * Plotting `lm()` results
 
 Begin with the intro video.
+
  <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=52349887-e562-4cfc-aa7e-ace2011e1418&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=52349887-e562-4cfc-aa7e-ace2011e1418) if it does not work. 
 
 # Part A: Choosing a model
 
 Video that recaps last week and gets ready for this week.
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=b724a370-7bd7-4775-b1be-ace2011e13bb&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [click here](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=b724a370-7bd7-4775-b1be-ace2011e13bb) if it does not work. 
 
 In this first part, you will be presented with some example data. 
@@ -81,11 +88,13 @@ There are 70 observations per treatment.
 <details><summary>Answer video</summary> 
 
 Answer videos:
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=dbaa2999-1ad6-4db7-bc61-ace2011e13f6&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=9016b116-9138-420b-a2e3-ace2011e1397&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=3c7365ab-e904-4ce3-970f-ace600e37193&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe> 
 --->
+
 [Video1](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=dbaa2999-1ad6-4db7-bc61-ace2011e13f6)
 [Video2](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9016b116-9138-420b-a2e3-ace2011e1397)
 [Video3](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3c7365ab-e904-4ce3-970f-ace600e37193)
@@ -271,9 +280,11 @@ Make sure to have at least a guess first! Think about what the
 model could be missing?
 
 Answer video:
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=c143cef8-4adc-444c-8a47-ace2011e273c&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [Link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c143cef8-4adc-444c-8a47-ace2011e273c)
 
 </details>
@@ -330,6 +341,7 @@ Answer video
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=a090d983-0e27-4505-9f86-ace2011e3f63&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [Link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=a090d983-0e27-4505-9f86-ace2011e3f63)
 
 <details><summary>Answer in writing</summary>
@@ -554,9 +566,11 @@ This is basically asking, was the interaction term clearly different to 0.
 </details>
 
 <details><summary>Show me the answers</summary>  
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=eedd4cac-9544-4018-a8bd-ace2011e553b&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [Link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=eedd4cac-9544-4018-a8bd-ace2011e553b)
 
 The (Intercept) is the intercept of
@@ -810,16 +824,20 @@ legend("topright", c("clutch initiation = 8",
 the interaction? </span>
 
 Summary video on continuous interactions:
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=4f7e9a5c-54e2-4701-8f72-ace2011fbf34&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [Link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=4f7e9a5c-54e2-4701-8f72-ace2011fbf34)
 
 
 # Part F: Detective skills
+
 <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=f82a674d-afee-46c5-aff5-ace2011e5745&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 --->
+
 [Link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=f82a674d-afee-46c5-aff5-ace2011e5745)
 
 <span style="color:blue"> Look at the model outputs above, match the 

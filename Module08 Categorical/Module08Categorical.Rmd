@@ -6,6 +6,7 @@ output:
     df_print: paged
     toc: true
     toc_float: true
+    css: "../ST2304RMarkdown.css"
 ---
 
 ```{r setup, include=FALSE}
