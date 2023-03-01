@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -----
 
-![Sparrow](../Week11 Generalised linear models/Sparrow.jpg)
+![Sparrow](../Module11 Generalised linear models/Sparrow.jpg)
 
 * Photo credit Wikipedia
 
@@ -99,6 +99,7 @@ Fit a model with quadratic effects for temperature and precipitation.
 
 <span style="color:blue">5. Does the ecological theory seem reasonable for this data? What parameter value(s) tell you about this?</span>
 
-<span style="color:blue">6.  What is the predicted probability of sparrows being found for the two sites mentioned above?</span>
+<span style="color:blue">6.  What is the predicted <strike>number of sparrows</strike> probability of sparrows being found for the two sites mentioned above?</span>
+(sorry: you can calculate the expected numbers because of the way the link function works, but the probabilities are more sensible in this module. If you have already answered this, keep your old answer and tell us what you did)
 
 <span style="color:blue">7. Comment briefly on the differences in the predictions from the linear and quadratic model.</span>
