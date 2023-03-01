@@ -10,7 +10,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE, dpi = 48)
+knitr::opts_chunk$set(cache=FALSE, dpi = 48)
 ```
 
 
