@@ -1,0 +1,910 @@
+---
+title: "GLMs with a Poisson"
+author: "Bob O'Hara"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    css: "../ST2304RMarkdown.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# The Poisson distribution and log-linear models
+
+First, a video.
+
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=74798c74-d792-4c04-bcc4-ad0800fa3456&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+[link](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=74798c74-d792-4c04-bcc4-ad0800fa3456)
+
+<!---
+Week 12: log-linear models/Poisson regression
+By the end of the lecture the students should be able to:
+- interpret the parameters of a log-linear model
+
+By the end of the practical the students should be able to 
+- fit a Poisson model
+- extract and interpret the parameters
+
+Week 14: Overdispersion
+By the end of the lecture the students should:
+- understand how to check for over-dispersion & fit improved models
+
+By the end of the practical the students should be able to 
+- test for overdispersion
+- fit models that take overdispersion into account
+
+--->
+
+This week you will:
+
+- learn about log-linear models 
+- learn about over-dispersion
+    - when there is more error than you expect
+
+# A Model for Counts: Fishing
+
+![Anglers by Raoul Dufy](anglers-1908.jpg!Large.jpg)
+
+Imagine sitting on the banks of the river Seine in Paris, fishing. Fish swim past randomly at a constant rate. If we catch fish for an hour, how many fish do we catch? Because they swim past randomly, the number will vary. it will also depend on the density of fish (and how fast they swim etc. etc.). But if we catch them at rate $\mu$, the mean number we catch in time $t$ will be $\lambda = \mu t$. The actual number will vary, and will follow a Poisson distribution:
+
+$$
+Pr(N=r | \lambda) = \frac{\lambda^r e^{-\lambda}}{r!}
+$$
+
+Now, as some of you may know, the French for fish is poisson (and the French call April 1st poisson d'avril, so beware). But the Poisson distribution is actually named after *Baron* Siméon Denis Poisson.
+
+![Siméon Denis Poisson](409px-Simeon_Poisson.jpg)
+
+By François Séraphin Delpech - http://web4.si.edu/sil/scientific-identity/display_results.cfm?alpha_sort=W, Public Domain, https://commons.wikimedia.org/w/index.php?curid=536305
+
+Count data is common, for example the numbers of murders, offspring,  bacterial/fungal colonies, and of course the number of people infected with a disease. So the ideas we discuss here will have a wide range of uses, and also form the basis of a lot of different models for different types of data.
+
+## The Poisson distribution
+
+So, what does the Poisson distribution look like? You can take a look! Here is some code to simulate 1000 data points from a Poisson distribution with a mean of 1.5. The `plot(table(...))` line of code plots the frequency of each count, e.g. the number of simuations with 0 counts (this is a histogram, but the plots are a bit nicer than using `hist()`):
+
+```{r PoissonDistr, eval=FALSE}
+Mean <- 1.5
+Pois <- rpois(1000, Mean)
+plot(table(Pois), lwd=8, lend=3)
+```
+
+Use this code and change the value of Mean to see what happens to the shape of the distribution when 
+
+- <span style="color:blue">the mean is less than 1?</span>
+- <span style="color:blue">the mean equals 1 </span>
+- <span style="color:blue">the mean is above 1</span>
+- <span style="color:blue">the mean gets large (i.e. a lot bigger than 1: chose your own values)?</span>
+
+<details><summary><span style="color:red">Answer: the mean is less than 1?</span></summary>
+<span style="color:red">
+We can try with 0.5:
+```{r PoisMeanLT1}
+Mean <- 0.5
+Pois <- rpois(1000, Mean)
+plot(table(Pois), lwd=8, lend=3)
+```
+
+The most common value is 0, and as the number of counts goes up, their frequency decreases.
+</span> 
+</details>
+
+<details><summary><span style="color:red">Answer: the mean equals 1?</span></summary>
+<span style="color:red">
+
+Now we plug in 1 for `Mean`:
+```{r PoisMeanEQ1}
+Mean <- 1
+Pois <- rpois(1000, Mean)
+plot(table(Pois), lwd=8, lend=3)
+```
+
+Both 0 and 1 are equally common (you will see some random variation, of course. If you run the code a few times, you'll see that the heights of the lines for 0 and 1 are usually about the same, but either can be a bit larger), and as the number of counts goes up, their frequency decreases.
+</span> 
+</details>
+
+<details><summary><span style="color:red">Answer: the mean is larger than 1?</span></summary>
+<span style="color:red">
+We can try a mean of 1.5:
+```{r PoisMeanGT1}
+Mean <- 1.5
+Pois <- rpois(1000, Mean)
+plot(table(Pois), lwd=8, lend=3)
+```
+
+Here the most common value (the mode) is 1, and the distribution tails off above that. 
+
+How about a mean of 5?
+```{r PoisMean5}
+Mean <- 5
+Pois <- rpois(1000, Mean)
+plot(table(Pois), lwd=8, lend=3)
+```
+
+Now the mode is about 5 (but 4 and 6 are also fairly likely, so they might have larger values in another simulation). Again, this tails off for larger values.
+
+Also notice that this distribution is positively skewed - above the mode the values spread out more.
+</span> 
+</details>
+
+<details><summary><span style="color:red">Answer: the mean is large?</span></summary>
+<span style="color:red">
+Let's go big with 50:
+```{r PoisMeanBig}
+Mean <- 50
+Pois <- rpois(1000, Mean)
+plot(table(Pois), lwd=8, lend=3)
+```
+
+The plot looks messier, so now a histogram does work better:
+
+```{r PoisHist}
+hist(Pois)
+```
+
+The histogram looks more like a normal distribution.
+</span> 
+
+</details>
+
+## Some useful facts about the Poisson distribution
+
+[Some useful facts about the Poisson distribution. You'll be AMAZED at number 4](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=1a870925-e544-40ee-8dba-ad0800fa3438)
+
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=1a870925-e544-40ee-8dba-ad0800fa3438&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+1. **When the mean is large, it is approximately a normal distribution.** This means that if you have large counts, you might as well model the data with a normal distribution (it is also commom to log transform it first).
+2. **If two random variables are Poisson distributed, the number of one type conditioned on the total follows a binomial distirbution**. OK, I need to explain this. Imaagine we were back to catching Parisian fish, and we catch two species, say perch and pike. We might be interested in what proportion are perch. If both follow Poisson distributions, and we catch $N_{\text{perch}}$ and $N_{\text{pike}}$, then $N_{\text{perch}}$ *given* $N_{\text{perch}} + N_{\text{pike}}$ follows a binomial distribution, with $P = \lambda_{\text{perch}}/(\lambda_{\text{perch}} + \lambda_{\text{pike}})$. The upshot of this is that if we have a data analysis problem where we want to look at proportions, we can actually use a Poisson distribution instead. Whether we want to depends on us: sometimes it is easier to use a Poisson, and sometimes a binomial.
+
+3. Following on from this, if we have a binomial distribution with a small $p$, the number of "successes" approximately follows a Poisson distribution with $\lambda = Np$. This is also useful: in epidemiology there are a lot of rare diseases, and it is easier to model the numbers rather than proportions, and to talk about risks as proportions (e.g. "relative risk"). So diseases can be (say) twice as common.
+
+## Is the Poisson a GLM?
+
+The log-likelihood is $l(N=r | \lambda) = r \log{\lambda} - \lambda - log(t!)$, so how does this compare to a GLM likelihood? Let's use some colours!
+
+The log-likelihood:
+
+$$
+l(N=r | \lambda) = {\color{red} r} {\color{blue} \log{\lambda}} - {\color{cyan} \lambda} - 
+{\color{orange} \log(t!)}
+$$
+
+The GLM likelihood:
+$$
+l(\theta | y) = \frac{ {\color{red} y} {\color{blue} \theta} - {\color{cyan} b(\theta) }}{a(\phi)} - {\color{orange} c(\phi, y)}
+$$
+
+So $a(\phi)=1$
+
+and $\color{blue} \theta = \log \lambda$
+
+Thus this is a GLM, and the natural link function is a log link. It is very rare than any other link function is used.
+
+## Interpretation
+
+The log link also makes the interpretation straightforward. If we are counting something, the process is multiplicative. So if we double the effort, we double the number of counts we expect. On the log scale this is additive:
+
+$$
+\begin{aligned}
+\log(\lambda) = \alpha + \beta x \\
+\lambda = e^{\alpha+\beta x} = e^\alpha e^{\beta x}
+\end{aligned}
+$$
+if we make $x$ a dummy variable, i.e. 0 or 1, then if $\beta$ doubles the mean (i.e. $\lambda = 2 e^\alpha$), $\beta = \log(2) = 0.69$.
+
+This is why these models are sometimes called **log-linear models**, because they are linear on the log scale. 
+
+There are some additional aides to interpretaion. If a coefficient is small, it is (approximately) the percent increase. So $e^{\alpha + \beta}$ means an increase by $e^{\beta} \approx 1+\beta$ times (if $\beta$ is small). So a coefficient of 0.01 is equal to about a 1% increase. A coefficient of 0.1 is about a 10.5% increase, so the approximation is getting worse.
+
+Also, the coefficients are symmetrical. A value of +0.01 increases the mean by $e^{0.01}$ times, and a value of -0.01 *decreases* the mean by $e^{0.01}$ times. This means that the sign only shows the direction, the absolute value show the strength.
+
+# Model Fitting
+
+Model fitting is easy, we can use the `glm()` function, almost like we did with the binomial distribution:
+
+```{r GLMmodel}
+mu <- seq(1,2, length=10)
+Count <- rpois(length(mu), mu)
+m1 <- glm(Count ~1, family=poisson("log"))
+m1a <- glm(Count ~1, family="poisson")
+
+```
+
+We just need to tell R to use the Poisson family. It will use the log link by default. We can use `summary()`, `coef()`, `confint()`, `anova()` etc just as we have before.
+
+## An Example: Himmicanes
+
+```{r DownloadHimmicaneData, echo=FALSE, eval=FALSE}
+if(!file.exists("../Data/Himmicanes.csv")) {
+  library(gdata)
+  Data=read.xls("http://www.pnas.org/content/suppl/2014/05/30/1402786111.DCSupplemental/pnas.1402786111.sd01.xlsx", nrows=92, as.is=TRUE)
+  Data <- Data[,c("Year", "Name", "MasFem", "Minpressure_Updated.2014", "Gender_MF", "Category", "alldeaths", "NDAM")]
+  Data$ColourMF=c("blue", "red")[1+Data$Gender_MF]
+  names(Data) <- gsub("_.*", "", names(Data)) # tidy up names
+  write.csv(Data, file="../Data/Himmicanes.csv", row.names = FALSE)
+}
+```
+
+A few years a go a strange paper [appeared in PNAS](https://doi.org/10.1073/pnas.1402786111) that suggested that hurricanes in the USA with female names caused more deaths than those with male names. This was rather a surprising result, so was worth checking. Fortunately, the authors of the paper made their data available. This is the data (you will need this code soon):
+
+```{r GetHimmicaneData, echo=TRUE}
+File <- "https://www.math.ntnu.no/emner/ST2304/2019v/Week13/Himmicanes.csv"
+HimmData <- read.csv(File, stringsAsFactors=FALSE)
+# Select hurricanes with > 100 deaths
+BigH <- which(HimmData$alldeaths>100)
+# Make a factor out of the Gender variable
+HimmData$GenderF <- factor(c("Male", "Female")[1+HimmData$Gender])
+```
+
+First we can plot the data:
+
+```{r PlotHimmicaneData, echo=TRUE, fig.height=5}
+plot(HimmData$Year, HimmData$alldeaths, col=HimmData$ColourMF, 
+     type="p", pch=15, xlab="Year", 
+     ylab="Number of Deaths")
+text(HimmData$Year[BigH], HimmData$alldeaths[BigH], 
+     HimmData$Name[BigH], adj=c(0.8,1.5))
+legend(1984,200,c("Male","Female"),fill=c("blue","red"))
+
+```
+
+We can see that the 4 hurricanes that caused the most death had female names. But also note that 3 of them occured between 1956 and 1978, when only female names were used.
+
+The data contains the following variables:
+
+- **Year**: Year
+- **Name**: Hurricane's name
+- **Gender**: Gender (0: Male, 1: Female)
+- **MasFem**: A scoring of how feminine the name sounds. We won't use this here
+- **Minpressure**: minimum air pressure in the hurricane (a measure of stength)
+- **Category**: Category of hurricane (larger is more severe)
+- **NDAM**: Normalised damage (i.e. how much the hurricane cost, corrected for inflation etc.)
+- **alldeaths**: Number of deaths
+
+The aim is to predict the number of deaths, and see if it is explaned by the gender assigned to the hurricane. It should also depend on the severity of the hurricane, which we can measure with minimum pressure, normalised damage or Category. 
+
+We will model the number of deaths. these are counts, so a Poisson distribution is called for. This then suggests a log link function. But which variables to use? Using Gender rather than MasFem will make the interpretation easier (and doesn't change the results), so we will us that. But should we use minimum pressure, normalised damage or Category? Note that all 3 are correlated with each other, as we might expect. So you should pick one to use in this analysis.
+
+You should fit the model, using whichever variable you decided to use. You only need to use the main effects, no interactions.
+
+<span style="color:blue">Fit the model! What estimates do you get? In particular, is there an effect of gender?</span>
+
+<details><summary><span style="color:red">Panic Button, if you want a hint</span></summary>
+<span style="color:red">Your code should look like this:
+
+```{r HelpCode, eval=FALSE}
+A_Model <- glm(Count ~X, data=SomeData, family="poisson")
+The_Same_Model <- glm(Count ~X, data=SomeData, family=poisson())
+
+```
+
+You need to work out what to plug in where.</span>
+
+</details>
+
+<details><summary><span style="color:red">Answers if you used minimum pressure</span></summary>
+
+<span style="color:red">This is the code to fit the model, and the summary:</span>
+
+```{r HimmicanesModelMinPres}
+mod.minpres <- glm(alldeaths ~ GenderF+Minpressure, family="poisson", data=HimmData)
+summary(mod.minpres)
+```
+
+<span style="color:red">It suggests a large effect of gender: `r round(coef(mod.minpres)["GenderFMale"], 2)`, which suggests that a male hurricane has exp(`r round(coef(mod.minpres)["GenderFMale"], 2)`) = `r round(exp(coef(mod.minpres)["GenderFMale"]), 2)` the deaths. Or, equivalently, a female hurricane has exp(- `r round(coef(mod.minpres)["GenderFMale"], 2)`) = `r round(exp(-coef(mod.minpres)["GenderFMale"]), 2)` times more deaths. The confidence interval is `r round(confint(mod.minpres)["GenderFMale",1], 2)` to `r round(confint(mod.minpres)["GenderFMale",2], 2)`, which would suggest the effect is definitely large.</span>
+
+<span style="color:red">Notice also that a higher pressure leads to less deaths - a change of 1 Mb changes the expected number of deaths by exp(`r round(coef(mod.minpres)["Minpressure"], 2)`) = `r round(exp(coef(mod.minpres)["Minpressure"]), 2)` times. A lower presure means a stronger hurricane, so this makes intuitive sense. Also note that `r round(exp(coef(mod.minpres)["Minpressure"]), 2)` is roughly a 4% decrease, so (as noted above) we can get an approximate estimate of the percent change from just from the estimate.</span>
+
+</details>
+
+<details><summary><span style="color:red">Answers if you used hurricane Category</span></summary>
+
+<span style="color:red">With Category we should probably use it as a factor. Although it is ordered (i.e. a category 4 hurricane is more powerful than a category 3), we don't know if the change from category 2 to category 3 should be the same as from category 3 to category 4. If we treat it as continuous, we could use polynomials to adjust for this, but we can "spend" a couple of parameters by making it categorical, and not having to worry.</span>
+
+```{r HimmicanesModelCat}
+mod.Cat <- glm(alldeaths ~ GenderF+factor(Category), family="poisson", data=HimmData)
+summary(mod.Cat)
+```
+
+<span style="color:red">Which suggests a large effect of gender: `r round(coef(mod.Cat)["GenderFMale"], 2)`, which suggests that a male hurricane has exp(`r round(coef(mod.Cat)["GenderFMale"], 2)`) = `r round(exp(coef(mod.Cat)["GenderFMale"]), 2)` the deaths. Or, equivalently, a female hurricane has exp(- `r round(coef(mod.Cat)["GenderFMale"], 2)`) = `r round(exp(-coef(mod.Cat)["GenderFMale"]), 2)` times more deaths. 
+The confidence interval is `r round(confint(mod.Cat)["GenderFMale",1], 2)` to `r round(confint(mod.Cat)["GenderFMale",2], 2)`, which woud suggest the effect is large.</span>
+
+<span style="color:red">Also notice that the effects of category become more positive as the category goes up. In other words, higher categories lead to more deaths as we might expect: higher categories are stronger hurricanes.</span>
+
+</details>
+
+<details><summary><span style="color:red">Answers if you used normalised damage</span></summary>
+
+<span style="color:red">Finally, damage:</span>
+```{r HimmicanesModelNDAM}
+mod.NDAM <- glm(alldeaths ~ GenderF+NDAM, family="poisson", data=HimmData)
+summary(mod.NDAM)
+```
+
+<span style="color:red">Which suggests a large effect of gender: `r round(coef(mod.NDAM)["GenderFMale"], 2)`, which suggests that a male hurricane has exp(`r round(coef(mod.NDAM)["GenderFMale"], 2)`) = `r round(exp(coef(mod.NDAM)["GenderFMale"]), 2)` the deaths. Or, equivalently, a female hurricane has exp(- `r round(coef(mod.NDAM)["GenderFMale"], 2)`) = `r round(exp(-coef(mod.NDAM)["GenderFMale"]), 2)` times more deaths. The confidence interval is `r round(confint(mod.NDAM)["GenderFMale",1], 2)` to `r round(confint(mod.NDAM)["GenderFMale",2], 2)`, which woud suggest the effect is large.</span>
+
+<span style="color:red">Also notice that the effect of damage is positive, so more damage means more deaths.</span>
+
+</details>
+
+<details><summary><span style="color:red">Summary of Answers</span></summary>
+
+<span style="color:red">Whichever hurricane severity measure you use, you find that stronger hurricanes lead to more deaths, which is not surprising. What is surprising is that gender seems to have a large effect, and the narrow coinfidence intervals suggest we can be fairly certain about it. But this is not the full story.</span>
+</details>
+
+
+For those poor souls who want to hear me explain  the answers, [here is the video](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=aad0f839-90a0-43d9-ae01-ad0900fe40e2)
+
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=aad0f839-90a0-43d9-ae01-ad0900fe40e2&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+## Model Comparison
+
+We can compare models in the same way as before.
+
+```{r modelcomparison}
+mod.null <- glm(alldeaths ~ 1, family="poisson", data=HimmData)
+mod.onlyNDAM <- glm(alldeaths ~ NDAM, family="poisson", data=HimmData)
+anova(mod.null, mod.onlyNDAM, test="Chisq")
+```
+
+<span style="color:blue">Compare the models with and without gender: does there seem to be an effect?</span>
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">Fit and compare these models (for NDAM, but this also works for the others):  `alldeaths ~ NDAM` and `alldeaths ~ GenderF+NDAM`</span>
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+
+<span style="color:red">Yes, there definitely seems to be an effect. The smallest deviance is about 80, with 1 degree of freedom:</span>
+
+```{r ANOVAs}
+# Fit the additional models we need
+mod.onlyminpres <- glm(alldeaths ~ Minpressure, family="poisson", data=HimmData)
+mod.onlyCat <- glm(alldeaths ~ factor(Category), family="poisson", data=HimmData)
+mod.onlyNDAM <- glm(alldeaths ~ NDAM, family="poisson", data=HimmData)
+
+# Compare the models with ANOVA
+anova(mod.onlyminpres, mod.minpres, test="Chisq")
+anova(mod.onlyCat, mod.Cat, test="Chisq")
+anova(mod.onlyNDAM, mod.NDAM, test="Chisq")
+```
+
+</details>
+
+# Model Checking
+
+(there is a video walkthrough of this code at the end if the section)
+
+Even if we fit a model, it might not be a good one. There are all the usual problems we've seen (outliers, non-linearity etc.). We can check them in the same way we check other residuals, although with some checks we can run into problems of non-normality. For example, we can get some weird patterns, like this
+
+```{r NonNormal}
+N <- 100
+x <- runif(N)
+
+Y <- rpois(N, exp(0+1*x))
+mod.Y <- glm(Y ~ x, family = poisson())
+
+plot(fitted(mod.Y), resid(mod.Y))
+```
+
+Plots like this can still be useful, though. But we will look at another aspect of model fit.
+
+One property of the Poisson distribution is that the mean equals the variance. But there is no reason why the counts we observe have to do that. Indeed, we often (perhaps usually) see that the variance is larger than the mean.
+
+We can see what happens when we have over-dispersion by simulating some data without and with over-dispersion. To do this we want to create some data that is from a Poisson distribution, i.e. a GLM is the correct model. We will then alter the model by adding some extra variation (this will also help you understand how a GLM is made).
+
+We will use 1000 data points (because it's a nice large number), and a single covariate which we will call `X`.
+
+```{r SimNoODPars}
+N <- 1e3
+X <- rnorm(N)
+```
+
+Now, to build up the GLM. Follow these steps:
+
+1. <span style="color:blue">Calculate the linear predictor. You will need an intercept and a slope (for the effect of X). Choose some sane values (e.g. 1.2 for each).</span>
+
+<details><summary><span style="color:red">Panic Button, if you want a hint</span></summary>
+<span style="color:red">The linear predictor will look like $\alpha + \beta X$</span>
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+
+<span style="color:red">You might use different variables names and values, but that's OK.</span>
+
+```{r LinearPred}
+alpha <- 1.2
+beta <- 1.2
+eta.noOD <- alpha + beta*X
+```
+
+</details>
+
+2. <span style="color:blue">Use the inverse of the link function to calculate the expected values for each (simulated) data point</span>
+
+<details><summary><span style="color:red">Panic Button, if you want a hint</span></summary>
+<span style="color:red">The link function is the log link, so we want the inverse of that.</span>
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+
+```{r calcNoODMean}
+Mean.noOD  <- exp(eta.noOD)
+```
+</details>
+
+3. <span style="color:blue">Simulate each data point from a Poisson distribution</span>
+
+<details><summary><span style="color:red">Panic Button, if you want a hint</span></summary>
+<span style="color:red">Use the `rpois()` function</span>
+</details>
+
+<details><summary><span style="color:red">Answer (includes a bonus plot)</span></summary>
+
+```{r SimNoODPoisData}
+Y.noOD <- rpois(length(Mean.noOD), Mean.noOD)
+
+plot(X, Y.noOD)
+```
+
+</details>
+
+You should now have some nice poisson-y data.
+
+Next you need to simulate some over-dispersed data. There are lots of ways to do this. Here we will add a second covariate that doesn't go into the model: it is probably also how a lot of overdispersion occurs in real data sets.
+
+We need to create a new variable:
+
+```{r SimExtraVar}
+X.unobs <- rnorm(N)
+```
+
+1. <span style="color:blue">Calculate the linear predictor with both the new and old `X`. You will need a regression coefficient (=slope) for the `X.unobs`. I would suggest a value of 0.5</span>:
+
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">The linear predictor will look like $\alpha + \beta_1 X_1 + \beta_2 X_2$. You could also simply add the effect of the new covariate to the old linear predictor.</span>
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+```{r LinearPredOD}
+beta.unobs <- 0.5
+eta.OD <- eta.noOD + beta.unobs*X.unobs
+```
+</details>
+
+2. <span style="color:blue">Use the inverse of the link function to calculate the expected values for each (simulated) data point</span>
+
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">The link function is the log link, so we want the inverse of that.</span>
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+```{r calcMean.OD}
+Mean.OD <- exp(eta.OD)
+```
+</details>
+
+3. <span style="color:blue">Simulate each data point from a Poisson distribution</span>
+
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">Use the `rpois()` function</span>
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+
+```{r SimODPoisData}
+Y.OD <- rpois(length(Mean.OD), Mean.OD)
+
+plot(X, Y.OD)
+```
+
+</details>
+
+So now we have some data from both a "good" model and one with over-dispersion. The first thing to note is that the variances are different: for the parameter estimates I chose the variance for the good model is `r round(var(Y.noOD), 1)`, and for the over-dispersed model it is `r round(var(Y.OD), 1)`. 
+
+But what happens when we fit the model?
+
+<span style="color:blue">Fit a model to the data without over-dispersion, with `X` as a predictor. Then fit the same model with overdispersion. Look at the summaries of the two models, in particular the coefficients, their standard errors, and the residual deviance. What effects does overdispersion have (and what doesn't it have?)</span>
+
+<details><summary><span style="color:red">Panic Button, if you want a hint</span></summary>
+<span style="color:red">The code should look something like this:
+
+```{r SomeModelCode, eval=FALSE}
+mod.Y <- glm(Y ~ x, family = poisson())
+summary(mod.Y)
+```
+
+You need to find the relevant terms in the summary.
+
+If you have done this and are not sure what's real, and what is noise, run the same code a few times with different simulations of the data, and see what patterns keep on appearing.</span>
+
+</details>
+
+<details><summary><span style="color:red">Answer</span></summary>
+
+<span style="color:red">First, the model with no overdispersion</span>
+```{r FitModel.NoOD}
+Model.noOD <- glm(Y.noOD ~ X, family = poisson())
+summary(Model.noOD)
+```
+
+<span style="color:red">And with overdispersion</span>
+
+```{r FitModel.OD}
+Model.OD <- glm(Y.OD ~ X, family = poisson())
+summary(Model.OD)
+```
+
+<span style="color:red">Your results might be a bit different, because random number generators are random. But what you should see are:</span>
+
+- <span style="color:red">the parameter estimates are the same (plus or minus some random error)</span>
+- <span style="color:red">the standard errors are the same  (plus or minus some random error)</span>
+- <span style="color:red">the residual deviance is higher for the overdispersed data.
+</span>
+</details>
+
+<br />
+
+[Here is a video](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=6ad8692f-92c8-4fba-9733-ad0a00ec9b76) of me waffling on whilst presenting the code.
+
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=6ad8692f-92c8-4fba-9733-ad0a00ec9b76&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+Having overdispersion is like having more residual variation. The overall effect of more unexplained variation should be to make things less precise. But we don't see that here. Does this matter? Well, we can look at what the distribution of parameters should be by doing these simulations lots of times, and looking at the standard deviation
+
+```{r SimLotsOD}
+# Function to simulate the data with overdispersion, and return the coefficient for the effect of X
+# betaOD=0 means no overdispersion
+SimOverDisp <- function(alpha=1, betaX=1, betaOD=0, N=1e3) {
+  X <- rnorm(N)
+  X.unobs <- rnorm(N)
+
+  eta <- alpha + betaX*X + betaOD*X.unobs
+  Y <- rpois(length(eta), exp(eta))
+
+  Model <- glm(Y ~ X, family = poisson())
+  coef(Model)["X"]
+}
+
+# First run the simulations without overdispersion, and then with overdispersion
+Repbeta0 <- replicate(1e2, SimOverDisp(betaOD=0))
+Repbeta1 <- replicate(1e2, SimOverDisp(betaOD=1))
+# And look at the standard deviations of the estimates
+c(NoOD=sd(Repbeta0), OD=sd(Repbeta1))
+
+```
+
+What we see is that the variance should be larger - we should see wider standard errors. 
+
+The uncertainty in the estimates increases but this isn't seen in the confidence intervals. But the residual deviance does increase. The residual deviance summarises the amount of unexplained variation, and because the variance of the Poisson distribution is determined by the mean, the amount of unexplained variation should also be determined by the mean. 
+
+Once the maths is done (not by us!), it turns out that with no overdispersion, the deviance should (roughly) equal the residual degrees of freedom.  Indeed, it should follow a chi-squared distribution, with degrees of freedom equal to the residual degrees of freedom. So we can use that to test whether there is overdispersion.
+
+We can do this with the **deviance ratio**, which is the Deviance divided by the degrees of freedom. This should equal about 1, but obviously there will be variation. As a rule of thumb, values below about 1.2 suggst that even if there is overdispersion, it shouldn't make  big difference. If the null hypothesis is true (i.e. there is no overdispersion), the deviance should follow a chi-squared distribution, so we can use that as a test.
+
+```{r EstDisp, echo=TRUE}
+(Dispersion <- deviance(Model.noOD)/df.residual(Model.noOD))
+pchisq(q = deviance(Model.noOD), df.residual(Model.noOD), lower.tail = FALSE)
+```
+
+Note that we need `lower.tail = FALSE` in `pchisq()` because we are interested in knowing if the dispersion is too big: this is a one-tailed test.
+
+<span style="color:blue">What evidence is there of over-dispersion in the Himmicanes data? Test it for one of the covariates</span>
+
+<details><summary><span style="color:red">Answers</span></summary>
+
+<span style="color:red">Minimum pressure:
+
+```{r TestODHimminacesMinPres}
+(Dispersion.minpres <- deviance(mod.minpres)/df.residual(mod.minpres))
+pchisq(q = deviance(mod.minpres), df.residual(mod.minpres), 
+       lower.tail = FALSE)
+```
+
+<span style="color:red">Categories:
+
+```{r TestODHimminacesCat}
+(Dispersion.Cat <- deviance(mod.Cat)/df.residual(mod.Cat))
+pchisq(q = deviance(mod.Cat), df.residual(mod.Cat), 
+       lower.tail = FALSE)
+```
+
+<span style="color:red">Normalised damage:
+
+```{r TestODHimminacesNDAM}
+(Dispersion.NDAM <- deviance(mod.NDAM)/df.residual(mod.NDAM))
+pchisq(q = deviance(mod.NDAM), df.residual(mod.NDAM), 
+       lower.tail = FALSE)
+```
+
+<span style="color:red">Regardless of which model we chose, the deviance ratio is huge, which suggests there is a lot of overdispersion. The p-values are so small they are effectively 0.</span>
+</details>
+
+## Dealing With Overdispersion
+
+[Let's have another video!](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=51055de5-2173-4d99-a3cb-ad0f00aa1d91)
+
+<!---
+<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=51055de5-2173-4d99-a3cb-ad0f00aa1d91&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+--->
+
+Overdispersion is so common that a few ways have been eveloped to deal with it:
+
+- Correct in the likelihood
+- Use a mixed model (not in this course, sorry)
+- Use a different distribution
+
+## Correct the likelihood
+
+The general form for a GLM likelihood is 
+
+$$
+l(\theta | y) = \frac{y \theta -b(\theta)}{a(\phi)} + c(y, \phi)
+$$
+
+Thus far we have not discussed $\phi$ much. But here we need it. One way to correct for overdispersion is to write $a(\phi) = c \phi$, and to estimate $c$. We can do this with the **deviance ratio**:
+
+```{r Estc, echo=TRUE, eval=FALSE}
+Dispersion <- deviance(Model.OD)/df.residual(Model.OD)
+```
+
+This should equal about 1, but obviously there will be variation. As a rule of thumb, values below about 1.2 suggst that even if there is overdispersion, it shouldn't make  big difference.
+
+We use the dispersion estimate to correct the calcualtions of standard errors by plugging it into the summary:
+
+```{r SummDisp, echo=TRUE,eval=FALSE}
+summary(mod.OD, dispersion = Dispersion)
+```
+
+The effect is to increase standard errors by sqrt(Dispersion):
+
+```{r SummDispStdErr, echo=TRUE,eval=FALSE}
+# Standard errors without over-dispersion
+summary(Model.OD)$coefficients[,"Std. Error"]
+# Standard errors without over-dispersion, multiplied by sqrt of dispersion
+summary(Model.OD)$coefficients[,"Std. Error"]*sqrt(Dispersion)
+# Standard errors with over-dispersion
+summary(Model.OD, dispersion = 
+                Dispersion)$coefficients[,"Std. Error"]
+```
+
+We can also use the dispersion in `anova()`:
+
+```{r ANOVAOD}
+anova(Model.OD, dispersion = Dispersion, test="Chisq")
+```
+
+<span style="color:blue">For the Himmicanes data, what happens to the results if you correct the analysis by correcting the estimates with overdispersion? What happens with the model comparison, and with the estimates of the gender effect and its standard error?</span>
+
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">Look at both `summary()` and `anova()`</span>
+
+</details>
+
+
+<details><summary><span style="color:red">Answer</span></summary>
+
+<span style="color:red">Regardless of which model we chose, the deviance ratio is over 30, which is huge.</span>
+
+```{r DRHimminaces}
+(MinPresDR <- deviance(mod.minpres)/df.residual(mod.minpres))
+(CatDR <- deviance(mod.Cat)/df.residual(mod.Cat))
+(NDAMDR <- deviance(mod.NDAM)/df.residual(mod.NDAM))
+
+```
+
+
+<span style="color:red">The models are compared here:</span>
+
+```{r HimmModCompDR}
+anova(mod.onlyminpres, mod.minpres, test="Chisq", dispersion = MinPresDR)
+anova(mod.onlyCat, mod.Cat, test="Chisq", dispersion = CatDR)
+anova(mod.onlyNDAM, mod.NDAM, test="Chisq", dispersion = NDAMDR)
+```
+
+<span style="color:red">The p-value goes up, so it is on the edge of significance. Basically, the evidence for an effect is much weaker.</span>
+
+<span style="color:red">We will only look at the estimates from the minimum pressure analysis</span>
+
+```{r MinPresDR}
+Disp.minpres <- deviance(mod.minpres)/df.residual(mod.minpres)
+summary(mod.minpres, dispersion = Disp.minpres)$coefficients
+```
+
+<span style="color:red">The estimated gender effect doesn't change, but the standard error is larger, and suggests the direction of effect is difficult to determine. Unfortunately `confint()` doesn't take a dispersion term. </span>
+
+</details>
+
+
+## Use a different distribution
+
+Correcting the dispersion is one approach, but one disadvantage it has it that it makes predictions more difficult. Another approach is to use a distribution that is more flexible, so that it can account for this extra variation. One distribution that is commonly used is the negative binomial distribution. There are several ways of deriving the negative binomial distribution, but the one that is useful here is as a mixture of Poisson distirbutions.
+
+With a Poisson distribution we have a mean, $\lambda$, and this defines the distribution:
+
+```{r NegBinSimsNoOD}
+lambda <- 5
+C1 <- rpois(1e4, lambda)
+plot(table(C1), lwd=12, lend=3)
+```
+
+But what if it varies? In particular, what if the mean is allowed to follow a chi-squared distribution?
+
+```{r NegBinSimsOD}
+df <- 5
+# the expected value of a chi-squared is its degrees of freedom, so we divide by df to give an expected value of 1
+lambda <- 5*rchisq(1e4, df)/df
+C2 <- rpois(1e3, lambda)
+plot(table(C2), lwd=12, lend=3)
+```
+
+
+We see that there is more variation. This makes sense if you think that this is a mixture of Poisson distributions, some with a mean above 5, some below. 
+
+The amount of extra variation is determined by the degrees of freedom parameter. The parameter has to be positive.
+
+<span style="color:blue">How does the variance of the distribution change as the degrees of freedom parameter increases? Use the code above and try different values of df.</span>
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">You don't need to plot the data each time: just use a different value of df (it has to be positive, though) and calculate the variance of `C2`</span>
+</details>
+<details><summary><span style="color:red">Answer</span></summary>
+
+<span style="color:red">Because I'm lazy, I used a function to calculate the variance, and pass different degrees of freedom to it:</span>
+
+```{r NegBinSimsdf}
+CalcVar <- function(df) {
+  lambda <- 5*rchisq(1e4, df)/df
+  C <- rpois(1e3, lambda)
+  var(C)
+}
+CalcVar(1)
+CalcVar(5)
+CalcVar(50)
+
+```
+
+<span style="color:red">So we see that the variance decreases. We can look in a bit more detail using `sapply()` to loop over the values. We know that the variance for this Poisson distribution is 5, so we can add that line:</span>
+
+```{r PlotNegBinSimsdf}
+dfs <- seq(1, 101, by=5)
+Variances <- sapply(dfs, CalcVar)
+plot(dfs, Variances, ylim=c(0, Variances[1]))
+abline(h=5)
+```
+
+<span style="color:red">We can see that the variance decreases, and at about 20 is close to the variance of a Poisson distribution. In fact, with an infinite degrees of freedom, the negative binomial is the same as a Poisson distribution.</span>
+
+</details>
+
+So, now we know that we can use a negative binomial distribution to model over-dispersed count data, how do we do it? The internal workings are a bit more complicated: if we know the degrees of freedom parameter (which is called $\theta$), the negative binomial distribution is a GLM. But it has to be estimated. Of couse we can simply let the computer do the work.
+
+We fit the model in almost the same way as we do for other GLMs, but with the `glm.nb()` function in the `MASS` package. We need this because the function has to flip between estimating $\theta$ and fitting the GLM for the value of $\theta$ it has estimated. It does this until the change in the likeihood get very small.
+
+```{r GLMNB, echo=TRUE}
+# Import the library first
+library(MASS)
+mod.NB <- glm.nb(Y.OD ~ X)
+# Could also do this, to call the function from the library directly:
+# mod.NB <- MASS::glm.nb(Y.OD ~ X)
+summary(mod.NB)
+```
+
+The summary gives the same information, but also has an estimate of $\theta$, which is `r round(mod.NB$theta, 1)`, and its standard error (`r round(mod.NB$SE.theta, 2)`). If we just want $\theta$, we can get it with `mod.NB$theta`, or `theta.ml(mod.NB)`.
+
+<span style="color:blue">What happens if you fit an negative binomial distribution to the Himmicanes data? What happens with the model comparison, and with the estimates of the gender effect and its standard error?</span>
+
+<details><summary><span style="color:red">Hint</span></summary>
+<span style="color:red">Fit the model with `glm.mb()`, use `summary()` to look at the parameters, and `anova()` to compare the models.</span>
+
+</details>
+
+<details><summary><span style="color:red">Negative Binomial Answer</span></summary>
+
+<span style="color:red">First we can look at the values of $\theta$</span>
+
+```{r negBinHimmicanesTheta}
+library(MASS)
+NB.minpres <- glm.nb(alldeaths ~ Minpressure+GenderF, data=HimmData)
+NB.Cat <- glm.nb(alldeaths ~ factor(Category)+GenderF, data=HimmData)
+NB.NDAM <- glm.nb(alldeaths ~ NDAM+GenderF, data=HimmData)
+NB.minpres$theta
+NB.Cat$theta
+NB.NDAM$theta
+
+```
+
+<span style="color:red">Regardless of which model we chose, the estimate of $\theta$ is small, suggesting overdispersion. </span>
+
+<span style="color:red">We can test whether Gender has an effect. Note that I have been cunning here: in the models above I put `GenderF` last. because the test is sequential, the line of the `anova()` tests the effect of adding gender to the model above (i.e. the model with Minpressure, Categors  or NDAM). I also only show the line for gender (which is what `["GenderF",]`does: it selects that row)</span>
+
+```{r negBinHimmicanesANOVA}
+anova(NB.minpres)["GenderF",]
+anova(NB.Cat)["GenderF",]
+anova(NB.NDAM)["GenderF",]
+```
+
+<span style="color:red">We can see that the effect becomes much more likey to have been an effect of random error.</span>
+
+<span style="color:red">We will only look at the estimates from the minimum pressure analysis.</span>
+
+```{r MinPresNB}
+summary(NB.minpres)$coefficients
+```
+
+<span style="color:red">We can see that the estimated gender effect is still negative (i.e. it suggests that Male hurricanes kill fewer people), but the standard error is wider: `r round(confint(NB.minpres)["GenderFMale",1],1)` to `r round(confint(NB.minpres)["GenderFMale",2],1)`. This suggests the estimated effects could be between `r round(exp(confint(NB.minpres)["GenderFMale",2]),2)` and `r round(exp(-confint(NB.minpres)["GenderFMale",1]),1)` times higher with a female name. i.e. if could be huge (3 times!) or almost nothing (about 1% higher). </span>
+</details>
+
+## More model Checking: Residuals
+
+Now we know how to account for excess variation, we can do some more model checking, and arrive at the punch-line of all of this. R can calculate residuals for you:
+
+```{r Resids}
+resid(mod.minpres)[1:5]
+resid(NB.minpres)[1:5]
+
+```
+
+We can look at them for the Himmicanes data. We'll look at the negative binomial model, with NDAM as a covariate (the pattern with the other covariates isn't as obvious: take a look!)
+
+```{r PlotResidsNB}
+par(mfcol=c(2,1), mar=c(4.1,4.1,1,1))
+plot(log(fitted(NB.NDAM)), resid(NB.NDAM))
+abline(h=0, col=2)
+plot(HimmData$NDAM, resid(NB.NDAM))
+abline(h=0, col=2)
+
+```
+
+When I looked at these , I thought it looked like it might be curved. 
+
+<span style="color:blue">How could we improve the model?</span>
+
+<details><summary><span style="color:red">Help! Help!</span></summary>
+<span style="color:red">Look back at the [model checking week](https://www.math.ntnu.no/emner/ST2304/2020v/Week06/ModelCheckingModule.html). The solutions are often similar, even if the data are a bit different.</span>
+</details>
+
+<details><summary><span style="color:red">Negative Binomial Answer</span></summary>
+<span style="color:red">We could add a quadratic term into the model:</span>
+
+```{r negBinHimmicanesQuad}
+library(MASS)
+NB.NDAM.quad <- glm.nb(alldeaths ~ NDAM + I(NDAM^2) + GenderF, 
+                       data=HimmData)
+anova(NB.NDAM.quad)
+```
+<span style="color:red">Now in the test, there is a large quadratic effect, and no evidence for an effect of gender.</span>
+
+```{r negBinHimmicanesQuadSumm}
+summary(NB.NDAM.quad)
+
+```
+
+<span style="color:red">And the direction of the Gender effect is uncertain.</span>
+
+<span style="color:red">Basically, there was never a Gender effect, just a curved effect of hurricane strength. this is why you should check your models: if you don't, someone else might and find out you're wrong.</span>
+
+</details>
+
+# Summary
+
+You should now have some idea about the following:
+
+- what a Poisson distribution is, and what sorts of problems it is used for
+- how to fit a GLM with a Poisson distribution
+- how to interpt the results of fitting a GLM with a Poisson distribution
+- what over-dispersion is
+- how to detect overdispersion
+- how to correct for overdispersion, e.g. by fitting a model with a negative binomial distribution.

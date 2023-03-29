@@ -1,5 +1,5 @@
 ---
-title: "Exercise Module: Binomial generalised linear models"
+title: "Module: Binomial generalised linear models"
 author: "Emily G Simmonds"
 output:
   html_document:

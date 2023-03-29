@@ -224,7 +224,7 @@ you have so far? </span>
 
 The second dataset that your team has access to is from Heggestad and Lesser (1990).
 This was published in a study in the Journal of Environmental Quality 
-[Paper link](https://dl.sciencesocieties.org/publications/jeq/abstracts/19/3/JEQ0190030488).
+[Paper link](https://doi.org/10.2134/jeq1990.00472425001900030022x).
 
 The data are from an experiment looking at the effects of low-level atmospheric
 pollution and drought on agricultural yields. Specifically this study looked at

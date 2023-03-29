@@ -1,0 +1,110 @@
+---
+title: "Dataset 1: Iris Flowers"
+author: "Emily Simmonds"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+```
+
+![Virginia iris](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Iris_virginica.jpg/512px-Iris_virginica.jpg)
+
+[image source: Frank Mayfield, CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Iris_virginica.jpg)
+
+
+These data are from three species of the plant, iris. They include measures of petal width and length. Here you will look at how the length of petals influences their width.
+
+You can find the data [here](https://www.math.ntnu.no/emner/ST2304/2020v/Week09/irisdata.csv): it is a .csv with a header.
+
+Important! When you import the data it is important to make sure it is in the right format. Here you need Species to be a factor and PetalLength to be numeric. See code below.
+
+```{r ReadIrisData}
+irisdata <- read.csv("https://www.math.ntnu.no/emner/ST2304/2020v/Week09/irisdata.csv", header=T)
+
+# str() checks the data structure
+str(irisdata)
+
+# we can see that the variables are ok but best to be sure
+irisdata$Species <- as.factor(irisdata$Species)
+irisdata$PetalLength <- as.numeric(irisdata$PetalLength)
+
+# now check again
+str(irisdata)
+```
+
+The columns in the dataframe are:
+
+- PetalWidth = width of the petal in cm.
+- PetalLength = length of the petal in cm.
+- Species = which species it is.
+
+You want to find out how petal length and species effect petal width.
+
+<span style="color:blue">1. What model will you use to answer this?</span> (1 mark)
+
+<span style="color:blue">2. What type of variables do you have and which are response or explanatory?</span> (3 marks)
+
+We have given code to run a model for the data below. Think about what type of model is being run? It is good practice to consider if you would have chosen the same one.
+
+```{r Model1}
+# Model 1
+model1 <- lm(PetalWidth ~ Species+PetalLength, data = irisdata)
+
+coef(model1)
+
+confint(model1)
+```
+
+
+<span style="color:blue">3. Interpret the output of the model. What does it tell you about the effect of petal length on petal width?</span> (5 marks)
+
+
+Below is the code to make some graphs to check the model fit.
+
+```{r ModelChecking}
+
+# Graph 1
+
+residuals <- residuals(model1)
+fitted <- fitted(model1)
+plot(fitted, residuals)
+
+qqnorm(residuals)
+qqline(residuals)
+```
+
+<span style="color:blue">4. What are the assumptions of the model?</span> (5 marks)
+
+
+<span style="color:blue">5. Are the assumptions met? Reference which plot you use to decide and why you make the choice.</span> (6 marks)
+
+
+<span style="color:blue">6. What other plot might you also want for checking assumptions?</span> (1 mark)
+
+
+Here is code for another model on the same data.
+
+```{r Model2}
+
+# Model 2
+model2 <- lm(PetalWidth ~ Species*PetalLength, data = irisdata)
+
+coef(model2)
+
+confint(model2)
+```
+
+
+<span style="color:blue">7. How is this model different to the first one?</span> (1 mark)
+
+
+<span style="color:blue">8. Given the new model, does this change your interpretation of the effect of petal length on petal width? Why?</span> (4 marks)
+
+
+<span style="color:blue">9. Which model do you prefer, why?</span> (3 marks)
+

@@ -24,7 +24,7 @@ I would suggest you try analysing at at least one of these from the description 
 
 As a general comment - in practice there is quite a bit of poking around when analysing real data, and trying things which don't work (or seem stupid later). There is also not just one right way to do things, and you may come to a slightly different conclusion to other people. So please poke around in these analyses, and welcome to the real world.
 
-And now the problems
+And now the problems.
 
 # Problem 1: Cow Diets
 
@@ -57,7 +57,7 @@ The columns in the dataframe are:
 
 You want to find out how diet treatment influenced dry matter intake while controlling for the baseline intake of each cow. Is there a diet that is better than the others?
 
-If you want to try the exam-style questions, [follow this link](Week10aCowQuestions.html).
+If you want to try the exam-style questions, [follow this link](Module10aCowQuestions.html).
 
 # Problem 2: Irises
 
@@ -90,4 +90,4 @@ The columns in the dataframe are:
 
 You want to find out how petal length and species effect petal width.
 
-If you want to try the exam-style questions, [follow this link](Week10aIrisQuestions.html).
+If you want to try the exam-style questions, [follow this link](Module10aIrisQuestions.html).
