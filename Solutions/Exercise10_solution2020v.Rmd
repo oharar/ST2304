@@ -1,0 +1,218 @@
+---
+title: 'Exercise 10: Binomial Models'
+output: html_document
+---
+
+
+## Instructions:
+
+*Hints and reminders are italic*
+
+<span style="color:blue"> Questions appear in blue. </span>
+ 
+<span style="color:purple"> Answers in purple or as R code </span>
+
+-----
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+-----
+
+![Sparrow](../Week11 Generalised linear models/Sparrow.jpg)
+
+* Photo credit Wikipedia
+
+
+# More House Sparrows in North America
+
+The North American Breeding Bird Survey is conducted across North America to estimate the abundances of birds. Bird watchers go to sites across North America and count the number of birds they observe for a set time. This data can be used to ask a wide range of questions. Here we can look at the effects of climate on abundance of the house sparrow.
+
+```{r ReadBBSSparrowData, eval=FALSE, echo=FALSE}
+
+#Data <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week12/HouseSparrowPresence.csv")
+#names(Data) <- gsub("stoptotal", "Count", names(Data))
+#Data$Present <- Data$Count>1
+#Data$prec.mean.sc <- scale(Data$prec.mean)
+#Data$temp.mean.sc <- scale(Data$temp.mean)
+#attr(Data$prec.mean.sc, "scaled:center") <- NULL
+#attr(Data$prec.mean.sc, "scaled:scale") <- NULL
+#attr(Data$temp.mean.sc, "scaled:center") <- NULL
+#attr(Data$temp.mean.sc, "scaled:scale") <- NULL
+
+#write.csv(Data[,c("Latitude", "Longitude", "prec.mean", "temp.mean", 
+                  "prec.mean.sc", "temp.mean.sc", "Present")],
+          file="../Data/HouseSparrowPresence.csv", row.names = FALSE)
+```
+
+The data set consists of 1714 observations at different sites across North America. For each site the presence of the house sparrow was recorded. Mean temperature (temp.mean) and total precipitation (perc.mean) were extracted from a standard database (CRU). The mean temperaure and precipitation are both scaled, so that a temperature value of 0.3 would mean that the temperature is 0.3 standard deviations above the mean in North-America.
+
+```{r BBSSparrowData}
+Data <- read.csv("https://www.math.ntnu.no/emner/ST2304/2019v/Week12/HouseSparrowPresence.csv")
+
+plot(Data$Longitude, Data$Latitude, col=1+Data$Present, pch=18)
+legend(-125, 31, c("Absent", "Present"), col=1:2, pch=18)
+
+```
+
+First, fit a generalised linear model for `Present` assuming a binomial response, with mean temperature and total precipitation as explanatory variables. Decide which link function and model to use.
+
+```{r FitBBSDaa1, echo=TRUE}
+form1 <- formula(Present ~ prec.mean.sc + temp.mean.sc)
+model1.logit <- glm(form1, data=Data, family = binomial("logit"))
+model1.cloglog <- glm(form1, data=Data, family = binomial("cloglog"))
+
+# These are the models with the quadratic effects in
+form2 <- formula(Present ~ prec.mean.sc + temp.mean.sc + I(prec.mean.sc^2) + I(temp.mean.sc^2))
+model2.logit <- glm(form2, data=Data, family = binomial("logit"))
+model2.cloglog <- glm(form2, data=Data, family = binomial("cloglog"))
+
+```
+
+<span style="color:blue">1. Which link function do you want to use? Justify your choice.</span>
+
+<span style="color:purple"> There is no single correct answer here. So, a choice is ok, but the justification is important. Here are the three reasonable answers:
+
+<span style="color:purple">**cloglog**: This is porbably the best link, because the presences and absences come from counts, and this is then a model for whether the counts are zero or larger. Therefore, this could be considered most appropriate to represent the process that generated the data. </span>
+
+<span style="color:purple">**logit**: This is the number two choice. It can be justified by saying that the counting processes is not the most important focus of the analysis, that you want to focus more on the presence-absence. Sometimes this makes sense ecologically: processes controlling abundance (i.e. counts) can sometimes be very different from those controlling presence/absence, in which case a logit link might make more sense.</span>
+
+<span style="color:purple">**probit**: This choice isn't wrong, but we can't think of a good reason for it. It is a threshold type model. If anyone can justify it, then please tell us how you do it! </span>
+
+<span style="color:blue">2. Write down the assumptions of this model and an equation for the expected number of sparrows at a site.</span>
+
+<span style="color:purple"> Assumptions should focus around: Lack of outliers, Correct distribution used, Correct link function is used, Correct variance function is used, Dispersion parameter is constant, Independence of y. I would also especially expect a mention of variance assumptions. I.e. that variance is controlled by mean in binomial GLM and therefore not overdispersed or underdispersed. </span>
+
+<span style="color:purple"> **This part is quite a difficult question. Read the whole answer slowly and carefully! I've tried to go through it in steps.** The simpliest and most familiar way to do this would be to use the Logit link, this is valid as discussed above. The equation for expected number of sparrows at site i refers to the equation you would need to use to predict, from the GLM coefficients, the value of a specific Y (response) given a specific X (explanatory). </span>
+
+<span style="color:purple">In this case the X values (explanatory variables) are the precipitation (rainfall) and temperature values for site i. If this was a simple linear model we could predict the Y value (response variable)
+for site i using just a linear equation and the coefficients of intercept (alpha) and slopes (betas) and the X values of rainfall and temperature
+at site i (see below). Here T = temperature and R = precipitation. </span>
+
+$$
+\begin{aligned}
+Y_i &= \alpha + \beta_TT_i + \beta_RR_i
+\end{aligned}
+$$
+<span style="color:purple">**All questions asking for an equation for the expected value of the response (Y) for a specific X, or asking for prediction, will have answers based around this general format. The key thing is to include the i for the Y and X values (here R and T) to indicate that you are predicting a specific Y value from specific X values.** </span>
+
+<span style="color:purple"> But as this is a GLM, we need to remember the link funtion. To predict back on the original scale, we need to place this
+linear part into the inverse of the link. An example of this for the Logit link is shown below. Plugging your coefficient values for alpha and betas and chosen values of Xs into this equation would allow you predict Y values manually without the predict() function. </span>
+
+<span style="color:purple"> Here is the equation for the Logit link, it gives the expected presence not expected number. To get number rather than presence we need the cloglog link. If you used Logit being aware that cloglog would give number and Logit does not, should be ok!. Here T = temperature and R = precipitation. </span>
+
+<span style="color:purple"> For logistic link (probability of presence in Site i): </span>
+
+$$
+\begin{aligned}
+Y_i &= \frac{1}{1+e^{-(\alpha + \beta_TT_i + \beta_RR_i)}}
+\end{aligned}
+$$
+
+<span style="color:purple"> For cloglog link things are slightly different. On the link scale, we predict the log(Yi), if we take the exp() of that, we will get the number of sparrows at site i. This is because the log(Yi) is the same link as we have for a Poisson GLM. **Again, this is towards the most advanced end of this course.** So, to predict the *number* of sparrows at site i from a cloglog model we can predict on the link scale. This basically means we can predict using the linear equation we would for a linear model. The inverse link we then use is actually exp(), we assume that our data were generated from a Poisson process. The cloglog link made our binary data comparable to count data so when we take inverse, we can just use the one we would have for Poisson. </span>
+
+<span style="color:purple"> For cloglog link (number of sparrows at Site i): </span>
+
+$$
+\begin{aligned}
+Y_i &= e^{(\alpha + \beta_TT_i + \beta_RR_i)}
+\end{aligned} 
+$$
+
+<span style="color:blue">3. What is the estimated coefficient for the effect of mean temperature (`prec.temp.sc`)? And what is the 95% confidence interval for this coefficient? Does this suggest an effect of temperature?</span>
+
+<span style="color:purple"> Estimated coefficient = 0.085 (logit), CI = -0.04 to 0.21.
+This means that we cannot be certain about the direction of the effect of temperature. When uncertainty is included, we cannot say a direction for this effect. Interpretation is the same for cloglog model. (coef = 0.035, CI = -0.02 to 0.094) </span>
+
+
+```{r Coefs1, eval=TRUE, echo=TRUE}
+# Logit model
+coef(model1.logit)
+confint(model1.logit)
+
+# cloglog
+coef(model1.cloglog)
+confint(model1.cloglog)
+```
+<span style="color:blue">4. What is the predicted probability of sparrows being found in the following sites:</span>
+
+  <span style="color:blue">1. at a site near Seattle where the mean temperature is 0.3 standard deviations below the mean, and total precipitation is 0.3 standard deviations above the mean?</span>
+  
+<span style="color:purple">To predict, you can either use the `predict()` function as is done below. Or you can use an equation and do it manually. it is useful to know both methods. To predict with an equation, you can use the linear predictor: $\alpha + \beta X$ but you need to remember that this will predict on the link scale. To predict a probability (the original scale) you need to take the inverse of the link e.g. $1/1+e^{-\alpha + \beta X}$ for the logit link (where e = `exp()` in R) and $1-e^{(-e^{(\alpha + \beta X)})}$ we can test this below in R code.</span>
+  
+<span style="color:purple"> Predicted probability from cloglog = 0.81. From logit = 0.81. </span>
+
+<span style="color:blue">2. at a site just west of Seattle, in a temperate rainforest, where the mean temperature is 0.4 standard deviations below the average, but the total precipitation is 5.8 standard deviations above the average.</span>
+
+<span style="color:purple"> Predicted probability from cloglog = 0.89. From logit = 0.89. Both of these are called responses, basically they are back on probability scale. R has used the inverse link function. </span>
+
+```{r Pred1, eval=TRUE, echo=TRUE}
+# do both predictions at once
+predData <- data.frame(temp.mean.sc=c(-0.3, -0.4), prec.mean.sc=c(0.3, 5.8))
+predict(model1.logit, newdata=predData, se.fit=TRUE, type="response")
+predict(model1.cloglog, newdata=predData, se.fit=TRUE, type="response")
+```
+
+<span style="color:purple"> *As well as using the predict function, you can also predict manually using the equations in question 2. But because this question asks for 'probability' we would need to use the cloglog inverse not `log()` for that model.* **Examples for each model below** </span>
+
+```{r PredLOGIT, eval=TRUE, echo=TRUE}
+# First LOGIT model
+# begin with looking at the coefficient values
+coef(model1.logit) # alpha(intercept) = 1.42, Rain beta = 0.11, Temp beta = 0.09
+# then you plug them and the X values for site 1 (Rain = 0.3, Temp = -0.3) into the equation from Q2.
+prediction <- 1/(1+exp(-(1.42+(0.11*0.3)+(0.09*-0.3)))) 
+round(prediction,2)
+# should also round to 0.81! YAY
+
+# Now for CLOGLOG
+# again, begin with coefficient values
+coef(model1.cloglog) # alpha(intercept) = 0.49, Rain beta = 0.05, Temp beta = 0.04
+# then you plug into the inverse cloglog link equation
+# that is 1-exp(-exp(alpha + beta*x))
+prediction2 <- 1-exp(-exp(0.49+(0.05*0.3)+(0.03*-0.4)))
+round(prediction2,2)
+# agains should round to 0.81! YAY
+```
+From ecological theory, we might expect that there is an optimum temperature and precipitation for the sparrows, and abundance declines when the conditions are further away from the optimum. We can model this using a quadratic curve.
+
+Fit a model with quadratic effects for temperature and precipitation.
+
+```{r Quad, eval=TRUE, echo=TRUE}
+coef(model2.cloglog)
+coef(model2.logit)
+
+confint(model2.cloglog)
+confint(model2.logit)
+```
+
+<span style="color:blue">5. Does the ecological theory seem reasonable for this data? What parameter value(s) tell you about this?</span>
+
+<span style="color:purple"> This is asking whether the idea that there is a quadratic (n shaped) effect of temperature and precipitation is reasonable. We can test this by adding a quadratic effect to our model and seeing if the estimates have confidence intervals that span 0. The parameter values that tell us about this are those for I(prec.mean.sc^2) and I(temp.mean.sc^2). The confidence interval for the quadratic effect of precipitation crosses 0 so suggests that with uncertainty we are not sure of the direction of this effect, so ecological theory doesn't hold. But for temperature it looks like it does. We would be unlikely to see the temperature effect if there was no quadratic effect. </span>
+
+
+<span style="color:blue">6.  What is the predicted number of sparrows for the two sites mentioned above?</span>
+
+```{r Pred2, eval=TRUE, echo=TRUE}
+predData <- data.frame(temp.mean.sc=c(-0.3, -0.4), prec.mean.sc=c(0.3, 5.8))
+exp(predict(model2.cloglog, newdata=predData, type ="link"))
+predict(model2.logit, newdata=predData, type="response")
+
+# Manually from Q2
+# original X values: Rain = 0.3, Tmep = -0.3
+# squared: Rain2 = 0.09, Temp = 0.09
+# alpha(intercept) = 0.71, beta Rain = 0.04, beta Rain2 = -0.04, beta Temp = 0.09, beta Temp2 = -0.17
+prediction <- exp(0.71+(0.04*0.3) + (-0.04*0.09) + (0.09*-0.3) + (-0.17*0.09)) 
+prediction
+# should be 1.97, rounds to 2 individuals, same as predict() function!
+
+```
+
+<span style="color:purple"> This question is a bit more complicated and relates to the cloglog link. If you used the Logit link, you could just answer this question in theory i.e. how you could get to the abundance. To do this from the cloglog link you need to predict on the link scale i.e. without taking in inverse. This is just the same as the equation in Q2. Then we take exp() of prediction, again just like Q2. If you do this you predict abundance of 2 and 0.7. From the Logit model you jsut predict probability of presence of 0.85 and 0.55 respectively. </span>
+
+<span style="color:purple"> As well as using the predict function you could also plug the coefficient and X (now also including X squared) values into the equations from Q2 to get the same prediction. Shown above in R code. </span>
+
+<span style="color:blue">7. Comment briefly on the differences in the predictions from the linear and quadratic model.</span> 
+
+<span style="color:purple"> This asks you to compare the predictions from the model without the quadratic terms to the model with them.
+The predictions for site 1 go up with the quadratic model but go down for site 2. The quadratic model is clearly showing a different pattern to the linear one. It has reversed the relative magnitude of the two sites. </span>
+
