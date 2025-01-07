@@ -121,10 +121,10 @@ knitr::include_app("https://shiny.math.ntnu.no/qmbio/Shiny_apps/LandSea/")
  
 ```{r SourceFunctions, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
 # You can find the script with the functions for this week at this url:
-# https://www.math.ntnu.no/emner/ST2304/2023v/Module02/Module02Functions.R
+# https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02Functions.R
 
 # Source the script directly from the internet
-source('https://www.math.ntnu.no/emner/ST2304/2023v/Module02/Module02Functions.R')
+source('https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02Functions.R')
 
 # The functions should now be loaded,
 # check your environment to be sure - you should have two functions there

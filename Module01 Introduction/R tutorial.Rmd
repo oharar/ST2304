@@ -313,8 +313,8 @@ Then you write the code you want the function to perform inside the branches ${}
 <span style="color:blue"> Have a look at the example function below. Can you work out what it does? </span> 
 
 ```{r, eval=FALSE}
+# myfunction is the name, x and y are the names of the inputs (arugments)
 myfunction <- function(x,y) 
-  # myfunction is the name, x and y are the names of the inputs (arugments)
 { # function begins here
   p <- x*y
   return(p) # we want to output p
@@ -395,7 +395,7 @@ The most common file type we will use in this course are `.csv` files. We will p
 
 <span style="color:blue"> Now look at the R script below, what does each line of the script do? </span>
 
-```{r,eval=FALSE}
+```{r, eval=FALSE}
 ?read.csv
 datafile <- read.csv(file="test_data.csv", header=TRUE)
 dim(datafile)

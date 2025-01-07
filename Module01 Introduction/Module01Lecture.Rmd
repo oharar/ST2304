@@ -156,7 +156,8 @@ Discuss in groups,
 - Come up with 3 topics you learned about, and for each give an example where they are used in biology (or biotechnology!)
 - Add the topics to TaskCard: https://ntnu.taskcards.app/#/board/7855bc8c-411d-4561-926c-474906820227
 
-![](mentimeter_qr_codeVirtual.png)
+
+![](/Users/robertoh/Downloads/https___ntnu.taskcards.app_#_board_7855bc8c-411d-4561-926c-474906820227_token=140a75f0-9c9c-4bc7-a1d4-3eac9203b1e2.png){width=40%}
 
 <!---
 Begin with a recap of why we use statistics in biology inc. an in-lecture exercise on what they can remember from before christmas, as we assume they don’t think about stats in the holiday.

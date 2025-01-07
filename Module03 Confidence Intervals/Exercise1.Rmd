@@ -11,11 +11,10 @@ This document contains information, questions, R code, and plots.
 
 <span style="color:blue"> Questions appear in blue. </span>
 
-#+ warning = FALSE, error = FALSE, include = TRUE, echo = TRUE
+```{r warning = FALSE, error = FALSE, include = TRUE, echo = TRUE}
 # R code looks like this.
 # Comments are in grey and explain the code
 
-```
 2+2 # add two and two
 ```
 
