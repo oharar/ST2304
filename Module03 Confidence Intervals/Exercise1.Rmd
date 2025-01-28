@@ -20,7 +20,7 @@ This document contains information, questions, R code, and plots.
 
 outputs from R appear like the above ^^^^
 
-You should work through the exercise in groups and write answers in a separate document to be submitted on Blackboard by **Friday 5th Feb midnight (or another date)**. 
+You should work through the exercise in groups and write answers in a separate document to be submitted on Blackboard by **Sunday 2nd February midnight 2025 (or another date if it is not 2025)**. 
 
 Answer all questions. The assignment can be written in any format 
 (e.g. `.docx`, `.pdf`, `.R`) but
@@ -246,8 +246,8 @@ NSuccess <- sum(SexRatioData$sex) # 44
 # save the number of trials as an object (total number of eggs)
 NTrials <- length(SexRatioData$sex) # 100
 
-# Help! what probabilites (probability of being female) do I use?
-# You can use any but chosing a large number of possibilities covering 
+# Help! what probabilities (probability of being female) do I use?
+# You can use any but choosing a large number of possibilities covering 
 # from almost 0 to almost 1 is best.
 # seq() is a good function to use. 
 # It creates a vector of sequence of numbers from the start and end you choose.

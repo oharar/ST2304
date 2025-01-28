@@ -11,7 +11,7 @@ This document contains information, questions, R code, and plots.
 
 <span style="color:blue"> Questions appear in blue. </span>
 
-**Exercise to be handed in by 6th February**
+**Exercise to be handed in by Sunday 9th February 2025 at midnight (if this is not 2025, you will need to invent a time machine first)**
 
 ## Rationale:
 

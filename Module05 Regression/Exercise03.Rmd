@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Due midnight 18th February 2023**^[if this is after 2022, you will be given extra time to invent a time machine]
+**Due midnight Sunday 16th February 2025** (claiming that this is not 202 will only be taken as an excuse if the 16th of February is not a Sunday)
 
 ## Question 1: Dragonfire
 
@@ -35,7 +35,7 @@ Flames <- data.frame(Size=Size, Distance=Distance)
 This is the data:
 
 ```{r ReadDragonData, echo=TRUE}
-DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2023v/Module05/DragonFire.csv")
+DragonFire <- read.csv(file="https://www.math.ntnu.no/emner/ST2304/2025v/Module05/DragonFire.csv")
 
 plot(DragonFire$Size, DragonFire$Distance, xlab="Length (m)", ylab="Distance (m)")
 

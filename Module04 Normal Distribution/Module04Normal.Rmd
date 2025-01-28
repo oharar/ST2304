@@ -362,12 +362,12 @@ This is the likelihood for $\mu$ given a guess for $\sigma^2$. But we want to es
 
 In practice, $\hat{\mu}$ is more important, because we will be modelling $\mu$ as a function of different effects. First we can calculate the likelihood for different values of $\mu$, using the sample estimate of the standard deviation of the data as the standard deviation of the distribution. 
 
-This code uses `CalcNormlogLh()` to calculate the likelihood. We create a vector of possible values of $\mu$, calculate the likelihood for each of these, and then plot the likeihood against their values.
+This code uses `CalcNormlogLh()` to calculate the likelihood. We create a vector of possible values of $\mu$, calculate the likelihood for each of these, and then plot the likelihood against their values.
 
 ```{r NormSimPlot, echo=TRUE, fig.height=3}
 Means <- seq(25, 35, length=500)
-# Calcualte the normal likelihood for differnet means
-#  sapply() loops ove rhte vlaues of Means, and applies the CalcNormlogLh() to each one
+# Calculate the normal likelihood for different means
+#  sapply() loops over the values of Means, and applies the CalcNormlogLh() to each one
 loglhoods <- sapply(Means, CalcNormlogLh, sigma=sdTemp, 
                  data=GDay$Temperature)
 plot(Means, exp(loglhoods-max(loglhoods)), type="l", 
