@@ -376,6 +376,10 @@ $\beta$ = the slope of the line
 
 $\sigma^2$ = the variance of the residuals
 
+You might be wondering why we have $\sigma^2$ as a parameter, but not $\varepsilon_i$. 
+The reason is that $\sigma^2$ is the variance of the $\varepsilon_i$s, and this is more useful 
+(it is only one number rather than as many numners as $i$s).
+
 The first step for this would be to write out the likelihood equation for this model. 
 <details><summary>I want to see the maths</summary>
 
