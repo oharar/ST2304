@@ -12,8 +12,9 @@ This document contains information, questions, R code, and plots.
 
 <span style="color:blue"> Questions appear in blue. </span>
  
-**Needs to be completed and handed in by Friday 4th March 23:59 2022**
- 
+ **Due midnight Sunday 2nd March 2025** (or a date to be decided if this is not 2025)
+
+
 This week you will be looking at multiple regression, working out when to use it, practicing how to use it, and interpreting results.
  
 ## R hints and general help

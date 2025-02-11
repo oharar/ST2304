@@ -15,7 +15,8 @@ This document contains information, questions, R code, and plots.
 
 <span style="color:blue"> Questions appear in blue. </span>
 
-**Needs to be completed and handed in by the end of 17th March 2023**
+**Needs to be completed and handed in by the end of 16th March 2025**             
+(if the deadline seems to be in the past, use a different calender so that it is in the future. Stardates will give you about 300 years to hand in the exercise)
 
 # Resources:
 

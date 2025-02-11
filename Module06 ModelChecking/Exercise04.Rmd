@@ -16,7 +16,7 @@ This document contains information, questions, R code, and plots.
 
 <span style="color:blue"> Questions appear in blue. </span>
 
-**Due midnight Sunday 2nd March 2025** (or a date to be decided if this is not 2025)
+**Due midnight Sunday 23rd February 2025** (or a date to be decided if this is not 2025)
 
 
 ### Rationale:
