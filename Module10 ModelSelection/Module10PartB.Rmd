@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache=FALSE)
 ```
 
-Now you have [learned about why model selection is needed](Lecture10PartAModule.html), you should be ready to find out how hypothesis testing is really model selection, and how to actually do it in R.
+Now you have [learned about why model selection is needed](Module10PartA.html), you should be ready to find out how hypothesis testing is really model selection, and how to actually do it in R.
 
 # Hypothesis Testing
 
@@ -387,4 +387,4 @@ So, we just want the third row, and we can see that the statistics are the same 
 
 ## Next
 
-If you want to go back to [why we select models](Lecture10PartAModule.html) you can. Or move forward to find out [about exploratory model selection](Lecture10PartCModule.html).
+If you want to go back to [why we select models](Module10PartA.html) you can. Or move forward to find out [about exploratory model selection](Module10PartC.html).

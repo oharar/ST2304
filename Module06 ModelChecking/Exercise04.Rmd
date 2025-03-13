@@ -101,7 +101,7 @@ police officers you would recommend to be on duty on Saturday.** </span>
 ## Part A: First recommendation
 
 The data from last week's exercise can be found at
-https://www.math.ntnu.no/emner/ST2304/2019v/Week6/TempCrimeChicago.csv
+https://www.math.ntnu.no/emner/ST2304/2019v/Week5/NoFreezeTempCrimeChicago.csv
 
 The first step is to import the data and assign it to an object. You can use the whole
 web link above to import the data. It is a csv file with column names (header) included.
@@ -172,7 +172,7 @@ This is just what you needed!**
 
 You can find the new complete dataset here:
 
-https://www.math.ntnu.no/emner/ST2304/2023v/Module06/TempCrimeChicago.csv  
+https://www.math.ntnu.no/emner/ST2304/2019v/Week6//TempCrimeChicago.csv
 
 It is important to import the data and **plot it**.
 

@@ -21,7 +21,8 @@ This week you will:
 - be able to use AIC and BIC to compare models
 - be able to compare hypotheses with F tests
 
-The material is split into 3 modules (because one was getting too long). This is the first, [the second is about hypothesis testing](Lecture10PartBModule.html),  and [the third is about exploratory model selection](Lecture10PartCModule.html). You should try to follow them in order.
+
+The material is split into 3 modules (because one was getting too long). This is the first, [the second is about hypothesis testing](Module10PartB.html),  and [the third is about exploratory model selection](Module10PartC.html). You should try to follow them in order.
 
 <!---
 By the end of the lecture the students should:
@@ -139,4 +140,4 @@ This is **exploratory**: we are exploring the possibilities that one of the SNPs
 
 # Next
 
-Next, you should go onto the next module, about [about hypothesis testing](Lecture10PartBModule.html). The final module will be last, and is [about exploratory model selection](Lecture10PartCModule.html).
+Next, you should go onto the next module, about [about hypothesis testing](Module10PartB.html). The final module will be last, and is [about exploratory model selection](Module10PartC.html).
