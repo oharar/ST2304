@@ -14,7 +14,7 @@ output: html_document
 
 ### Remember to read ALL questions carefully and answer ALL parts
 
-**Exercise to be handed in by 22nd April, 2022**
+**Exercise to be handed in by 13th April, 2025 (extra credit will be awarded if you do this when taking the course after 2025)**
 
 
 -----

@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Needs to be completed and handed in by 30th April 23:59, 2022**
+**Needs to be completed and handed in by the end of 29th April, 2025 (we are giving you an extra few days because it is Easter. If you are trying to habd in after 2025, the deadline is 27th April, 2025)**
 
 # Instructions
 
