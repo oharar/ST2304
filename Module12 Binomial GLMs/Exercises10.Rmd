@@ -75,7 +75,7 @@ model2.cloglog <- glm(form2, data=Data, family = binomial("cloglog"))
 
 <span style="color:blue">1. Which link function do you want to use? Justify your choice.</span>
 
-<span style="color:blue">2. Write down the assumptions of this model and an equation for the expected number of sparrows at a site.</span>
+<span style="color:blue">2. Write down the assumptions of this model and an equation for the probability that you would see sparrows at a site.</span>
 
 <span style="color:blue">3. What is the estimated coefficient for the effect of mean temperature (`temp.mean.sc`)? And what is the 95% confidence interval for this coefficient? Does this suggest an effect of temperature?</span>
 
