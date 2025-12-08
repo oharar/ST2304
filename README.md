@@ -48,49 +48,50 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ### Module 2: Estimating a Parameter
 
-  * [Module 2]([Module02 One Parameter/Module02MLEs.html)
+  * [Module 2](Module02 One Parameter/Module02MLEs.html)
   * [An introduction to directories](Module02 One Parameter/Directories.html), for those confused by them.
   * [R functions for the module](Module02 One Parameter/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
 
 ### Module 3: Confidence Intervals
 
-\\ Exercises start this week!\\  
+*Exercises start this week!*
+
   * [Module 3](Module03 Confidence Intervals/Module03ConfidenceIntervals.html)
-  * [Exercise 1](Module03 Confidence Intervals/Exercise1.html).  (20205 deadline: end of Sunday 2nd February)\\   
+  * [Exercise 1](Module03 Confidence Intervals/Exercise1.html)
   * [R functions for the module](Module03 Confidence Intervals/InferenceFunctions.R).
-  * [Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf].
+  * [Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf)
 
 ### Module 4: Normal Distribution
 
   * [Module 4](Module04 Normal Distribution/Module04Normal.html)
-  * [Exercise 2](Module04 Normal Distribution/Exercise2.html).   ( 2025 deadline: end of Sunday 9th February)
-  * [R functions for the module](Module03 Normal Distribution/NormalDistFunctions.R).
+  * [Exercise 2](Module04 Normal Distribution/Exercise2.html)
+  * [R functions for the module](Module04 Normal Distribution/NormalDistFunctions.R).
 
 ### Module 5: Regression
 
   * [Module 5](Module05 Regression/Module05Regression.html)
-  * [Exercise 3](Module05 Regression/Exercise03.html).   (2025 deadline: end of Sunday 16th February)
+  * [Exercise 3](Module05 Regression/Exercise03.html)
 
 
 ### Module 6: Model Checking
-  * [Module (includes all learning material for this week)](Module06 Model Checking/Module06ModelChecking.html)
-  * [Exercise 4](Module06 Model Checking/Exercise04.html)
+  * [Module](Module06 ModelChecking/Module06ModelChecking.html)
+  * [Exercise 4](Module06 ModelChecking/Exercise04.html)
 
 
 ### Module 7: Multiple Regression
-  * [Module (includes all learning material for this week)](Module07 Multiple Regression/Module07MultipleRegression.html)
+  * [Module](Module07 Multiple Regression/Module07MultipleRegression.html)
   * [Exercise 5](Module07 Multiple Regression/Exercise05.html)
 
 ### Module 8: Categorical Variables (aka ANOVA)
 
   * [Module](Module08 Categorical/Module08Categorical.html)
-  * [Exercise 6]](Module08 Categorical/Exercise06.html)
+  * [Exercise 6](Module08 Categorical/Exercise06.html)
 
 ### Module 9: Interactions between Categorical Variables
   * [Module](Module09 MoreCategorical/Module09Interactions.html)
   * [Exercise 7](Module09 MoreCategorical/Exercise07.html)
 
-### Module 10: Model Selection (week beginning March 10th) === 
+### Module 10: Model Selection
 This week's module is split into 3 parts, because it was getting a bit long.
   * [Module, Part A](Module10 ModelSelection/Module10PartA.html)
   * [Module, Part B](Module10 ModelSelection/Module10PartB.html)
@@ -119,7 +120,7 @@ We only expect you to answer one of these, but we will be happy if you try both.
 ### Module 12: Binomial Generalised Linear Models
 
   * [Binomial Module](Module12 Binomial GLMs/Module12Binomial.html)
-  * [Exercise 10](Module12 Binomial GLMs/Exercise10.html)
+  * [Exercise 10](Module12 Binomial GLMs/Exercises10.html)
 
 ### Module 13: Poisson Generalised Linear Models
 
