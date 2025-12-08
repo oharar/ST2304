@@ -49,13 +49,13 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 === Module 2: Estimating a Parameter (week beginning January 13th) ===
 
   * [Module 2]([Module02/Module02MLEs.html)
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Directories.html|An introduction to directories]], for those confused by them.
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02Functions.R|R functions for the module]]. You probably don't need to look at this file - we will use it in the module.
+  * [An introduction to directories](Module02/Directories.html), for those confused by them.
+  * [R functions for the module](Module02/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
 
 === Module 3: Confidence Intervals (week beginning January 20th) === 
 
 \\ Exercises start this week!\\  
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/Module03ConfidenceIntervals.html|Module 3]]\\   
+  * [Module 3](Module03/Module03ConfidenceIntervals.html)
   * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/Exercise1.html|Exercise 1]].  (deadline: end of Sunday 2nd February)\\   
   * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/InferenceFunctions.R|R functions for the module]].
   * Notes from 23.01 on the difference between probability distribution and likelihood: [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf|Notes from iPad]].
