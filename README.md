@@ -39,7 +39,7 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ### Module 1: Introduction
 
-* [Intro Lecture slides](Module01 Introduction/Lecture1.pdf)
+* [Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
 * [R Lecture](Module01 Introduction/Introduction_to_R.pdf)
 * [R Module](Module01 Introduction/R-tutorial.html)
 * [Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
@@ -56,9 +56,9 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 \\ Exercises start this week!\\  
   * [Module 3](Module03/Module03ConfidenceIntervals.html)
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/Exercise1.html|Exercise 1]].  (deadline: end of Sunday 2nd February)\\   
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/InferenceFunctions.R|R functions for the module]].
-  * Notes from 23.01 on the difference between probability distribution and likelihood: [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf|Notes from iPad]].
+  * [Exercise 1](Module03/Exercise1.html).  (deadline: end of Sunday 2nd February)\\   
+  * [R functions for the module](Module03/InferenceFunctions.R).
+ [ * ]Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf].
 
 === Module 4: Normal Distribution (week beginning January 27th) ===
 
