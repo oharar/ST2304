@@ -39,16 +39,16 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ### Module 1: Introduction
 
-* [Intro Lecture slides](Module01/Lecture1.pdf)
-* [R Lecture](Module01/Introduction_to_R.pdf)
-* [R Module](Module01/R-tutorial.html)
-* [Additional help: dealing with errors and warnings](Module01/Errors-and-warnings.html)
+* [Intro Lecture slides](Module01 Introduction/Lecture1.pdf)
+* [R Lecture](Module01 Introduction/Introduction_to_R.pdf)
+* [R Module](Module01 Introduction/R-tutorial.html)
+* [Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
 
 [Taskcard link](https://ntnu.taskcards.app/#/board/7855bc8c-411d-4561-926c-474906820227?token=140a75f0-9c9c-4bc7-a1d4-3eac9203b1e2) (this will be explained)
 
 === Module 2: Estimating a Parameter (week beginning January 13th) ===
 
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02MLEs.html|Module 2]]
+  * [Module 2]([Module02/Module02MLEs.html)
   * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Directories.html|An introduction to directories]], for those confused by them.
   * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02Functions.R|R functions for the module]]. You probably don't need to look at this file - we will use it in the module.
 
