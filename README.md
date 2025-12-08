@@ -35,11 +35,11 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ## Course Content
 
-[Markdown](Module01/Module01IntroPresentation.Rmd) 
+[Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
 
 ### Module 1: Introduction
 
-* [Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
+* ???
 * [R Lecture](Module01 Introduction/Introduction_to_R.pdf)
 * [R Module](Module01 Introduction/R-tutorial.html)
 * [Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
