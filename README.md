@@ -35,11 +35,11 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ## Course Content
 
-[Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
+
 
 ### Module 1: Introduction
 
-* ???
+* [Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
 * [R Lecture](Module01 Introduction/Introduction_to_R.pdf)
 * [R Module](Module01 Introduction/R-tutorial.html)
 * [Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
@@ -48,16 +48,16 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 === Module 2: Estimating a Parameter (week beginning January 13th) ===
 
-  * [Module 2]([Module02/Module02MLEs.html)
-  * [An introduction to directories](Module02/Directories.html), for those confused by them.
-  * [R functions for the module](Module02/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
+  * [Module 2]([Module02 One Parameter/Module02MLEs.html)
+  * [An introduction to directories](Module02 One Parameter/Directories.html), for those confused by them.
+  * [R functions for the module](Module02 One Parameter/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
 
 === Module 3: Confidence Intervals (week beginning January 20th) === 
 
 \\ Exercises start this week!\\  
-  * [Module 3](Module03/Module03ConfidenceIntervals.html)
-  * [Exercise 1](Module03/Exercise1.html).  (deadline: end of Sunday 2nd February)\\   
-  * [R functions for the module](Module03/InferenceFunctions.R).
+  * [Module 3](Module03 Confidence Intervals/Module03ConfidenceIntervals.html)
+  * [Exercise 1](Module03 Confidence Intervals/Exercise1.html).  (20205 deadline: end of Sunday 2nd February)\\   
+  * [R functions for the module](Module03 Confidence Intervals/InferenceFunctions.R).
  [ * ]Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf].
 
 === Module 4: Normal Distribution (week beginning January 27th) ===
