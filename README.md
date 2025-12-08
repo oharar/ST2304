@@ -46,84 +46,85 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 [Taskcard link](https://ntnu.taskcards.app/#/board/7855bc8c-411d-4561-926c-474906820227?token=140a75f0-9c9c-4bc7-a1d4-3eac9203b1e2) (this will be explained)
 
-=== Module 2: Estimating a Parameter (week beginning January 13th) ===
+### Module 2: Estimating a Parameter
 
   * [Module 2]([Module02 One Parameter/Module02MLEs.html)
   * [An introduction to directories](Module02 One Parameter/Directories.html), for those confused by them.
   * [R functions for the module](Module02 One Parameter/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
 
-=== Module 3: Confidence Intervals (week beginning January 20th) === 
+### Module 3: Confidence Intervals
 
 \\ Exercises start this week!\\  
   * [Module 3](Module03 Confidence Intervals/Module03ConfidenceIntervals.html)
   * [Exercise 1](Module03 Confidence Intervals/Exercise1.html).  (20205 deadline: end of Sunday 2nd February)\\   
   * [R functions for the module](Module03 Confidence Intervals/InferenceFunctions.R).
- [ * ]Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf].
+  * [Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf].
 
-=== Module 4: Normal Distribution (week beginning January 27th) ===
+### Module 4: Normal Distribution
 
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module04/Module04Normal.html|Module 4]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module04/Exercise2.html|Exercise 2]].   (deadline: end of Sunday 9th February)
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module03/NormalDistFunctions.R|R functions for the module]].
+  * [Module 4](Module04 Normal Distribution/Module04Normal.html)
+  * [Exercise 2](Module04 Normal Distribution/Exercise2.html).   ( 2025 deadline: end of Sunday 9th February)
+  * [R functions for the module](Module03 Normal Distribution/NormalDistFunctions.R).
 
-=== Module 5: Regression (week beginning February 3rd)===
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module05/Module05Regression.html|Module 5]]   
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module05/Exercise03.html|Exercise 3]].   (deadline: end of Sunday 16th February)
+### Module 5: Regression
 
-
-
-=== Module 6: Regression (week beginning February 10th) ===  
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module06/Module06ModelChecking.html|Module (includes all learning material for this week)]]  
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module06/Exercise04.html|Exercise 4]] (hand in by end of February 23th)
+  * [Module 5](Module05 Regression/Module05Regression.html)
+  * [Exercise 3](Module05 Regression/Exercise03.html).   (2025 deadline: end of Sunday 16th February)
 
 
-=== Module 7: Multiple Regression (week beginning February 17th) ===  
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module07/Module07MultipleRegression.html|Module (includes all learning material for this week)]]  
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module07/Exercise05.html|Exercise 5]] (hand in by end of March 2nd)
+### Module 6: Model Checking
+  * [Module (includes all learning material for this week)](Module06 Model Checking/Module06ModelChecking.html)
+  * [Exercise 4](Module06 Model Checking/Exercise04.html)
 
-=== Module 8: Categorical Variables (aka ANOVA) (week beginning February 24th) ===
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module08/Module08Categorical.html|Module (includes all learning material for this week)]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module08/Exercise06.html|Exercise 6]] (hand in by end of March 9th)
 
-=== Module 9: Interactions between Categorical Variables (week beginning March 3rd) ===
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module09/Module09Interactions.html|Module (includes all learning material for this week)]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module09/Exercise07.html|Exercise 7]] (hand in by end of March 16th)
+### Module 7: Multiple Regression
+  * [Module (includes all learning material for this week)](Module07 Multiple Regression/Module07MultipleRegression.html)
+  * [Exercise 5](Module07 Multiple Regression/Exercise05.html)
 
-=== Module 10: Model Selection (week beginning March 10th) === 
+### Module 8: Categorical Variables (aka ANOVA)
+
+  * [Module](Module08 Categorical/Module08Categorical.html)
+  * [Exercise 6]](Module08 Categorical/Exercise06.html)
+
+### Module 9: Interactions between Categorical Variables
+  * [Module](Module09 MoreCategorical/Module09Interactions.html)
+  * [Exercise 7](Module09 MoreCategorical/Exercise07.html)
+
+### Module 10: Model Selection (week beginning March 10th) === 
 This week's module is split into 3 parts, because it was getting a bit long.
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10/Module10PartA.html|Module, Part A]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10/Module10PartB.html|Module, Part B]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10/Module10PartC.html|Module, Part C]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10/Exercise08.html|Exercise 8]] (hand in by end of March 23rd)
+  * [Module, Part A](Module10 ModelSelection/Module10PartA.html)
+  * [Module, Part B](Module10 ModelSelection/Module10PartB.html)
+  * [Module, Part C](Module10 ModelSelection/Module10PartC.html)
+  * [Exercise 8](Module10 ModelSelection/Exercise08.html)
 
 In addition we have a couple of scripts that might help you when running the problems in R:
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10/ConfirmatoryScript.html|Confirmatory Script]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10/ExploratoryScript.html|Exploratory Script]]
+  * [Confirmatory Script](Module10 ModelSelection/ConfirmatoryScript.html)
+  * [Exploratory Script](Module10 ModelSelection/ExploratoryScript.html)
 
-=== Module 10a: Full Analyses (week beginning March 17th) ===
+### Module 10a: Full Analyses (the precise location of this might vary depending on things like Easter)
 
 This week will be a bit different. We want you to look at the whole process of data analysis, i.e. use all the parts you have been learning over the last few weeks to answer some biological questions.
 
 We only expect you to answer one of these, but we will be happy if you try both. There are two ways to answer them: some exam-style questions (for those of you looking ahead), and a more free-form "try to do the analysis on your own". For those of you taking the continuation exam, note that this will probably be an oral exam, so we will ask you to do an analysis like this, and discuss in in the exam.
 
- The deadline for handing in is the end of March 30th.  
-
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10a/Module10Introduction.html|Introduction]]  
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10a/Module10aCowQuestions.html|Cow Questions]]   
-  * [[https://www.math.ntnu.no/emner/ST2304/2024v/Module10a/Module10aIrisQuestions.html|Iris Questions]]
+  * [Introduction](Module10a - Example Analyses/Module10Introduction.html)
+  * [Cow Questions](Module10a - Example Analyses/Module10aCowQuestions.html)
+  * [Iris Questions](Module10a - Example Analyses/Module10aIrisQuestions.html)
 
 
-=== Module 11: GLMs (week beginning March 23rd) ===
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module11/Module11GLMs.html|Module]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module11/Exercise09.html|Exercise 9]] (hand in by end of April 6th)
+### Module 11: GLMs (week beginning March 23rd) ===
+  * [Module](Module11 Generalised linear models/Module11GLMs.html)
+  * [Exercise 9](Module11 Generalised linear models/Exercise09.html)
 
-=== Module 12: Binomial Generalised Linear Models (week beginning 30th March) ===
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module12/Module12Binomial.html|Binomial Module]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module12/Exercise10.html|Exercise 10]] (hand in by end of April 13th. This is before Easter week starts, so grading may be a bit delayed)
+### Module 12: Binomial Generalised Linear Models
 
-=== Module 13: Poisson Generalised Linear Models (week beginning 7th April) ===
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module13/Module13Poisson.html|Poisson Module]]
-  * [[https://www.math.ntnu.no/emner/ST2304/2025v/Module13/Exercise11.html| Exercise 11]] (hand in by end of April 28th: note a couple of extra days, because of Easter)
+  * [Binomial Module](Module12 Binomial GLMs/Module12Binomial.html)
+  * [Exercise 10](Module12 Binomial GLMs/Exercise10.html)
+
+### Module 13: Poisson Generalised Linear Models
+
+  * [Poisson Module](Module13 Poisson GLMs/Module13Poisson.html)
+  * [Exercise 11](Module13 Poisson GLMs/Exercise11.html)
 
 
 
