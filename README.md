@@ -44,7 +44,8 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 * [R Module](Module01 Introduction/R-tutorial.html)
 * [Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
 
-[Taskcard link](https://ntnu.taskcards.app/#/board/7855bc8c-411d-4561-926c-474906820227?token=140a75f0-9c9c-4bc7-a1d4-3eac9203b1e2) (this will be explained)
+[Taskcard link](https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb?token=4afd1618-c42a-4d54-a6cb-a334a926e356) (this will be explained)
+
 
 ### Module 2: Estimating a Parameter
 

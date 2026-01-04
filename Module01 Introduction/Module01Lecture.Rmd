@@ -40,9 +40,9 @@ By the end of the practical the students should be able to run R and use simple 
 - Reference Group
 
 - Blackboard
-- web page: https://wiki.math.ntnu.no/st2304/2025v/start
-- Material: https://www.math.ntnu.no/emner/ST2304/2025v/
-- GitHub: https://github.com/oharar/ST2304
+- web page: https://wiki.math.ntnu.no/st2304/2026v/start
+- Material: https://www.math.ntnu.no/emner/ST2304/2026v/
+- GitHub: https://oharar.github.io/ST2304/
 
 
 ## How the Course Will Run: Modules
@@ -95,6 +95,8 @@ https://www.menti.com/al6sim51dgx9
 ![](mentimeter_qr_codeVirtual.png){height=70%}
 --->
 
+<!---
+
 ## Teachers
 
 Me
@@ -103,6 +105,7 @@ Andrea Riebler
 
 TA: ???
 
+--->
 
 ## Resources
 
@@ -112,7 +115,7 @@ Blackboard
 - links to more material
 - exercises
 
-Web page: https://wiki.math.ntnu.no/st2304/2025v/start 
+Web page: https://wiki.math.ntnu.no/st2304/2026v/start 
 (this includes other links from this presentation)
 
 - modules
@@ -147,21 +150,23 @@ Wiki
 
 Google (yes, use it!)
 
-## Recap: why do we we use statistics in biology
+## Other Resources: AI
 
-What do you remember from ST0103?
+Like Google, AI can be a tool to help you learn
 
-Discuss in groups, 
+If you use it just to get answers for the exercises, you probably won't learn anything.
 
-- Come up with 3 topics you learned about, and for each give an example where they are used in biology (or biotechnology!)
-- Add the topics to TaskCard: https://ntnu.taskcards.app/#/board/7855bc8c-411d-4561-926c-474906820227
+For the exercises, if you use AI explain how you use it
+
+## Recap: What do you remember from ST0103?
+
+Discuss in groups. Come up with 3 topics you learned about, and for each give an example where they are used in biology
+
+- Add the topics to TaskCard: 
+
+![](TaskcardQR2026a.png)
 
 
-![](/Users/robertoh/Downloads/https___ntnu.taskcards.app_#_board_7855bc8c-411d-4561-926c-474906820227_token=140a75f0-9c9c-4bc7-a1d4-3eac9203b1e2.png){width=40%}
-
-<!---
-Begin with a recap of why we use statistics in biology inc. an in-lecture exercise on what they can remember from before christmas, as we assume they don’t think about stats in the holiday.
---->
 
 ## .
 
