@@ -40,11 +40,15 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ### Module 1: Introduction
 
-* [Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
-* [R Lecture](Module01 Introduction/Introduction_to_R.pdf)
-* [R Module](Module01 Introduction/R-tutorial.html)
-* [Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
-* [An introduction to directories](Module02 One Parameter/Directories.html), for those confused by them.
+[Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
+
+[R Lecture](Module01 Introduction/Introduction_to_R.pdf)
+
+[R Module](Module01 Introduction/R-tutorial.html)
+
+[Additional help: dealing with errors and warnings](Module01 Introduction/Errors-and-warnings.html)
+
+[An introduction to directories](Module02 One Parameter/Directories.html), for those confused by them.
 
 [Taskcard link](https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb?token=4afd1618-c42a-4d54-a6cb-a334a926e356) (this will be explained)
 
