@@ -40,74 +40,70 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 ### Module 1: Introduction
 
-[Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
-
-[R Lecture](Module01%20Introduction/Introduction_to_R.pdf)
-
-[R Module](Module01%20Introduction/R-tutorial.html)
-
-[Additional help: dealing with errors and warnings](Module01%20Introduction/Errors-and-warnings.html)
-
-[An introduction to directories](Module02%20One%20Parameter/Directories.html), for those confused by them.
+* [Intro Lecture slides](Module01%20Introduction/Lecture1.pdf)
+* [R Lecture](Module01%20Introduction/Introduction_to_R.pdf)
+* [R Module](Module01%20Introduction/R-tutorial.html)
+* [Additional help: dealing with errors and warnings](Module01%20Introduction/Errors-and-warnings.html)
+* [An introduction to directories](Module02%20One%20Parameter/Directories.html), for those confused by them.
 
 [Taskcard link](https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb?token=4afd1618-c42a-4d54-a6cb-a334a926e356) (this will be explained)
 
 
 ### Module 2: Estimating a Parameter
 
-  * [Module 2](Module02 One Parameter/Module02MLEs.html)
-  * [An introduction to directories](Module02 One Parameter/Directories.html), for those confused by them.
-  * [R functions for the module](Module02 One Parameter/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
+  * [Module 2](Module02%20One%20Parameter/Module02MLEs.html)
+  * [An introduction to directories](Module02%20One%20Parameter/Directories.html), for those confused by them.
+  * [R functions for the module](Module02%20One%20Parameter/Module02Functions.R). You probably don't need to look at this file - we will use it in the module.
 
 ### Module 3: Confidence Intervals
 
 *Exercises start this week!*
 
-  * [Module 3](Module03 Confidence Intervals/Module03ConfidenceIntervals.html)
-  * [Exercise 1](Module03 Confidence Intervals/Exercise1.html)
-  * [R functions for the module](Module03 Confidence Intervals/InferenceFunctions.R).
+  * [Module 3](Module03%20Confidence%20Intervals/Module03ConfidenceIntervals.html)
+  * [Exercise 1](Module03%20Confidence%20Intervals/Exercise1.html)
+  * [R functions for the module](Module03%20Confidence%20Intervals/InferenceFunctions.R).
   * [Notes on the difference between probability distribution and likelihood](https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf)
 
 ### Module 4: Normal Distribution
 
-  * [Module 4](Module04 Normal Distribution/Module04Normal.html)
-  * [Exercise 2](Module04 Normal Distribution/Exercise2.html)
-  * [R functions for the module](Module04 Normal Distribution/NormalDistFunctions.R).
+  * [Module 4](Module04%20Normal%20Distribution/Module04Normal.html)
+  * [Exercise 2](Module04%20Normal%20Distribution/Exercise2.html)
+  * [R functions for the module](Module04%20Normal%20Distribution/NormalDistFunctions.R).
 
 ### Module 5: Regression
 
-  * [Module 5](Module05 Regression/Module05Regression.html)
-  * [Exercise 3](Module05 Regression/Exercise03.html)
+  * [Module 5](Module05%20Regression/Module05Regression.html)
+  * [Exercise 3](Module05%20Regression/Exercise03.html)
 
 
 ### Module 6: Model Checking
-  * [Module](Module06 ModelChecking/Module06ModelChecking.html)
-  * [Exercise 4](Module06 ModelChecking/Exercise04.html)
+  * [Module](Module06%20ModelChecking/Module06ModelChecking.html)
+  * [Exercise 4](Module06%20ModelChecking/Exercise04.html)
 
 
 ### Module 7: Multiple Regression
-  * [Module](Module07 Multiple Regression/Module07MultipleRegression.html)
-  * [Exercise 5](Module07 Multiple Regression/Exercise05.html)
+  * [Module](Module07%20Multiple%20Regression/Module07MultipleRegression.html)
+  * [Exercise 5](Module07%20Multiple%20Regression/Exercise05.html)
 
 ### Module 8: Categorical Variables (aka ANOVA)
 
-  * [Module](Module08 Categorical/Module08Categorical.html)
-  * [Exercise 6](Module08 Categorical/Exercise06.html)
+  * [Module](Module08%20Categorical/Module08Categorical.html)
+  * [Exercise 6](Module08%20Categorical/Exercise06.html)
 
 ### Module 9: Interactions between Categorical Variables
-  * [Module](Module09 MoreCategorical/Module09Interactions.html)
-  * [Exercise 7](Module09 MoreCategorical/Exercise07.html)
+  * [Module](Module09%20MoreCategorical/Module09Interactions.html)
+  * [Exercise 7](Module09%20MoreCategorical/Exercise07.html)
 
 ### Module 10: Model Selection
 This week's module is split into 3 parts, because it was getting a bit long.
-  * [Module, Part A](Module10 ModelSelection/Module10PartA.html)
-  * [Module, Part B](Module10 ModelSelection/Module10PartB.html)
-  * [Module, Part C](Module10 ModelSelection/Module10PartC.html)
-  * [Exercise 8](Module10 ModelSelection/Exercise08.html)
+  * [Module, Part A](Module10%20ModelSelection/Module10PartA.html)
+  * [Module, Part B](Module10%20ModelSelection/Module10PartB.html)
+  * [Module, Part C](Module10%20ModelSelection/Module10PartC.html)
+  * [Exercise 8](Module10%20ModelSelection/Exercise08.html)
 
 In addition we have a couple of scripts that might help you when running the problems in R:
-  * [Confirmatory Script](Module10 ModelSelection/ConfirmatoryScript.html)
-  * [Exploratory Script](Module10 ModelSelection/ExploratoryScript.html)
+  * [Confirmatory Script](Module10%20ModelSelection/ConfirmatoryScript.html)
+  * [Exploratory Script](Module10%20ModelSelection/ExploratoryScript.html)
 
 ### Module 10a: Full Analyses (the precise location of this might vary depending on things like Easter)
 
@@ -115,24 +111,24 @@ This week will be a bit different. We want you to look at the whole process of d
 
 We only expect you to answer one of these, but we will be happy if you try both. There are two ways to answer them: some exam-style questions (for those of you looking ahead), and a more free-form "try to do the analysis on your own". For those of you taking the continuation exam, note that this will probably be an oral exam, so we will ask you to do an analysis like this, and discuss in in the exam.
 
-  * [Introduction](Module10a - Example Analyses/Module10Introduction.html)
-  * [Cow Questions](Module10a - Example Analyses/Module10aCowQuestions.html)
-  * [Iris Questions](Module10a - Example Analyses/Module10aIrisQuestions.html)
+  * [Introduction](Module10a%20-%20Example%20Analyses/Module10Introduction.html)
+  * [Cow Questions](Module10a%20-%20Example%20Analyses/Module10aCowQuestions.html)
+  * [Iris Questions](Module10a%20-%20Example%20Analyses/Module10aIrisQuestions.html)
 
 
 ### Module 11: GLMs (week beginning March 23rd) ===
-  * [Module](Module11 Generalised linear models/Module11GLMs.html)
-  * [Exercise 9](Module11 Generalised linear models/Exercise09.html)
+  * [Module](Module11%20Generalised%20linear%20models/Module11GLMs.html)
+  * [Exercise 9](Module11%20Generalised%20linear%20models/Exercise09.html)
 
 ### Module 12: Binomial Generalised Linear Models
 
-  * [Binomial Module](Module12 Binomial GLMs/Module12Binomial.html)
-  * [Exercise 10](Module12 Binomial GLMs/Exercises10.html)
+  * [Binomial Module](Module12%20Binomial%20GLMs/Module12Binomial.html)
+  * [Exercise 10](Module12%20Binomial%20GLMs/Exercises10.html)
 
 ### Module 13: Poisson Generalised Linear Models
 
-  * [Poisson Module](Module13 Poisson GLMs/Module13Poisson.html)
-  * [Exercise 11](Module13 Poisson GLMs/Exercise11.html)
+  * [Poisson Module](Module13%20Poisson%20GLMs/Module13Poisson.html)
+  * [Exercise 11](Module13%20Poisson%20GLMs/Exercise11.html)
 
 
 
