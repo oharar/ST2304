@@ -122,10 +122,10 @@ You can also source the code into your own R session and run the function there.
  
 ```{r SourceFunctions, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
 # You can find the script with the functions for this week at this url:
-# https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02Functions.R
+# https://oharar.github.io/ST2304/Module02%20One%20Parameter/Module02Functions.R
 
 # Source the script directly from the internet
-source('https://www.math.ntnu.no/emner/ST2304/2025v/Module02/Module02Functions.R')
+source('https://oharar.github.io/ST2304/Module02%20One%20Parameter/Module02Functions.R')
 
 # The functions should now be loaded,
 # check your environment to be sure - you should have two functions there
@@ -819,7 +819,7 @@ hist(result,
  We also used these functions within the ones we wrote for this course. 
  The full code with comments for this week's functions `simGlobe()` and 
  `mleGlobe()` can be found in the 
- [script](https://www.math.ntnu.no/emner/ST2304/2020v/Week02/Week2Functions.R).
+ [script](https://oharar.github.io/ST2304/Module02%20One%20Parameter/Module02Functions.R).
  
  **Reminder for arguments** you can input arguments to a function
  either by naming them e.g. `plot(x=2, y=3)` or by typing them in order
