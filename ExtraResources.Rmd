@@ -1,0 +1,56 @@
+---
+title: "Resources"
+author: "Emily Simmonds & Bob O'Hara"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here are some useful resources for using R.
+
+## Useful cheatsheets
+
+- [For base R (general)](https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf)
+- [Other cheatsheets](https://www.rstudio.com/resources/cheatsheets/)
+
+
+## Extra R tutorials
+
+- [Very basic](http://www.r-tutor.com/r-introduction) 
+- [General R introduction up to complex statistics all here](https://ourcodingclub.github.io/tutorials.html)
+- [A bit more complex/broad](https://datacarpentry.org/R-ecology-lesson/01-intro-to-r.html)
+
+For those looking to go beyond this course [TidyVerse](https://www.tidyverse.org/learn/) or [Advanced R](http://adv-r.had.co.nz/)
+
+
+## R and RStudio
+
+If you want to use R Studio (which we reconmend), you will need to download and install both R and R Studio
+
+- [R](https://cran.r-project.org/)
+- [R-studio](https://www.rstudio.com/products/rstudio/#Desktop): select the Desktop version and make sure it is the free version!
+
+## Tutorial on R and stats (plus its very pretty)
+
+[A tutorial on some basics of R, there are also statistics modules here too](https://tinystats.github.io/teacups-giraffes-and-statistics/01_introToR.html)
+
+
+## A guide to dbinom
+
+[A guide to dbinom](https://www.statology.org/a-guide-to-dbinom-pbinom-qbinom-and-rbinom-in-r/)
+
+(this might help with other function, like dnorm() etc. for the normal distribution)
+
+
+## Resources for Linear Models
+
+[Table showing how some common statistical tests are actually linear models](https://lindeloev.github.io/tests-as-linear/linear_tests_cheat_sheet.pdf)
+
+
+[Regression web page](https://bioceed.uib.no/dropfolder/sites/bioSTATS-and-R/StatisticsInR/2.1_simple_linear_regression.html)
+
+
+

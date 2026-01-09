@@ -81,9 +81,10 @@ a sample size of 12. If you repeat all of the 12 spins (data collection), you wo
  
  ![Figure 1: Picture of globe: source = wikipedia](Globe.JPEG)
  
-
 In reality it would take a long time to repeat the data collection many times
-to get many samples, so we have created an app to do this for this.
+to get many samples, so we have created a function to do this (we did create an app hat you could use, but teh server it ran on was shut down. Sorry).
+
+<!---
  
  [Click for app](https://shiny.math.ntnu.no/qmbio/Shiny_apps/LandSea/)
  
@@ -101,15 +102,15 @@ knitr::include_app("https://shiny.math.ntnu.no/qmbio/Shiny_apps/LandSea/")
  
  <span style="color:blue"> Also change the number of times you repeat the data 
  collection (number of samples). </span>
+ --->
  
- This app was created in R, it simulates the idea of collecting data in the 
+ This function was created in R, it simulates the idea of collecting data in the 
  way described above. 
  Simulations can be very useful when it is hard to collect data ourselves.
  
- In the 
- app the code is hidden, but you can also source the code into your own R 
- session and run the function there.
- It is not quite as pretty but you have more control. 
+You can also source the code into your own R session and run the function there.
+<!--- It is not quite as pretty but you have more control.--->
+
  You now only get the data not the plots.  
  
  <span style="color:blue"> Run the lines below to source the function and 

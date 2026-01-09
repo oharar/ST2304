@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Emily Simmonds &amp; Bob O’Hara" />
 
+<meta name="date" content="2026-01-09" />
 
-<title>README</title>
+<title>Resources</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,216 +350,66 @@ display: none;
 
 
 
+<h1 class="title toc-ignore">Resources</h1>
+<h4 class="author">Emily Simmonds &amp; Bob O’Hara</h4>
+<h4 class="date">2026-01-09</h4>
 
 </div>
 
 
-<div id="st2304" class="section level1">
-<h1>ST2304</h1>
-<p>This is the material for ST2304 Statistisk modellering for
-biologer/bioteknologer (or ST2304 Statistical modelling for
-biologists/bioteknologists), which is run at NTNU. It includes a module
-for each week, and exercises starting at week 3. I have not included the
-solutions to the exercises, for obvious reasons.</p>
-<p>Each module is written as an R markdown file. It includes
-explanations of the topic, in-class exercises (with hints and solutions)
-and links to videos and other material. In theory rendering the R
-markdown files will provide everytning, with the exception of embedded
-videos (see below).</p>
-<p>Please consider the licence for this repo to be <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC
-BY-NC-SA</a></p>
-<p><a href="ExtraResources.html">Here are some extra resources</a>,
-which might be helpful. If you find some more, please tell us and we can
-add them to the list.</p>
-<div id="videos" class="section level2">
-<h2>Videos</h2>
-<p>The videos are hosted on NTNU’s Panopto site. If you need to render
-the R Markdown files to create a new html file, the videos don’t embed
-properly. So instead you need to embed them by hand. There are two ways
-to do this, depending on what we’ve done:</p>
-<p>The easiest is if we have already added the html code in the
-RMarkdown document. If we have done this it will be commented out, so
-try this:</p>
+<p>Here are some useful resources for using R.</p>
+<div id="useful-cheatsheets" class="section level2">
+<h2>Useful cheatsheets</h2>
 <ul>
-<li>search the html file for “<!---". 
-- check that this comments out a video: it should start with an iframe tag ("<iframe src=...."), and should be next to a link to the video
-- remove the commenting out: "<!---" and "--->”</li>
-<li>save the file (and check it’s OK)</li>
-</ul>
-<p>If you do not find any videos this way, we probably added them with
-Plan B. So you need to do this:</p>
-<ul>
-<li>search the html file for “ADD EMBED”.</li>
-<li>work out which video goes with this. The link to the video should be
-just above the ADD EMBED.</li>
-<li>Go to the video, and getthe code: Settings (the cog at the top of
-the screen) &gt; Share &gt; Embed &gt; Copy Embed Code</li>
-<li>Paste the code into the html file, in place of the “ADD EMBED
-X”</li>
-</ul>
-<p>If that doesn’t work, you could try to extract them from <a href="https://wiki.math.ntnu.no/st2304/2022v/start">previous years’
-pages</a>.</p>
-<p>Note that you will have to do this evert time you re-make the html
-document.</p>
-</div>
-<div id="acknowledgements" class="section level2">
-<h2>Acknowledgements</h2>
-<p>The material was initially created and revised by <span class="citation">@oharar</span> and <span class="citation">@emilygsimmonds</span>.</p>
-</div>
-<div id="course-content" class="section level2">
-<h2>Course Content</h2>
-<div id="module-1-introduction" class="section level3">
-<h3>Module 1: Introduction</h3>
-<ul>
-<li><a href="Module01%20Introduction/Lecture1.pdf">Intro Lecture
-slides</a></li>
-<li><a href="Module01%20Introduction/Introduction_to_R.pdf">R
-Lecture</a></li>
-<li><a href="Module01%20Introduction/R-tutorial.html">R Module</a></li>
-<li><a href="Module01%20Introduction/Errors-and-warnings.html">Additional help:
-dealing with errors and warnings</a></li>
-<li><a href="Module02%20One%20Parameter/Directories.html">An
-introduction to directories</a>, for those confused by them.</li>
-</ul>
-<p><a href="https://ntnu.taskcards.app/#/board/448a3a68-62df-4a5a-9820-0d03428d06fb?token=4afd1618-c42a-4d54-a6cb-a334a926e356">Taskcard
-link</a> (this will be explained)</p>
-</div>
-<div id="module-2-estimating-a-parameter" class="section level3">
-<h3>Module 2: Estimating a Parameter</h3>
-<ul>
-<li><a href="Module02%20One%20Parameter/Module02MLEs.html">Module
-2</a></li>
-<li><a href="Module02%20One%20Parameter/Directories.html">An
-introduction to directories</a>, for those confused by them.</li>
-<li><a href="Module02%20One%20Parameter/Module02Functions.R">R functions
-for the module</a>. You probably don’t need to look at this file - we
-will use it in the module.</li>
+<li><a href="https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf">For
+base R (general)</a></li>
+<li><a href="https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf">For
+RStudio</a></li>
+<li><a href="https://www.rstudio.com/resources/cheatsheets/">Other
+cheatsheets</a></li>
 </ul>
 </div>
-<div id="module-3-confidence-intervals" class="section level3">
-<h3>Module 3: Confidence Intervals</h3>
-<p><em>Exercises start this week!</em></p>
+<div id="extra-r-tutorials" class="section level2">
+<h2>Extra R tutorials</h2>
 <ul>
-<li><a href="Module03%20Confidence%20Intervals/Module03ConfidenceIntervals.html">Module
-3</a></li>
-<li><a href="Module03%20Confidence%20Intervals/Exercise1.html">Exercise
-1</a></li>
-<li><a href="Module03%20Confidence%20Intervals/InferenceFunctions.R">R
-functions for the module</a>.</li>
-<li><a href="https://www.math.ntnu.no/emner/ST2304/2025v/Module03/St2304-240123.pdf">Notes
-on the difference between probability distribution and
-likelihood</a></li>
+<li><a href="http://www.r-tutor.com/r-introduction">Very basic</a></li>
+<li><a href="https://ourcodingclub.github.io/tutorials.html">General R
+introduction up to complex statistics all here</a></li>
+<li><a href="https://datacarpentry.org/R-ecology-lesson/01-intro-to-r.html">A
+bit more complex/broad</a></li>
+</ul>
+<p>For those looking to go beyond this course <a href="https://www.tidyverse.org/learn/">TidyVerse</a> or <a href="http://adv-r.had.co.nz/">Advanced R</a></p>
+</div>
+<div id="r-and-rstudio" class="section level2">
+<h2>R and RStudio</h2>
+<p>If you want to use R Studio (which we reconmend), you will need to
+download and install both R and R Studio</p>
+<ul>
+<li><a href="https://cran.r-project.org/">R</a></li>
+<li><a href="https://www.rstudio.com/products/rstudio/#Desktop">R-studio</a>:
+select the Desktop version and make sure it is the free version!</li>
 </ul>
 </div>
-<div id="module-4-normal-distribution" class="section level3">
-<h3>Module 4: Normal Distribution</h3>
-<ul>
-<li><a href="Module04%20Normal%20Distribution/Module04Normal.html">Module
-4</a></li>
-<li><a href="Module04%20Normal%20Distribution/Exercise2.html">Exercise
-2</a></li>
-<li><a href="Module04%20Normal%20Distribution/NormalDistFunctions.R">R
-functions for the module</a>.</li>
-</ul>
+<div id="tutorial-on-r-and-stats-plus-its-very-pretty" class="section level2">
+<h2>Tutorial on R and stats (plus its very pretty)</h2>
+<p><a href="https://tinystats.github.io/teacups-giraffes-and-statistics/01_introToR.html">A
+tutorial on some basics of R, there are also statistics modules here
+too</a></p>
 </div>
-<div id="module-5-regression" class="section level3">
-<h3>Module 5: Regression</h3>
-<ul>
-<li><a href="Module05%20Regression/Module05Regression.html">Module
-5</a></li>
-<li><a href="Module05%20Regression/Exercise03.html">Exercise 3</a></li>
-</ul>
+<div id="a-guide-to-dbinom" class="section level2">
+<h2>A guide to dbinom</h2>
+<p><a href="https://www.statology.org/a-guide-to-dbinom-pbinom-qbinom-and-rbinom-in-r/">A
+guide to dbinom</a></p>
+<p>(this might help with other function, like dnorm() etc. for the
+normal distribution)</p>
 </div>
-<div id="module-6-model-checking" class="section level3">
-<h3>Module 6: Model Checking</h3>
-<ul>
-<li><a href="Module06%20ModelChecking/Module06ModelChecking.html">Module</a></li>
-<li><a href="Module06%20ModelChecking/Exercise04.html">Exercise
-4</a></li>
-</ul>
-</div>
-<div id="module-7-multiple-regression" class="section level3">
-<h3>Module 7: Multiple Regression</h3>
-<ul>
-<li><a href="Module07%20Multiple%20Regression/Module07MultipleRegression.html">Module</a></li>
-<li><a href="Module07%20Multiple%20Regression/Exercise05.html">Exercise
-5</a></li>
-</ul>
-</div>
-<div id="module-8-categorical-variables-aka-anova" class="section level3">
-<h3>Module 8: Categorical Variables (aka ANOVA)</h3>
-<ul>
-<li><a href="Module08%20Categorical/Module08Categorical.html">Module</a></li>
-<li><a href="Module08%20Categorical/Exercise06.html">Exercise 6</a></li>
-</ul>
-</div>
-<div id="module-9-interactions-between-categorical-variables" class="section level3">
-<h3>Module 9: Interactions between Categorical Variables</h3>
-<ul>
-<li><a href="Module09%20MoreCategorical/Module09Interactions.html">Module</a></li>
-<li><a href="Module09%20MoreCategorical/Exercise07.html">Exercise
-7</a></li>
-</ul>
-</div>
-<div id="module-10-model-selection" class="section level3">
-<h3>Module 10: Model Selection</h3>
-<p>This week’s module is split into 3 parts, because it was getting a
-bit long. * <a href="Module10%20ModelSelection/Module10PartA.html">Module, Part A</a> *
-<a href="Module10%20ModelSelection/Module10PartB.html">Module, Part
-B</a> * <a href="Module10%20ModelSelection/Module10PartC.html">Module,
-Part C</a> * <a href="Module10%20ModelSelection/Exercise08.html">Exercise 8</a></p>
-<p>In addition we have a couple of scripts that might help you when
-running the problems in R: * <a href="Module10%20ModelSelection/ConfirmatoryScript.html">Confirmatory
-Script</a> * <a href="Module10%20ModelSelection/ExploratoryScript.html">Exploratory
-Script</a></p>
-</div>
-<div id="module-10a-full-analyses-the-precise-location-of-this-might-vary-depending-on-things-like-easter" class="section level3">
-<h3>Module 10a: Full Analyses (the precise location of this might vary
-depending on things like Easter)</h3>
-<p>This week will be a bit different. We want you to look at the whole
-process of data analysis, i.e. use all the parts you have been learning
-over the last few weeks to answer some biological questions.</p>
-<p>We only expect you to answer one of these, but we will be happy if
-you try both. There are two ways to answer them: some exam-style
-questions (for those of you looking ahead), and a more free-form “try to
-do the analysis on your own”. For those of you taking the continuation
-exam, note that this will probably be an oral exam, so we will ask you
-to do an analysis like this, and discuss in in the exam.</p>
-<ul>
-<li><a href="Module10a%20-%20Example%20Analyses/Module10Introduction.html">Introduction</a></li>
-<li><a href="Module10a%20-%20Example%20Analyses/Module10aCowQuestions.html">Cow
-Questions</a></li>
-<li><a href="Module10a%20-%20Example%20Analyses/Module10aIrisQuestions.html">Iris
-Questions</a></li>
-</ul>
-</div>
-<div id="module-11-glms-week-beginning-march-23rd" class="section level3">
-<h3>Module 11: GLMs (week beginning March 23rd) ===</h3>
-<ul>
-<li><a href="Module11%20Generalised%20linear%20models/Module11GLMs.html">Module</a></li>
-<li><a href="Module11%20Generalised%20linear%20models/Exercise09.html">Exercise
-9</a></li>
-</ul>
-</div>
-<div id="module-12-binomial-generalised-linear-models" class="section level3">
-<h3>Module 12: Binomial Generalised Linear Models</h3>
-<ul>
-<li><a href="Module12%20Binomial%20GLMs/Module12Binomial.html">Binomial
-Module</a></li>
-<li><a href="Module12%20Binomial%20GLMs/Exercises10.html">Exercise
-10</a></li>
-</ul>
-</div>
-<div id="module-13-poisson-generalised-linear-models" class="section level3">
-<h3>Module 13: Poisson Generalised Linear Models</h3>
-<ul>
-<li><a href="Module13%20Poisson%20GLMs/Module13Poisson.html">Poisson
-Module</a></li>
-<li><a href="Module13%20Poisson%20GLMs/Exercise11.html">Exercise
-11</a></li>
-</ul>
-</div>
-</div>
+<div id="resources-for-linear-models" class="section level2">
+<h2>Resources for Linear Models</h2>
+<p><a href="https://lindeloev.github.io/tests-as-linear/linear_tests_cheat_sheet.pdf">Table
+showing how some common statistical tests are actually linear
+models</a></p>
+<p><a href="https://bioceed.uib.no/dropfolder/sites/bioSTATS-and-R/StatisticsInR/2.1_simple_linear_regression.html">Regression
+web page</a></p>
 </div>
 
 
