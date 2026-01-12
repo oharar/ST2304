@@ -826,8 +826,13 @@ hist(result,
  e.g. `plot(2, 3)`. If doing the second option, you MUST put them in the 
  right order, so it is important to remember or check what the function expects. 
  
- # Finally 
+# Finally 
  
  
 [Here is a video summarising this week's module](https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c), running through some of the main themes (and talking too much about the R code).
 
+<!---
+<div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%">
+	<iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=true&interactivity=all" style="border: 1px solid #464646; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="ST2304w2Summary"></iframe>
+</div>
+--->
