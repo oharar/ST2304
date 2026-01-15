@@ -1680,9 +1680,10 @@ We estimate the estimand with this.</li>
 <p><span style="color:blue"> Begin by watching the <strong>Introduction
 video</strong> </span> Either <a href="https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=7c9e1f6a-e7d4-4dd7-a39e-ae2000cda621">click
 here</a> or watch below.</p>
-<p>
+<p>(NOTE: in the markdown document the video embed has been commented
+out. It should be manually copied and pasted into the html) <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=7c9e1f6a-e7d4-4dd7-a39e-ae2000cda621&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&captions=true&interactivity=all" height="315" width="560" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
- </p>
+ ---></p>
 <p>In the video Bob collected data using a globe. He span the globe and
 recorded if the he touched <code>Land</code> or <code>Sea</code> when it
 stopped spinning. Each time he picked a point on the globe, this gave a
@@ -1745,6 +1746,9 @@ result &lt;- simGlobe(NTrials = 5, nSims = 1, probability = 0.4)
 
 # Look at your results:
 result</code></pre>
+<pre><code>## 
+##  Sea Land 
+##    3    2</code></pre>
 <p><span style="color:blue"> When you repeat the data collection more
 than once, do you get the same data? </span></p>
 <p><span style="color:blue"> If not, why not? </span></p>
@@ -1806,9 +1810,9 @@ account the variability in possible outcomes and estimate properties
 <p>Either <a href="https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=3b325c3e-561c-47d5-a18f-ae2000bc8099">click
 here</a> or watch below. (NOTE: in the markdown document the video embed
 has been commented out. It should be manually copied and pasted into the
-html) 
+html) <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=3b325c3e-561c-47d5-a18f-ae2000bc8099&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&captions=true&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-</p>
+---></p>
 <div id="statistical-inference-for-the-proportion-of-land-and-sea" class="section level2">
 <h2>Statistical inference for the proportion of land and sea</h2>
 <p>The biological question we are asking in this example is: “What is
@@ -1882,23 +1886,31 @@ try and visualise it too. You already saw how the same ‘true’ parameter
 can produce many data sets. Now we want to look at how different
 parameters can produce similar datasets.</p>
 <p><span style="color:blue"> Using the code below, simulate 100 observed
-data sets for <span class="math inline">\(p\)</span> = 0.4 AND <span class="math inline">\(p\)</span> = 0.6. Two histograms will be plotted.
-How many time was the same observed data created by both probabilities?
-For example, if you see Land 5 times, how often do you get it with <span class="math inline">\(p=0.4\)</span>, and with <span class="math inline">\(p=0.6\)</span>. What does this suggest about
-tyrying to estimate <span class="math inline">\(p\)</span>?</span></p>
+data sets for <span class="math inline">\(p\)</span> = 0.4 AND <span class="math inline">\(p\)</span> = 0.6. Two bar charts will be plotted.
+How does the distribution of the number of times you see Land change
+when the probability of seeing land changes? For example, if you think
+about seeing Land 4 times, how often do you get it with <span class="math inline">\(p=0.4\)</span>, and with <span class="math inline">\(p=0.6\)</span>? What does this mean for trying to
+estimate <span class="math inline">\(p\)</span>?</span></p>
 <pre class="r"><code># Create a split screen to plot in
 par(mfrow=c(1,2)) # one row and two columns
 
-# Create the histograms
-# we put the simGlobe function inside hist()
-# simGlobe creates our x arugment for hist()
+# Create the bar charts
+# we put the simGlobe function inside table(). This counts how many times we 
+# see land 0, 1, 2, ... times.
+# simGlobe creates our x argument for table()
 #[&quot;Land&quot;,] tells R to take only the row with number of Land
-hist(simGlobe(0.4, 12, 100)[&quot;Land&quot;,], xlab = &quot;Number of land&quot;,
-     main = &quot;0.4&quot;)
-hist(simGlobe(0.6, 12, 100)[&quot;Land&quot;,], xlab = &quot;Number of land&quot;,
-     main = &quot;0.6&quot;)
+# plot() then works on the table, because R recognises it as a table and knows 
+#  how to handle it. We use lwd=8 and lend=3 toi make it look nicer, 
+#  and axis() to label all of the numbers.
 # main changes the title
-# xlab changes the x label</code></pre>
+# xlab changes the x label
+
+plot(table(simGlobe(0.4, 12, 100)[&quot;Land&quot;,]), xlim=c(0,12), xlab = &quot;Number of land&quot;, 
+     ylab=&quot;Frequency&quot;, main = &quot;0.4&quot;, lwd=8, lend=3)
+axis(1, at=0:12)
+plot(table(simGlobe(0.6, 12, 100)[&quot;Land&quot;,]), xlim=c(0,12), xlab = &quot;Number of land&quot;, 
+     ylab=&quot;Frequency&quot;, main = &quot;0.6&quot;, lwd=8, lend=3)
+axis(1, at=0:12)</code></pre>
 <p>When we estimate parameters, we also want to recognise the variation.
 We call it <strong>uncertainty</strong>, more on this next week.</p>
 </div>
@@ -1930,9 +1942,9 @@ success.</p>
 <p><span style="color:blue"> Watch the <strong>final
 video</strong>.</span></p>
 <p>Either <a href="https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c">click
-here</a> or watch below. 
+here</a> or watch below. <!---
 <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-</p>
+---></p>
 <p>As we said above, the likelihood is the probability of getting our
 observed data, given a parameter value <span class="math inline">\(p\)</span>.</p>
 <p>In this section we will walk you through how to write a likelihood
@@ -2315,10 +2327,11 @@ remember or check what the function expects.</p>
 <p><a href="https://ntnu.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c">Here
 is a video summarising this week’s module</a>, running through some of
 the main themes (and talking too much about the R code).</p>
-
+<!---
 <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%">
     <iframe src="https://ntnu.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=9c221c95-4e41-41b2-8de2-ae2200a0159c&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=true&interactivity=all" style="border: 1px solid #464646; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="ST2304w2Summary"></iframe>
 </div>
+--->
 </div>
 
 

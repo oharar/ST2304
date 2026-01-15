@@ -120,7 +120,7 @@ You can also source the code into your own R session and run the function there.
  
  We will explain why the arguments have these names in Part B.
  
-```{r SourceFunctions, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+```{r SourceFunctions, warning = FALSE, error = FALSE, eval = TRUE, echo = TRUE}
 # You can find the script with the functions for this week at this url:
 # https://oharar.github.io/ST2304/Module02%20One%20Parameter/Module02Functions.R
 
@@ -310,24 +310,33 @@ In Part A, you experimented with simulating data in R or in an app.
  different parameters can produce similar datasets. 
  
  <span style="color:blue"> Using the code below, simulate 100 
- observed data sets for $p$ = 0.4 AND $p$ = 0.6. Two histograms
- will be plotted. How many time was the same observed data created by both 
- probabilities? For example, if you see Land 5 times, how often do you get it with $p=0.4$, and with $p=0.6$. What does this suggest about tyrying to estimate $p$?</span>
+ observed data sets for $p$ = 0.4 AND $p$ = 0.6. Two bar charts
+ will be plotted. How does the distribution of the number of times you see 
+ Land change when the probability of seeing land changes? For example, 
+ if you think about seeing Land 4 times, how often do you get it with $p=0.4$, 
+ and with $p=0.6$? What does this mean for trying to estimate $p$?</span>
  
 ```{r PlotSims, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
 # Create a split screen to plot in
 par(mfrow=c(1,2)) # one row and two columns
 
-# Create the histograms
-# we put the simGlobe function inside hist()
-# simGlobe creates our x arugment for hist()
+# Create the bar charts
+# we put the simGlobe function inside table(). This counts how many times we 
+# see land 0, 1, 2, ... times.
+# simGlobe creates our x argument for table()
 #["Land",] tells R to take only the row with number of Land
-hist(simGlobe(0.4, 12, 100)["Land",], xlab = "Number of land",
-     main = "0.4")
-hist(simGlobe(0.6, 12, 100)["Land",], xlab = "Number of land",
-     main = "0.6")
+# plot() then works on the table, because R recognises it as a table and knows 
+#  how to handle it. We use lwd=8 and lend=3 toi make it look nicer, 
+#  and axis() to label all of the numbers.
 # main changes the title
 # xlab changes the x label
+
+plot(table(simGlobe(0.4, 12, 100)["Land",]), xlim=c(0,12), xlab = "Number of land", 
+     ylab="Frequency", main = "0.4", lwd=8, lend=3)
+axis(1, at=0:12)
+plot(table(simGlobe(0.6, 12, 100)["Land",]), xlim=c(0,12), xlab = "Number of land", 
+     ylab="Frequency", main = "0.6", lwd=8, lend=3)
+axis(1, at=0:12)
 
 ```
  
@@ -550,7 +559,7 @@ factorial(5) # 5!
  <span style="color:blue"> The data for this are: 10 trials and data = 
  (`Land` = 4, `Sea` = 6). </span>
  
-```{r dbinom, warning = FALSE, error = FALSE, eval = FALSE, echo = TRUE}
+```{r dbinom, warning = FALSE, error = FALSE, eval = TRUE, echo = TRUE}
 # Code to use dbinom()
 
 # First create an object containing your candidate values of p
