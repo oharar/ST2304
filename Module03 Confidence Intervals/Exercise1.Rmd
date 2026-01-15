@@ -20,7 +20,7 @@ This document contains information, questions, R code, and plots.
 
 outputs from R appear like the above ^^^^
 
-You should work through the exercise in groups and write answers in a separate document to be submitted on Blackboard by **Sunday 1st February midnight 2026 (or another date if it is not 2025)** (you may see this as Monday 2nd, if I allow an extra few minutes for panic). 
+You should work through the exercise in groups and write answers in a separate document to be submitted on Blackboard by **Sunday 1st February midnight 2026 (or another date if it is not 2026)** (you may see this as Monday 2nd, if I allow an extra few minutes for panic). 
 
 Answer all questions. The assignment can be written in any format 
 (e.g. `.docx`, `.pdf`, `.R`) but
