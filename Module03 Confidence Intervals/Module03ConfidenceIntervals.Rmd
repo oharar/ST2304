@@ -86,6 +86,15 @@ $$
 \hat{p} = \frac{r}{N}
 $$
 
+### Likelihood vs Probability
+
+In everyday life, we often use likelihood and probability to mean the same thing. But in statistics they mean slightly different things.
+
+First, **probability**. This you should know: if something has a higher probability, it is more likely to happen. To be more precise, if you try to do something a lot of times, the probability is the proportion of times you expect is to happen. e.g. if the probability of Scunthorpe United scoring between 44 and 73 goals in a season is 0.3, then over lots of seasons we would expect to see it happening about 30% of the time. So probabilities are statements about events, which may or may not happen, and how likely they are to happen. We will leave it as that, without delving into technical definitions.
+
+Now, **likelihood**. First, you can think of it as a specific type of probability. It is (almost: see below) the probability of seeing the data you have collected, given the parameters of a model and the model. So, we might think that the number of goals Scunthorpe United score in a season should follow a Poisson distribution. In 2024/5 they scored 76 goals. We can think about how likely that is. If we think on average they score 70 goals a season, then the likelihood is the probability of scoring 76 given an average of 70, and that the number of goals follows a Poisson distribution. We can actually calculate this as `dpois(76, lambda=70)` which gives `r round(dpois(76, lambda=70), 4)`. But we can also calculate the likelihood of 76 goials if the mean was actually 73.6: `dpois(76, lambda=73.6)` which gives `r round(dpois(76, lambda=73.6), 4)`, which is higher.
+
+Why is likelihood not quite a probability (and why doesn't it matter)? Because we can also calculate likelihoods for continuous distributions, like height or the time it takes for me to write a sentence. For continuous distributions, we have to talk about the probability of events being between two values, e.g. the probability it would take between 3 and 24 seconds for me to write a sentence. Our model for a continuous distribution is written as a *probability density*: a higher density is like a higher probability. We can still calculate a density, and a likelihood for a continuous distribution is just the probability density for the observation (e.g. me taking 4.63 seconds to write a sentence) given whatever parameter we have for our model. The bottom line is that we can think about discrete events adn continuous probabilities in the same way (and years ago a Russian mathematician proved this works).
 
 ## This Week: Uncertainty in the Estimate
 
