@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Due midnight Sunday 16th February 2025** (claiming that this is not 202 will only be taken as an excuse if the 16th of February is not a Sunday)
+**Due midnight Sunday 15th February 2026** (claiming that this is not 2026 will only be taken as an excuse if the 16th of February is not a Sunday)
 
 ## Question 1: Dragonfire
 
