@@ -497,7 +497,7 @@ plot(X, resid(mods[[1]]))
 
 ```
 
-When we only have one covariate this does not look much different to plotting against the fitted valiues, but it does makea  difference when we look at multiple regression later. As a taster, here's an example when plotting agaisnt the fitted values looks OK, but one of the covaraites has a non-linear effect.
+When we only have one covariate this does not look much different to plotting against the fitted values, but it does make a difference when we look at multiple regression later. As a taster, here's an example when plotting against the fitted values looks OK, but one of the covariates has a non-linear effect.
 
 ```{r PlotMultiple, echo=TRUE, results='hide', fig.height=3}
 X1 <- runif(N)
@@ -600,20 +600,35 @@ The residuals for Model 8 look unhappy: they are obviously curved. So fitting a 
 
 Residual plots can show some deviant patterns, but they are poor as a test of normality. There are formal tests of normality, but they generally don't work too well. Instead we can use normal probability plots. These are a particular sort of 'Q-Q plot' (Q-Q = quantile-quantile). The idea of a Q-Q- plot is that if we have $N$ samples from a distribution, then the smallest should be approximately the same as the $1/(N+1)$th quantile, the next smallest approximately the  $2/(N+1)$th quantile etc.
 
-So, for example, for a uniform distribution the quantiles should be evenly spaced:
+So, for example, for a uniform distribution the quantiles should be evenly spaced. Here is the process to create Q-Q plots.
+
+1. Get your data.
+2. Sort it from lowest to highest.
+3. Plot it against the quantiles.
+
+For the uniform distribution the quantiles are just the rank divided by $N+1$, so the bottom two plots below look the same.
 
 ```{r NotNormal, echo=TRUE, fig.height=8, fig.width=5}
 N <- 50
 # NNorm <- scale(rnorm(N))
 NUnif <- runif(N, 0, 1)
 
-par(mfrow=c(2,1), mar=c(2,2,1,1))
+Lab.at <- seq(5, N, by=10) 
+# Labels <-sapply(1:N, function(n) as.expression(paste0(n, "%/%(N+1)"))) 
+Labels <-sapply(Lab.at, function(n) bquote(frac(.(n), 1+.(n))))
+
+par(mfrow=c(3,1), mar=c(4,2,3,1))
 plot(1:N, NUnif, xlab="Order drawn", ylab="Value", main="Un-sorted")
-plot((1:N)/(N+1), sort(NUnif), xlab="Rank", ylab="Value", main="Sorted")
+# plot((1:N)/(N+1), sort(NUnif), xlab="Rank", ylab="Value", main="Sorted")
+plot(1:N, sort(NUnif), xlab="Rank", ylab="Value", main="Sorted", xaxt="n")
+
+plot((1:N)/(N+1), sort(NUnif), xlab="Expected Quantile", ylab="Value", main="Q-Q plot", xaxt="n")
+axis(1, at=Lab.at/(N+1), labels=as.expression(Labels), padj=0.5)
 abline(0,1)
+
 ```
 
-The bottom plot is the QQ plot. On the y axis is the data (or the residuals, below), and the x axis is the expected value for that data points.
+The bottom plot is the Q-Q plot. On the y axis is the data (or the residuals, below), and the x axis is the expected value for that data points.
 
 For a normal distribution the spacing is uneven, but we can calculate it 
 
@@ -630,7 +645,7 @@ abline(0,1)
 
 ```
 
-R even has code specifically to make these plots, so everything's easier. The line that is drawn is the expected line, which the points should fall along.
+R has code specifically to make these plots, so everything's easier. The line that is drawn is the expected line, which the points should fall along.
 
 ```{r QQResidPlot, fig.height=4}
 qqnorm(NNorm)
