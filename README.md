@@ -82,8 +82,9 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 
 
 ### Module 7: Multiple Regression
-  * [Module](Module07 Multiple Regression/Module07MultipleRegression.html)
-  * [Exercise 5](Module07%20Multiple%20Regression/Exercise05.html)
+  * [Module](Module07 Mutliple Regression/Module07MultipleRegression.html)
+  * [Exercise 5](Module07 Mutliple Regression/Exercise05.html)
+  * [Ignore - I'm trying to sort out links](Module07 Mutliple Regression/Alien101.png)
 
 ### Module 8: Categorical Variables (aka ANOVA)
 
@@ -91,17 +92,21 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
   * [Exercise 6](Module08%20Categorical/Exercise06.html)
 
 ### Module 9: Interactions between Categorical Variables
+
   * [Module](Module09%20MoreCategorical/Module09Interactions.html)
   * [Exercise 7](Module09%20MoreCategorical/Exercise07.html)
 
 ### Module 10: Model Selection
+
 This week's module is split into 3 parts, because it was getting a bit long.
+
   * [Module, Part A](Module10%20ModelSelection/Module10PartA.html)
   * [Module, Part B](Module10%20ModelSelection/Module10PartB.html)
   * [Module, Part C](Module10%20ModelSelection/Module10PartC.html)
   * [Exercise 8](Module10%20ModelSelection/Exercise08.html)
 
 In addition we have a couple of scripts that might help you when running the problems in R:
+
   * [Confirmatory Script](Module10%20ModelSelection/ConfirmatoryScript.html)
   * [Exploratory Script](Module10%20ModelSelection/ExploratoryScript.html)
 
@@ -116,7 +121,8 @@ We only expect you to answer one of these, but we will be happy if you try both.
   * [Iris Questions](Module10a%20-%20Example%20Analyses/Module10aIrisQuestions.html)
 
 
-### Module 11: GLMs (week beginning March 23rd) ===
+### Module 11: GLMs (week beginning March 23rd) 
+
   * [Module](Module11%20Generalised%20linear%20models/Module11GLMs.html)
   * [Exercise 9](Module11%20Generalised%20linear%20models/Exercise09.html)
 
@@ -130,5 +136,5 @@ We only expect you to answer one of these, but we will be happy if you try both.
   * [Poisson Module](Module13%20Poisson%20GLMs/Module13Poisson.html)
   * [Exercise 11](Module13%20Poisson%20GLMs/Exercise11.html)
 
-
+After this is just the examanf then a lifetime of fun running GLMs.
 
