@@ -84,7 +84,6 @@ The material was initially created and revised by @oharar and @emilygsimmonds.
 ### Module 7: Multiple Regression
   * [Module](Module07 Mutliple Regression/Module07MultipleRegression.html)
   * [Exercise 5](Module07 Mutliple Regression/Exercise05.html)
-  * [Ignore - I'm trying to sort out links](Module07 Mutliple Regression/Alien101.png)
 
 ### Module 8: Categorical Variables (aka ANOVA)
 
