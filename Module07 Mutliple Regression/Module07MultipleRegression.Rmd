@@ -293,7 +293,7 @@ Obviously we can add as many covariates as we want, although the model will not 
 
 Writing the model like this can get messy, espacially if we want to manipulate it. But we can write it as a matrix. This is, in some ways, a detail, but the practical upshot is that we can work with the matrix formulation to find out how to fit the model, and then for any complicated model we just have to be able to write it in this matrix form, and everything else just follows.
   
-The first step in writing this as amatrix is to turn the intercept into a covariate by using a covariate with a value of 1 for every data point. Then we write all of the covariates in a matrix, $X$.
+The first step in writing this as a matrix is to turn the intercept into a covariate by using a covariate with a value of 1 for every data point. Then we write all of the covariates in a matrix, $X$.
 
 $$
 X = \left( \begin{array}{ccc}
@@ -377,7 +377,7 @@ abline(OlympicModelW, col=2)
 
 ```
 
-This looks a bit silly, and the suggestion that at 0 AD the winning time would be an unlikely `r round(coef(OlympicModelW)[1])`s. This is not usuallly a problem as long as we don't care about the intercept. But sometimes we can find it helpful to have an intercept that is interpretable, if only so we can do a sanity check. We can easíly move the intercept like this:
+This looks a bit silly, and the suggestion that at 0 AD the winning time would be an unlikely `r round(coef(OlympicModelW)[1])`s. This is not usuallly a problem as long as we don't care about the intercept. But sometimes we can find it helpful to have an intercept that is interpretable, if only so we can do a sanity check. We can easily move the intercept like this:
 
 ```{r PlotYAxes, fig.height=5, echo=TRUE}
 

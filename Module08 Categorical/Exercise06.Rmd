@@ -17,7 +17,7 @@ This document contains information, questions, R code, and plots.
 <span style="color:blue"> Questions appear in blue. </span>
 
 
-**Needs to be completed and handed in by 9th March, 2025** (if this is not 2025 you're on your own)
+**Needs to be completed and handed in by the end of 8th March, 2026** (if this is not 2026 you're on your own)
 
 # Rationale
 
