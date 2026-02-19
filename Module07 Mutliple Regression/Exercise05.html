@@ -371,8 +371,8 @@ when to use it, practicing how to use it, and interpreting results.</p>
 <ul>
 <li>Google (or any other search engine) e.g. “multiple regression in
 R”</li>
-<li><a href="https://www.math.ntnu.no/emner/ST2304/2023v/Module07/">Week
-7 lectures</a></li>
+<li><a href="https://oharar.github.io/ST2304/Module07%20Mutliple%20Regression/Module07MultipleRegression.html">Week
+7 module</a></li>
 </ul>
 </div>
 <div id="r-this-week" class="section level3">
@@ -484,7 +484,7 @@ resources</strong> </span></p>
 <p>The first step is to import the data and assign it to an object. You
 can use the whole web link above to import the data. It is a csv file
 with column names (header) included.</p>
-<pre class="r"><code>Alien &lt;- read.csv(&quot;https://www.math.ntnu.no/emner/ST2304/2023v/Module07/Alien101LabData.csv&quot;, 
+<pre class="r"><code>Alien &lt;- read.csv(&quot;https://raw.githubusercontent.com/oharar/ST2304/refs/heads/main/Module07%20Mutliple%20Regression/Alien101LabData.csv&quot;, 
                   header=TRUE)</code></pre>
 <p><span style="color:blue"> A1. Plot the data using the
 <code>pairs()</code> function. What can you tell from the
@@ -535,7 +535,7 @@ this by creating predictions of the amount of biomass for the actual
 average annual temperature and rainfall of Australia. The company have
 provided you with very simplified data of the average annual temperature
 and total annual rainfall for different coordinates in Australia. Found
-at: <a href="https://www.math.ntnu.no/emner/ST2304/2023v/Module07/AustraliaEnvironmentalData.csv" class="uri">https://www.math.ntnu.no/emner/ST2304/2023v/Module07/AustraliaEnvironmentalData.csv</a></p>
+at: <a href="https://raw.githubusercontent.com/oharar/ST2304/refs/heads/main/Module07%20Mutliple%20Regression/AustraliaEnvironmentalData.csv" class="uri">https://raw.githubusercontent.com/oharar/ST2304/refs/heads/main/Module07%20Mutliple%20Regression/AustraliaEnvironmentalData.csv</a></p>
 <p>This is plotted below.</p>
 <p>Using this you can try to guess where the alien might spread to based
 on what you have found out about the influence of temperature and
@@ -618,7 +618,7 @@ plots!</p>
 </ul>
 <p>Then load them using the <code>library()</code> function.
 e.g. <code>library(ggplot2)</code></p>
-<p>The plotting function is available here: <a href="https://www.math.ntnu.no/emner/ST2304/2023v/Module07/plotting_function.R" class="uri">https://www.math.ntnu.no/emner/ST2304/2023v/Module07/plotting_function.R</a>.
+<p>The plotting function is available here: <a href="https://github.com/oharar/ST2304/blob/main/Module07%20Mutliple%20Regression/plotting_function.R" class="uri">https://github.com/oharar/ST2304/blob/main/Module07%20Mutliple%20Regression/plotting_function.R</a>.
 You can bring the function into your R by using the
 <code>source()</code> function.</p>
 <div id="what-does-source-really-do" class="section level3">
@@ -641,7 +641,7 @@ and <code>Predictions</code> which is your prediction object.</p>
 R hint
 </summary>
 <pre class="r"><code># source the script
-source(&quot;https://www.math.ntnu.no/emner/ST2304/2023v/Module07/plotting_function.R&quot;)
+source(&quot;https://github.com/oharar/ST2304/blob/main/Module07%20Mutliple%20Regression/plotting_function.R&quot;)
 
 plotting_function(InputData = Australia, Predictions = PredictionsRain[,1])
 
