@@ -374,7 +374,7 @@ For all of the models we have the same variance, and means for the two groups. B
 
 ## Identifiability: making sure the model is unique
 
-Part of the discussion abiut multiple regression was about centring the regression. Some of the same issues are about to appear with categorical varaibles. Essentially, we can centre the models in different places. If we write the model badly, it is not clear where we have centred the model: indeed any centre will do.
+Part of the discussion about multiple regression was about centring the regression. Some of the same issues are about to appear with categorical varaibles. Essentially, we can centre the models in different places. If we write the model badly, it is not clear where we have centred the model: indeed any centre will do.
 
 For example, for the ANOVA model we have $\mu_A = \mu + \alpha_A$ and $\mu_B = \mu + \alpha_B$. What if we add a constant, $C$, to $\mu$, and subtract the same constant from each $\alpha_i$? We would get
 
@@ -645,7 +645,7 @@ First, run the code above and get the summary (you will just need the coefficien
 - <span style="color:blue">For the data with the `Fertilised` treatment and `Before1970`, how would you calculate the mean? </span>
 - <span style="color:blue">For the data with the `Fertilised` treatment and `After1970`, how would you calculate the mean? </span>
 
-If it helps (and it may or may not), these are the unique comnination of factor levels in the design matrix. Each row is one observation (but in the data there are several observations with the same 1s and 0s as row 31, for example).
+If it helps (and it may or may not), these are the unique combination of factor levels in the design matrix. Each row is one observation, but in the data there are several observations with the same 1s and 0s as row 31, for example.
 
 ```{r TwoWayANOVADesignMatrix, eval=TRUE, R.options = list(width = 100)}
 knitr::kable(unique(model.matrix(yield ~ Treatment + After1970, data=Yields)))
