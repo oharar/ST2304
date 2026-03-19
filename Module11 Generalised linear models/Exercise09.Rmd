@@ -60,7 +60,7 @@ $$
 \begin{aligned}
 y &= \frac{r}{N} \\
 \theta &= \log \left(\frac{p}{1-p} \right) \\
-b(\theta) &= \log (1-p) \\ 
+b(\theta) &= -\log (1-p) \\ 
 a(\phi) &= {1/N} \\
 c(y, \phi) &= \log \left( \begin{array}{c} N \\ r  \end{array} \right)
 \end{aligned}
