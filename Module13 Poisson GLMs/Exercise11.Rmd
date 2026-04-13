@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Needs to be completed and handed in by the end of 29th April, 2025 (we are giving you an extra few days because it is Easter. If you are trying to habd in after 2025, the deadline is 27th April, 2025)**
+**For 2026 this has 2 deadlines: if you want/need it to count towards doing the exam, it should be handed in by April 19th 2026. That gives us time to grade it before the deadline for telling the exam office who can takes the exam. If you don't need it, the deadline is Aprol 26th 2026.  If this is not 2026, you are too late to hand in by the 2026 deadline anyway. Hopefully there is a nicer deadline.**
 
 # Instructions
 
